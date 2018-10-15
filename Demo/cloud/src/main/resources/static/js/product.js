@@ -8,7 +8,7 @@ function initData() {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/gundam/get-gundams/',
+        url: 'get-gundams/',
         success: function (data) {
             console.log(data);
             loadData(data);
@@ -56,7 +56,7 @@ function loadUserModal(id) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/gundam/get/' + id,
+        url: 'get/' + id,
         success: function (data) {
             // var user = JSON.parse(data);
             console.log("user: " + data);

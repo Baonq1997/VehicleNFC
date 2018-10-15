@@ -30,4 +30,5 @@ public class GundamService {
     public void delete(Integer id) {
         gundamRepository.delete(findById(id));
     }
+
 }

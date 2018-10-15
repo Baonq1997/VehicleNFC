@@ -2,7 +2,7 @@ $(document).ready(function (e) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/gundam/get-gundams/',
+        url: 'get-gundams/',
         success: function (data) {
             console.log(data);
             loadProducts(data);

@@ -2,12 +2,18 @@ package com.cloud.project.controller;
 
 import com.cloud.project.model.Gundam;
 import com.cloud.project.service.GundamService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/gundam")
@@ -41,8 +47,8 @@ public class GundamController {
     }
 
     @GetMapping("/save-product")
-    public String saveProduct(Gundam gundam){
-        try{
+    public String saveProduct(Gundam gundam) {
+        try {
             gundamService.save(gundam);
             return "Success";
         } catch (Exception e) {
@@ -52,7 +58,7 @@ public class GundamController {
 
     @PostMapping("/delete-product")
     public String deleteProduct(Integer id) {
-        try{
+        try {
             gundamService.delete(id);
             return "Success";
         } catch (Exception e) {
@@ -65,8 +71,33 @@ public class GundamController {
         try {
             gundamService.save(gundam);
             return "Success";
-        }catch (Exception e){
+        } catch (Exception e) {
             return "Failed to create this product";
         }
+    }
+
+    @GetMapping("/add-to-cart")
+    public void addToCart(@Param("username") String username,
+                          @Param("productId") int productId,
+                          @Param("quantity") int quantity, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Map<Gundam, Integer> cart = (Map<Gundam, Integer>) session.getAttribute(username);
+        if (cart == null) {
+            cart = new HashMap<>();
+            cart.put(gundamService.findById(productId), quantity);
+        } else {
+            boolean exist = false;
+            for (Map.Entry<Gundam, Integer> entry : cart.entrySet()) {
+                if (entry.getKey().getId().equals(productId)) {
+                    cart.replace(entry.getKey(), entry.getValue() + quantity);
+                    exist = true;
+                    break;
+                }
+            }
+            if (!exist) {
+                cart.put(gundamService.findById(productId), quantity);
+            }
+        }
+        session.setAttribute(username,cart);
     }
 }
