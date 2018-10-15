@@ -1,0 +1,20 @@
+.product-table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+    line-height: 50px;
+}
+th {
+    background-color: lightgray;
+    color: white;
+}
+
+th, td {
+    padding: 8px;
+}
+tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+tr:hover{
+    background-color: #ddd;
+}
