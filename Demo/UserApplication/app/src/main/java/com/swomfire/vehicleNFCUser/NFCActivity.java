@@ -11,6 +11,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -74,18 +75,20 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
 
         context = this;
         token = FirebaseInstanceId.getInstance().getToken();
-
+        SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
+        String phoneNumber = prefs.getString("phoneNumberSignIn", "1");
+        sendTokenToServer(token,phoneNumber);
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
 
         NfcAdapter mAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mAdapter == null) {
-            Toast.makeText(this, "Sorry this device does not have NFC.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Thiết bị không hỗ trợ NFC.", Toast.LENGTH_LONG).show();
             return;
         }
 
         if (!mAdapter.isEnabled()) {
-            Toast.makeText(this, "Please enable NFC via Settings.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vui lòng bật chức năng NFC trong cài đặt.", Toast.LENGTH_LONG).show();
         }
 
         mAdapter.setNdefPushMessageCallback(this, this);
@@ -120,6 +123,11 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         lblTotal = findViewById(R.id.lblTotal);
         double totalPrice = 0;
         List<HourHasPrice> hourHasPrices = new ArrayList<>();
+        if (h < order.getMinHour()) {
+            h = order.getMinHour();
+            m = 0;
+        }
+
         while (h > 0) {
             hourHasPrices.add(new HourHasPrice(h, null));
             h--;
@@ -145,7 +153,9 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         }
 
         totalPrice += lastPrice * ((double) m / 60);
-        lblTotal.setText(UserService.convertMoney(totalPrice));
+        try {
+            lblTotal.setText(UserService.convertMoney(totalPrice));
+        } catch (NullPointerException e) {}
     }
 
     TextView lblTotal;
@@ -165,6 +175,9 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         parkingChorno.start();
     }
 
+    private boolean hasCurrentOrder = false;
+    private boolean pause = false;
+
     public void getOrderInfo(String orderId) {
         if (orderId == null) {
             //TODO get user info
@@ -172,17 +185,30 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
 //            if (user == null) {
 //                return;
 //            }
+            SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
+            String userId = prefs.getString("userId", "1");
+
             RmaAPIService mService = RmaAPIUtils.getAPIService();
-            mService.getOpenOrderByUserId(Integer.parseInt("2")).enqueue(new Callback<Order>() {
+            mService.getOpenOrderByUserId(Integer.parseInt(userId)).enqueue(new Callback<Order>() {
                 @Override
                 public void onResponse(Call<Order> call, Response<Order> response) {
                     if (response.isSuccessful()) {
                         Order result = response.body();
                         if (result != null) {
-                            setContentView(R.layout.activity_checkout);
-                            parkingChorno = findViewById(R.id.chroParking);
-                            setUpChrono(result);
-                            setUpOrderInfo(result);
+                            if (!hasCurrentOrder) {
+                                setContentView(R.layout.activity_checkout);
+                                parkingChorno = findViewById(R.id.chroParking);
+                                setUpChrono(result);
+                                setUpOrderInfo(result);
+                                hasCurrentOrder = true;
+                            }
+                        } else if (result == null && hasCurrentOrder) {
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
+                        }
+                        if (!pause) {
+                            getOrderInfo(null);
                         }
                     }
                 }
@@ -232,8 +258,8 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         lblCheckInDate.setText(date);
         lblLocation.setText(order.getLocation().getLocation());
 
-        lblVehicleNumber.setText(order.getUser().getVehicleNumber());
-        lblVehicleType.setText(order.getUser().getVehicleType().getName());
+        lblVehicleNumber.setText(order.getUser().getVehicle().getVehicleNumber());
+        lblVehicleType.setText(order.getUser().getVehicle().getVehicleTypeId().getName());
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listOrderPricing);
         OrderPricingAdapter orderPricingAdapter = new OrderPricingAdapter(order.getOrderPricings());
@@ -247,6 +273,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
     protected void onResume() {
         super.onResume();
         checkInternetConnection();
+        pause = false;
     }
 
     public void checkInternetConnection() {
@@ -265,5 +292,33 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         if (i == networkInfo.length) {
             Toast.makeText(getApplicationContext(), "Không có kết nối internet", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pause = true;
+    }
+
+    public void sendTokenToServer(String token, String phoneNumber){
+        RmaAPIService mService = RmaAPIUtils.getAPIService();
+        mService.sendDeviceTokenToServer(token,phoneNumber).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful()) {
+//                    Order result = response.body();
+//                    if (result != null) {
+//                        setUpChrono(result);
+//                        setUpOrderInfo(result);
+//                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 }

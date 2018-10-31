@@ -3,14 +3,15 @@ package com.example.demo.service;
 import com.example.demo.Config.NFCServerProperties;
 import com.example.demo.Config.ResponseObject;
 import com.example.demo.Config.SearchCriteria;
-import com.example.demo.entities.User;
-import com.example.demo.entities.Vehicle;
+import com.example.demo.entity.User;
+import com.example.demo.entity.Vehicle;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -19,6 +20,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.net.ConnectException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -36,7 +38,11 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Integer userId) {
-        return userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
+        }
+        return user;
     }
 
     public void updateUser(User user) {
@@ -48,18 +54,49 @@ public class UserService {
         }
     }
 
-    public void createUser(User user, String confirmCode) {
-        userRepository.save(user);
-        requestNewConfirmCode(user.getPhoneNumber(), confirmCode);
+    @Transactional
+    public void createUser(User user) {
+        if (user.getVehicle() != null) {
+            boolean needVerify = false;
+            //TODO check if phoneNumber exist
+            Vehicle vehicle = null;
+            if (user.getId() != null) {
+                vehicle = vehicleRepository.findByVehicleNumber(userRepository.findById(user.getId()).get().getVehicleNumber()).get();
+            }
+            if (user.getId() == null || !userRepository.findById(user.getId()).isPresent()
+                    || !vehicle.getVehicleNumber().equals(user.getVehicle().getVehicleNumber())
+                    || !vehicle.getLicensePlateId().equals(user.getVehicle().getLicensePlateId())) {
+                needVerify = true;
+                user.getVehicle().setVerified(false);
+                user.setActivated(false);
+                vehicleRepository.save(user.getVehicle());
+                user.setVehicleNumber(user.getVehicle().getVehicleNumber());
+            }
+            user.setVehicleNumber(user.getVehicle().getVehicleNumber());
+            userRepository.save(user);
+            if (needVerify) {
+                try {
+                    PushNotificationService.sendUserNeedVerifyNotification(
+                            "fhRoDKtJR4Q:APA91bFRKKjR2GydlMD0akn71EluhoayB7YXe3a9M5MVat1IRPGo-59onV4VmI-KLj3b-e0zQ2k55brMCxTGJPIcZK2eNslJMnTdq8BNecpqJwsDO5InyL-ALvF0ojQEb_PMtX_xtYsf",
+                            user.getPhoneNumber()
+                    );
+                } catch (Exception e) {
+                    System.err.println("Cannot connect to firebase");
+                }
+            }
+        }
     }
 
     public void requestNewConfirmCode(String phoneNumber, String confirmCode) {
-        PushNotificationService pushNotificationService = new PushNotificationService();
-        pushNotificationService.sendPhoneConfirmNotification(NFCServerProperties.getSmsHostToken(), phoneNumber, confirmCode);
+        PushNotificationService.sendPhoneConfirmNotification(NFCServerProperties.getSmsHostToken(), phoneNumber, confirmCode);
     }
 
     public Optional<User> getUserByPhone(String phone) {
-        return userRepository.findByPhoneNumber(phone);
+        Optional<User> user = userRepository.findByPhoneNumber(phone);
+        if (user.isPresent()) {
+            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
+        }
+        return user;
 
     }
 
@@ -111,13 +148,17 @@ public class UserService {
         query.where(predicate);
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
         List<User> result = typedQuery.getResultList();
-        int totalPages = result.size() / pageSize;
+        for (User user : result) {
+            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
+        }
+        int totalPages = (int) Math.ceil((double) result.size() / pageSize);
         typedQuery.setFirstResult(pagNumber * pageSize);
         typedQuery.setMaxResults(pageSize);
         List<User> userList = typedQuery.getResultList();
         responseObject.setData(userList);
-        responseObject.setTotalPages(totalPages + 1);
+        responseObject.setTotalPages(totalPages);
         responseObject.setPageNumber(pagNumber);
+        responseObject.setPageSize(pageSize);
         return responseObject;
     }
 
@@ -147,11 +188,15 @@ public class UserService {
                 countQuery.from(User.class)));
         Long count = entityManager.createQuery(countQuery)
                 .getSingleResult();
-        return (long) (count / pageSize) + 1;
+        return (long) Math.ceil((double) count / pageSize);
     }
 
     public Optional<User> login(String phone, String password) {
-        return userRepository.findByPhoneNumberAndPassword(phone, password);
+        Optional<User> user = userRepository.findByPhoneNumberAndPassword(phone, password);
+        if (user.isPresent()) {
+            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
+        }
+        return user;
     }
 
     public void updateUserSmsNoti(User user) {
@@ -196,5 +241,9 @@ public class UserService {
             userRepository.save(user.get());
         }
         return user;
+    }
+
+    public Optional<User> getUserByVehicleNumber(String vehicleNumber) {
+        return userRepository.findByVehicleNumber(vehicleNumber);
     }
 }

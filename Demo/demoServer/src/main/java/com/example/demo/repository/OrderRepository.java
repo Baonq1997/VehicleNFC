@@ -1,10 +1,9 @@
 package com.example.demo.repository;
 
-import com.example.demo.entities.Location;
-import com.example.demo.entities.Order;
-import com.example.demo.entities.OrderStatus;
-import com.example.demo.entities.User;
-import org.aspectj.weaver.ast.Or;
+import com.example.demo.entity.Location;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderStatus;
+import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

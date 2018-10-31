@@ -70,6 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
+        contentValues.put(COLUMN_ID, order.getId());
         contentValues.put(COLUMN_TOTAL, order.getTotal());
         contentValues.put(COLUMN_CHECK_IN_DATE, order.getCheckInDate());
         contentValues.put(COLUMN_CHECK_OUT_DATE, order.getCheckOutDate());
@@ -78,8 +79,13 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_ALLOWED_PARKING_TO, order.getAllowedParkingTo());
         contentValues.put(COLUMN_TBL_ORDER_STATUS_ID, order.getOrderStatus().getName());
         contentValues.put(COLUMN_TBL_USER_ID, order.getUser().getLastName() + order.getUser().getFirstName());
-        contentValues.put(COLUMN_TBL_VEHICAL_NAME, order.getUser().getVehicleType().getName());
-        contentValues.put(COLUMN_TBL_VEHICAL_ID, order.getUser().getVehicleNumber());
+        if (order.getUser().getVehicle() != null) {
+            contentValues.put(COLUMN_TBL_VEHICAL_NAME, order.getUser().getVehicle().getVehicleTypeId().getName());
+            contentValues.put(COLUMN_TBL_VEHICAL_ID, order.getUser().getVehicle().getVehicleNumber());
+        } else {
+            contentValues.put(COLUMN_TBL_VEHICAL_NAME, "");
+            contentValues.put(COLUMN_TBL_VEHICAL_ID, "");
+        }
         contentValues.put(COLUMN_TBL_LOCATION_ID, order.getLocation().getLocation());
 
         db.insert("tbl_order", null, contentValues);
@@ -96,7 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<History> array_list = new ArrayList<History>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from tbl_order", null);
+        Cursor res = db.rawQuery("select * from tbl_order ORDER BY check_in_date DESC;", null);
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
@@ -105,9 +111,9 @@ public class DBHelper extends SQLiteOpenHelper {
             double total = res.getDouble(res.getColumnIndex(COLUMN_TOTAL));
             long indate = res.getLong(res.getColumnIndex(COLUMN_CHECK_IN_DATE));
             long outdate = res.getLong(res.getColumnIndex(COLUMN_CHECK_OUT_DATE));
-            int duration = res.getInt(res.getColumnIndex(COLUMN_DURATION));
-            int parkfrom = res.getInt(res.getColumnIndex(COLUMN_ALLOWED_PARKING_FROM));
-            int parkto = res.getInt(res.getColumnIndex(COLUMN_ALLOWED_PARKING_TO));
+            long duration = res.getLong(res.getColumnIndex(COLUMN_DURATION));
+            long parkfrom = res.getLong(res.getColumnIndex(COLUMN_ALLOWED_PARKING_FROM));
+            long parkto = res.getLong(res.getColumnIndex(COLUMN_ALLOWED_PARKING_TO));
             String orderstatus = res.getString(res.getColumnIndex(COLUMN_TBL_ORDER_STATUS_ID));
             String username = res.getString(res.getColumnIndex(COLUMN_TBL_USER_ID));
             String vehicalname = res.getString(res.getColumnIndex(COLUMN_TBL_VEHICAL_NAME));

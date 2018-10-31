@@ -8,9 +8,9 @@ public class History implements Serializable {
     private double total;
     private long check_in_date;
     private long check_out_date;
-    private int duration;
-    private int allowed_parking_from;
-    private int allowed_parking_to;
+    private long duration;
+    private long allowed_parking_from;
+    private long allowed_parking_to;
     private String tbl_order_status_id;
     private String username;
     private String vehical_name;
@@ -20,7 +20,7 @@ public class History implements Serializable {
     public History() {
     }
 
-    public History(int id, double total, long check_in_date, long check_out_date, int duration, int allowed_parking_from, int allowed_parking_to, String tbl_order_status_id, String username, String vehical_name, String vehical_id, String tbl_location_id) {
+    public History(int id, double total, long check_in_date, long check_out_date, long duration, long allowed_parking_from, long allowed_parking_to, String tbl_order_status_id, String username, String vehical_name, String vehical_id, String tbl_location_id) {
         this.id = id;
         this.total = total;
         this.check_in_date = check_in_date;
@@ -67,7 +67,7 @@ public class History implements Serializable {
         this.check_out_date = check_out_date;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
@@ -75,7 +75,7 @@ public class History implements Serializable {
         this.duration = duration;
     }
 
-    public int getAllowed_parking_from() {
+    public long getAllowed_parking_from() {
         return allowed_parking_from;
     }
 
@@ -83,7 +83,7 @@ public class History implements Serializable {
         this.allowed_parking_from = allowed_parking_from;
     }
 
-    public int getAllowed_parking_to() {
+    public long getAllowed_parking_to() {
         return allowed_parking_to;
     }
 

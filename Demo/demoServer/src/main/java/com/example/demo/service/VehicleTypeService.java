@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entities.VehicleType;
+import com.example.demo.entity.VehicleType;
 import com.example.demo.repository.VehicleTypeRepository;
 import org.springframework.stereotype.Service;
 

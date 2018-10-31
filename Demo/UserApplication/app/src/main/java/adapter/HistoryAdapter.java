@@ -1,5 +1,6 @@
 package adapter;
 
+import android.app.Service;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import service.UserService;
 import sqliteModel.History;
 
 
@@ -51,9 +53,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
 
         holder.txtToDate.setText("Đến : " + sdf.format(new Date(history.getCheck_out_date())));
 
-        holder.txtAddress.setText("Thời gian đỗ : " + history.getTbl_location_id());
+        holder.txtAddress.setText("Địa điểm : " + history.getTbl_location_id());
 
-        holder.txtPrice.setText("Chi phí : " + (long) history.getTotal() * 1000 + " vnd");
+        holder.txtPrice.setText("Chi phí : " +  UserService.convertMoney((double)history.getTotal()));
 
         holder.txtPos.setText("" + position);
 

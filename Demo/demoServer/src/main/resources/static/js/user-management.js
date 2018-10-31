@@ -1,18 +1,22 @@
 $(document).ready(function (e) {
+    var phone = $('#main-content', window.parent.document).attr('phone');
+    if (typeof(phone) === 'undefined') {
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: 'get-users-json',
+            success: function (data) {
+                console.log(data);
+                loadData(data);
+            }, error: function () {
+                alert("Can't load data")
+            }
 
-    $.ajax({
-        type: "GET",
-        dataType: "json",
-        url: 'get-users-json',
-        success: function (data) {
-            console.log(data);
-            loadData(data);
-        }, error: function () {
-            alert("Can't load data")
-        }
-
-    });
-
+        });
+    } else {
+        $('#searchValue').val(phone);
+        searchUser(0);
+    }
     submitDeleteUserForm();
     submitCreateUserForm();
     // save user form
@@ -159,17 +163,20 @@ function loadData(res) {
     for (i = 0; i < content.length; i++) {
         row = (content[i].vehicle.verified) ? '<tr>' : '<tr class="not-verified">';
         // row += '<td>' + content[i].id + '</td>';
-        row += '<td>' + (i + 1) + '</td>';
-        row += '<td>' + content[i].phoneNumber + '</td>';
+        row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
+        row += '<td class="text-right">' + content[i].phoneNumber + '</td>';
         // row += '<td>' + content[i].password + '</td>';
-        row += '<td>' + content[i].money + '</td>';
         row += '<td>' + content[i].firstName + ' ' + content[i].lastName + '</td>';
-        row += '<td>' + content[i].vehicle.vehicleNumber + '</td>';
-        row += '<td>' + content[i].vehicle.licensePlateId + '</td>';
-        row += '<td>' + content[i].vehicle.vehicleTypeId.name + '</td>';
+        row += '<td class="text-right">' + (content[i].money * 1000).toLocaleString() + " vnđ" + '</td>';
+        row += '<td class="text-right">' + content[i].vehicle.vehicleNumber + '</td>';
+        var vehicleType = (content[i].vehicle.vehicleTypeId != null)
+            ? content[i].vehicle.vehicleTypeId.name : "Empty";
+        row += '<td class="text-center">' + vehicleType + '</td>';
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
-        row += '<td><a href="#" onclick="loadUserModal(' + content[i].id + ')" class="btn btn-primary edtBtn"><i class="lnr lnr-pencil"></i></a></td>';
-        row += '<td><a href="#" onclick="deleteModal(' + content[i].id + ')" class="btn btn-danger delBtn"><i class="lnr lnr-trash"></i></a></td>'
+        var verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "')\" class=\"btn btn-success btnVerify\">Verify</a>" : "";
+        var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].id + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
+        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].id + "')\" class=\"btn btn-danger btnAction\"><i class=\"lnr lnr-trash\"></i></a>";
+        row += cellBuilder(deleteStr + edit + verify);
         row += '</tr>';
         $('#user-table tbody').append(row);
     }
@@ -179,17 +186,17 @@ function loadData(res) {
     console.log("Total Page: " + res.totalPages);
     var currentPage;
     var li = "";
-    for (currentPage = 0; currentPage <= res.totalPages - 1; currentPage++) {
+    for (currentPage = 0; currentPage < res.totalPages; currentPage++) {
         if (currentPage === pageNumber) {
             li = '<li class="nav-item active">\n' +
-                '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">' + currentPage + '</a>\n' +
+                '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">' + (currentPage + 1) + '</a>\n' +
                 '</li>';
             $('#pagination').append(li);
         } else {
 
             li = '<li class="nav-item">\n' +
                 '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">\n' +
-                +currentPage + '</a>\n' +
+                +(currentPage + 1) + '</a>\n' +
                 '</li>';
             $('#pagination').append(li);
         }
@@ -233,7 +240,7 @@ $(document).ready(function (e) {
 });
 
 function searchUser(pageNumber) {
-    var url = "http://localhost:8080/user/search-user";
+    var url = "search-user";
     if (pageNumber != null) {
         url = url + "?page=" + pageNumber;
     }
@@ -252,7 +259,7 @@ function searchUser(pageNumber) {
         success: function (response) {
             emptyTable();
             emptyPaginationLi();
-            loadData(response);
+            loadData(response.data);
             console.log(response);
         }
     });
@@ -265,4 +272,170 @@ function createSearchObject(key, operation, value) {
         value: value
     };
     return obj;
+}
+
+function cellBuilder(text, className) {
+    text = (text != null) ? text : "Empty";
+    return "<td class='" + className + "'>" + text + "</td>";
+}
+
+function loadVehicleInfo(vehicleNumber) {
+    $('#main-content-user-list').hide();
+    $('#main-content-verify-form').show();
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: 'get-vehicle/' + vehicleNumber,
+        success: function (data) {
+            setUpFormData(data);
+        }, error: function () {
+            alert("Can't load data")
+        }
+    });
+    //load vehicle Type
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: '/vehicle-type/get-all',
+        success: function (data) {
+            setUpVehicleType(data, 'verify-vehicle-list')
+        }, error: function () {
+            alert("Can't load data")
+        }
+
+    });
+}
+
+
+function setUpFormData(vehicle) {
+    $('#vehicleNumberShow').val(vehicle.vehicleNumber);
+    $('#verify-vehicleNumber').val(vehicle.vehicleNumber);
+    $('#licenseIdShow').val(vehicle.licensePlateId);
+    $('#licenseId').val(vehicle.licensePlateId);
+}
+
+function setUpVehicleType(list, holder) {
+    for (var i = 0; i < list.length; i++) {
+        var option = "<option value='" + list[i].id + "'>" + list[i].name + "</option>";
+        $('#' + holder).append(option);
+    }
+}
+
+
+function setLongFromExpireDate() {
+    var time = $('#datepicker').val().split("-");
+    var date = new Date(time[1] + "-" + time[0] + "-" + time[2]);
+    $('#expireDate').val(date.getTime());
+}
+
+
+$('#datepicker').datepicker({
+    weekStart: 1,
+    autoclose: true,
+    format: "dd-mm-yyyy",
+    todayHighlight: true,
+});
+
+$('#verify-vehicle-form').on('submit', function (e) {
+    $.ajax({
+        type: 'post',
+        url: 'verify-vehicle',
+        data: $('#verify-vehicle-form').serialize(),
+        success: function (data) {
+            if (data) {
+                location.reload();
+            }
+        }
+    });
+    e.preventDefault();
+});
+
+function closeForm() {
+    $('#verify-vehicle-form').trigger("reset");
+    $('#main-content-user-list').show();
+    $('#main-content-verify-form').hide();
+    $('#main-content-save-form').hide();
+}
+
+function openSaveForm() {
+
+    $('#main-content-user-list').hide();
+    $('#main-content-save-form').show();
+}
+
+$('#save-user-form').on('submit', function (e) {
+    if ($('#id').val() === '') {
+        $('#id').removeAttr('value');
+    }
+    $.ajax({
+        type: 'post',
+        url: 'create-user',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: buildUserJSON(),
+        success: function (data) {
+            if (data) {
+                location.reload();
+            }
+        }
+    });
+    e.preventDefault();
+});
+
+function buildUserJSON() {
+    var string = {
+        id: $('#id').val(),
+        phoneNumber: $('#phoneNumber').val(),
+        firstName: $('#firstName').val(),
+        lastName: $('#lastName').val(),
+        password: $('#password').val(),
+        vehicle: {
+            "vehicleNumber": $('#vehicleNumber').val(),
+            "licensePlateId": $('#licensePlateId').val()
+        }
+    };
+    return JSON.stringify(string);
+}
+
+function loadUserInfo(id) {
+    openSaveForm();
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: 'get-user/' + id,
+        success: function (data) {
+            setUpUserInfo(data);
+        }, error: function () {
+            alert("Can't load data")
+        }
+    });
+}
+
+function setUpUserInfo(data) {
+    // alert(data.phoneNumber);
+    $('#id').val(data.id);
+    $('#phoneNumber').val(data.phoneNumber);
+    $('#firstName').val(data.firstName);
+    $('#lastName').val(data.lastName);
+    $('#password').val(data.password);
+    $('#vehicleNumber').val(data.vehicle.vehicleNumber);
+    $('#licensePlateId').val(data.vehicle.licensePlateId);
+}
+
+
+function openDeleteModal(vehicleNumber) {
+    $('#deleteModal').modal(focus);
+    $('#delete-id').val(vehicleNumber);
+}
+
+function deleteUser(id) {
+    $.post("delete-user",
+        {
+            id: id,
+        },
+        (function (data, status) {
+            if (data) {
+                location.reload();
+            }
+        }));
 }

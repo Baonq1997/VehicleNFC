@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.entities.VehicleType;
+import com.example.demo.entity.VehicleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

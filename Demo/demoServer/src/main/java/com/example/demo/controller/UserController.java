@@ -3,8 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.Config.PaginationEnum;
 import com.example.demo.Config.ResponseObject;
 import com.example.demo.Config.SearchCriteria;
-import com.example.demo.entities.User;
-import com.example.demo.entities.VehicleType;
+import com.example.demo.entity.User;
+import com.example.demo.entity.Vehicle;
+import com.example.demo.service.PushNotificationService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.VehicleService;
 import com.example.demo.service.VehicleTypeService;
@@ -56,15 +57,7 @@ public class UserController {
     public ResponseEntity<String> createUser(@RequestBody User user) {
         String hashedID = "";
         // Cần đoạn lấy thông tin xe
-        String confirmCode = encodeGenerator();
-        System.err.println(user.getPhoneNumber() + ", Code:" + confirmCode);
-        userService.createUser(user, confirmCode);
-        Map<String, String> confirmSMSList = (Map<String, String>) servletContext.getAttribute("confirmSMSList");
-        if (confirmSMSList == null) {
-            confirmSMSList = new HashMap<>();
-        }
-        confirmSMSList.put(user.getPhoneNumber(), confirmCode);
-        servletContext.setAttribute("confirmSMSList", confirmSMSList);
+        userService.createUser(user);
 //        }
         Optional<User> userOptional = userService.getUserByPhone(user.getPhoneNumber());
         if (userOptional.isPresent()) {
@@ -134,8 +127,8 @@ public class UserController {
         return "Success";
     }
 
-    @PostMapping("/delete-user/{id}")
-    public String deleteUser(Integer id) {
+    @PostMapping("/delete-user")
+    public String deleteUser(@Param(value = "id") Integer id) {
         userService.deleteUser(id);
         return "Success";
     }
@@ -170,8 +163,12 @@ public class UserController {
     @PostMapping("/search-user")
     public ResponseEntity<ResponseObject> searchUser(@RequestBody SearchCriteria params
             , @RequestParam(defaultValue = "0") Integer page) {
-        return ResponseEntity.status(OK).body(userService.searchUser
-                (params, page, PaginationEnum.userPageSize.getNumberOfRows()));
+        ResponseObject response = new ResponseObject();
+        response.setData(userService.searchUser(params, page, PaginationEnum.userPageSize.getNumberOfRows()));
+        response.setPageNumber(page);
+        response.setPageSize(PaginationEnum.userPageSize.getNumberOfRows());
+        response.setTotalPages(userService.getTotalUsers(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/admin")
@@ -187,9 +184,45 @@ public class UserController {
         return mav;
     }
 
-    @GetMapping("/verify-vehicle")
-    public ModelAndView verifyPage(ModelAndView mav) {
-        mav.setViewName("verify-vehicle");
+    @GetMapping("/lookup-vehicle")
+    public ModelAndView lookupPage(ModelAndView mav) {
+        mav.setViewName("lookup-vehicle");
+        return mav;
+    }
+
+    @PostMapping("/verify-vehicle")
+    public Boolean verifyPage(Vehicle vehicle) {
+        if (vehicleService.verifyVehicle(vehicle).isPresent()) {
+            Optional<User> user = userService.getUserByVehicleNumber(vehicle.getVehicleNumber());
+            if (user.isPresent()) {
+                String confirmCode = encodeGenerator();
+                PushNotificationService.sendPhoneConfirmNotification(null, user.get().getPhoneNumber(), confirmCode);
+                System.err.println(user.get().getPhoneNumber() + ", Code:" + confirmCode);
+                Map<String, String> confirmSMSList = (Map<String, String>) servletContext.getAttribute("confirmSMSList");
+                if (confirmSMSList == null) {
+                    confirmSMSList = new HashMap<>();
+                }
+                confirmSMSList.put(user.get().getPhoneNumber(), confirmCode);
+                servletContext.setAttribute("confirmSMSList", confirmSMSList);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @PostMapping("/save-vehicle")
+    public Boolean savePage(Vehicle vehicle) {
+        if (vehicleService.saveVehicle(vehicle).isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
+
+    @GetMapping("/verify-vehicle-form")
+    public ModelAndView verifyForm(ModelAndView mav) {
+        mav.setViewName("verify-vehicle-form");
+        mav.addObject("vehicleNumber", "abc");
         return mav;
     }
 
@@ -245,6 +278,47 @@ public class UserController {
 
     @GetMapping(value = "/get-vehicles")
     public ResponseEntity<ResponseObject> getVehicles(@RequestParam(defaultValue = "0") Integer page) {
-        return ResponseEntity.status(OK).body(vehicleService.getAllVehicle())   ;
+        ResponseObject response = new ResponseObject();
+        response.setData(vehicleService.getAllVehicle(page, PaginationEnum.userPageSize.getNumberOfRows()));
+        response.setPageNumber(page);
+        response.setTotalPages(vehicleService.getTotalVehicles(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
+
+        return ResponseEntity.status(OK).body(response);
     }
+
+    @PostMapping("/search-vehicle")
+    public ResponseEntity<ResponseObject> searchVehicle(@RequestBody SearchCriteria params
+            , @RequestParam(defaultValue = "0") Integer page) {
+        ResponseObject response = new ResponseObject();
+//        response.setPageNumber(page);
+//        response.setPageSize(PaginationEnum.userPageSize.getNumberOfRows());
+//        response.setTotalPages(vehicleService.getTotalVehicles(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
+        response.setData(vehicleService.searchVehicle(params, page, PaginationEnum.userPageSize.getNumberOfRows()));
+
+        return ResponseEntity.status(OK).body(response);
+    }
+
+    @GetMapping(value = "/get-vehicle/{vehicleNumber}")
+    public ResponseEntity<Optional<Vehicle>> getVehicle(@PathVariable(value = "vehicleNumber") String vehicleNumber) {
+        return ResponseEntity.status(OK).body(vehicleService.getVehicle(vehicleNumber));
+    }
+
+    @PostMapping(value = "/delete-vehicle")
+    public ResponseEntity<Boolean> deleteVehicle(@Param(value = "vehicleNumber") String vehicleNumber) {
+        return ResponseEntity.status(OK).body(vehicleService.deleteVehicle(vehicleNumber));
+    }
+
+    @GetMapping(value = "/register-token")
+    public ResponseEntity<Boolean> registerToken(@RequestParam(value = "token") String token
+            , @RequestParam(value = "PhoneNumber") String phoneNumber) {
+        Map<String, String> registerTokenList = (Map<String, String>) servletContext.getAttribute("registerTokenList");
+        if (registerTokenList == null) {
+            registerTokenList = new HashMap<>();
+        }
+        registerTokenList.put(phoneNumber, token);
+        System.err.println("Token: "+ phoneNumber+", " +token);
+        servletContext.setAttribute("registerTokenList", registerTokenList);
+        return ResponseEntity.status(OK).body(true);
+    }
+
 }

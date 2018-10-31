@@ -1,9 +1,10 @@
-.not-verified {
-    background-color: rgba(255, 100, 69, 0.51);
+.not-verified{
+    border-left: 5px solid #d9534f !important;
 }
 
 .not-verified:hover {
-    background-color: rgba(255, 27, 12, 0.51) !important;
+    /*background-color: rgba(70, 68, 65, .8);*/
+    /*!important;*/
 }
 
 .btnAction {
@@ -15,4 +16,89 @@
     text-align: center;
     padding: 5px 0px;
     font-size: 20px;
+}
+
+.btnVerify {
+    float: right;
+    display: block;
+    margin-right: 5px;
+    margin-left: 5px;
+    width: auto;
+    text-align: center;
+    padding: 9px 10px;
+    font-size: 15px;
+}
+
+.form-group {
+    float: left;
+    width: calc(50% - 20px);
+    margin: 10px;
+    box-sizing: border-box;
+}
+
+#verify-vehicle-form {
+    margin: 0 auto;
+}
+
+#search-box-user {
+    height: 100%;
+    display: flex;
+    float: right;
+    margin-left: 10px;
+    align-items: center;
+    width: 50%;
+    margin-bottom: 10px;
+}
+
+#search-box-user .btnAction {
+    float: right;
+    display: block;
+    width: 40px;
+    margin: 0;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 0 5px 5px 0;
+    font-size: 16px;
+}
+
+#searchValue {
+    border-radius: 0;
+}
+
+#search-filter {
+    width: 39%;
+    border-radius: 5px 0 0 5px;
+}
+
+.panel-tool {
+    margin: 0;
+    float: left;
+}
+
+.panel {
+    padding: 30px;
+}
+
+#user-table tr {
+    border-left: 5px solid transparent;
+    box-sizing: border-box;
+    vertical-align: center;
+}
+
+#user-table td {
+    vertical-align: middle;
+    padding-left: 15px;
+}
+
+#user-table thead th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.text-right{
+    text-align: right;
 }

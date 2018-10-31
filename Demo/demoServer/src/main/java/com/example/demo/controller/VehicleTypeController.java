@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entities.VehicleType;
+import com.example.demo.entity.VehicleType;
 import com.example.demo.service.VehicleTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/vehicleType")
+@RequestMapping(value = "/vehicle-type")
 public class VehicleTypeController {
 
     private final VehicleTypeService vehicleTypeService;

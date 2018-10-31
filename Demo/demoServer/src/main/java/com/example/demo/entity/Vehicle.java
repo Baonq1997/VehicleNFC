@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_vehicle")
 public class Vehicle {
     @Id
     @Basic(optional = false)
@@ -27,11 +29,11 @@ public class Vehicle {
     @NotNull
     @Column(name = "is_verified")
     private boolean isVerified;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vehicle")
-    private List<User> userList;
+
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
     @ManyToOne
     private VehicleType vehicleTypeId;
+
     @Transient
     private User owner;
 
@@ -84,14 +86,6 @@ public class Vehicle {
 
     public void setVerified(boolean verified) {
         isVerified = verified;
-    }
-
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
     }
 
     public VehicleType getVehicleTypeId() {

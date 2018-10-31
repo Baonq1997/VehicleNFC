@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_policy_instance_has_tbl_vehicle_type")
 public class PolicyInstanceHasTblVehicleType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,15 +14,15 @@ public class PolicyInstanceHasTblVehicleType implements Serializable {
     private Integer id;
     @Column(name = "min_hour")
     private Integer minHour;
-//    @JoinTable(name = "tbl_policy_instance_has_tbl_vehicle_type_has_tbl_pricing", joinColumns = {
-//            @JoinColumn(name = "tbl_policy_instance_has_tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
-//            @JoinColumn(name = "tbl_pricing_id", referencedColumnName = "id", nullable = false)})
-//    @ManyToMany
-    @Transient
+    @JoinTable(name = "tbl_policy_instance_has_tbl_vehicle_type_has_tbl_pricing", joinColumns = {
+            @JoinColumn(name = "tbl_policy_instance_has_tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
+            @JoinColumn(name = "tbl_pricing_id", referencedColumnName = "id", nullable = false)})
+    @ManyToMany
     private List<Pricing> pricingList;
-    @JoinColumn(name = "tbl_policy_instance_id", referencedColumnName = "id", nullable = false)
-    @ManyToOne(optional = false)
-    private PolicyInstance policyInstanceId;
+
+    @Basic(optional = false)
+    @Column(name = "tbl_policy_instance_id", nullable = false)
+    private Integer policyInstanceId;
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
     private VehicleType vehicleTypeId;
@@ -52,11 +54,11 @@ public class PolicyInstanceHasTblVehicleType implements Serializable {
         this.pricingList = pricingList;
     }
 
-    public PolicyInstance getPolicyInstanceId() {
+    public Integer getPolicyInstanceId() {
         return policyInstanceId;
     }
 
-    public void setPolicyInstanceId(PolicyInstance policyInstanceId) {
+    public void setPolicyInstanceId(Integer policyInstanceId) {
         this.policyInstanceId = policyInstanceId;
     }
 

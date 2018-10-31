@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_policy")
 public class Policy implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +26,8 @@ public class Policy implements Serializable {
             @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")})
     @ManyToMany
     private List<VehicleType> vehicleTypeList;
+    @OneToMany(mappedBy = "policyId")
+    private List<PolicyInstance> policyInstanceList;
 
     public Policy() {
     }

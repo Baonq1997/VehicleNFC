@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entities.OrderPricing;
+import com.example.demo.entity.OrderPricing;
 import com.example.demo.repository.OrderPricingRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_min_height"
+            android:background="@drawable/toolbar_default"
+            android:gravity="center"
+            android:minHeight="50dp">
+
+            <TextView
+                android:id="@+id/lbl_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-40dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/parkingwithnfc"
+                android:textColor="#FFFFFF"
+                android:textSize="24dp" />
+        </LinearLayout>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Bạn đã đăng kí tài khoản thành công!"
+                android:textColor="#F95555"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="17"
+                android:gravity="center"
+                android:paddingRight="10dp"
+                android:text="Sau kiểm tra, chúng tôi sẽ gửi một mã code đến điện thoải của bạn. Vui lòng dùng mã code để đăng nhập vào hệ thống."
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="18dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingRight="10dp"
+                android:text="Cảm ơn quý khách!"
+                android:textColor="#000000"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btnXacNhan"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_nor_height"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_normal"
+                android:onClick="onClickXacNhan"
+                android:text="Trở về trang Đăng Nhập"
+                android:textColor="#FFFFFF"
+                android:textSize="18dp" />
+        </TableRow>
+
+
+    </TableLayout>
+
+
+</LinearLayout>

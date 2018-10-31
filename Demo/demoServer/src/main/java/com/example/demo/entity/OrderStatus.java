@@ -5,6 +5,8 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_order_status")
 public class OrderStatus implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +19,6 @@ public class OrderStatus implements Serializable {
     @Size(max = 255)
     @Column(name = "description")
     private String description;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderStatusId")
-    private List<Order> tblOrderList;
 
     public OrderStatus() {
     }
@@ -47,11 +47,4 @@ public class OrderStatus implements Serializable {
         this.description = description;
     }
 
-    public List<Order> getTblOrderList() {
-        return tblOrderList;
-    }
-
-    public void setTblOrderList(List<Order> tblOrderList) {
-        this.tblOrderList = tblOrderList;
-    }
 }

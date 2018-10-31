@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.Config.ResponseObject;
-import com.example.demo.entities.Location;
 import com.example.demo.service.LocationService;
 import com.example.demo.view.AddLocationObject;
 import org.springframework.http.HttpStatus;
@@ -20,10 +19,10 @@ public class LocationController {
 
     @GetMapping(value = {"get/{id}"})
     public ResponseEntity<?> getLocationBy(@PathVariable("id") Integer id) {
-        try{
+        try {
             System.out.println("Getting location info...");
             return ResponseEntity.status(HttpStatus.OK).body(locationService.getMeterById(id));
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found Location");
         }
 
@@ -34,6 +33,7 @@ public class LocationController {
         mav.setViewName("location-management");
         return mav;
     }
+
     @GetMapping("/get-locations")
     public ResponseEntity<ResponseObject> getLocations() {
         ResponseObject response = locationService.getAllLocations();
@@ -41,7 +41,7 @@ public class LocationController {
     }
 
     @GetMapping("/location-has-vehicles/{id}")
-    public  ResponseEntity getLocationHasVehicles(@PathVariable("id") Integer locationId){
+    public ResponseEntity getLocationHasVehicles(@PathVariable("id") Integer locationId) {
         return ResponseEntity.status(HttpStatus.OK).body(locationService.getLocationHasVehicleTypes(locationId));
     }
 

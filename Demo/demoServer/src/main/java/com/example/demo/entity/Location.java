@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.entities.Policy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -23,13 +22,10 @@ public class Location implements Serializable {
     private String description;
     @Column(name = "is_activated")
     private Boolean isActivated;
-//    @JoinTable(name = "tbl_location_has_tbl_policy_instance", joinColumns = {
-//            @JoinColumn(name = "tbl_location_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
-//            @JoinColumn(name = "tbl_policy_instance_id", referencedColumnName = "id", nullable = false)})
-//    @ManyToMany
+
     @Transient
     private List<PolicyInstance> policyInstanceList;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblLocationId")
+    //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblLocationId")
     @Transient
     private List<Order> orderList;
     @Transient
@@ -85,4 +81,14 @@ public class Location implements Serializable {
     public void setIsDelete(String isDelete) {
         this.isDelete = isDelete;
     }
+
+    public List<PolicyInstance> getPolicyInstanceList() {
+        return policyInstanceList;
+    }
+
+    public void setPolicyInstanceList(List<PolicyInstance> policyInstanceList) {
+        this.policyInstanceList = policyInstanceList;
+    }
 }
+
+

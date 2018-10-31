@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entities.OrderStatus;
+import com.example.demo.entity.OrderStatus;
 import com.example.demo.repository.OrderStatusRepository;
 import org.springframework.stereotype.Service;
 

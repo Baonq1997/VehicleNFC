@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_pricing")
 public class Pricing implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +23,6 @@ public class Pricing implements Serializable {
     private double pricePerHour;
     @Column(name = "late_fee_per_hour")
     private Integer lateFeePerHour;
-    @ManyToMany(mappedBy = "pricingList")
-    private List<PolicyInstanceHasTblVehicleType> tblPolicyInstanceHasTblVehicleTypeList;
 
     public Pricing() {
     }
@@ -59,11 +59,4 @@ public class Pricing implements Serializable {
         this.lateFeePerHour = lateFeePerHour;
     }
 
-    public List<PolicyInstanceHasTblVehicleType> getTblPolicyInstanceHasTblVehicleTypeList() {
-        return tblPolicyInstanceHasTblVehicleTypeList;
-    }
-
-    public void setTblPolicyInstanceHasTblVehicleTypeList(List<PolicyInstanceHasTblVehicleType> tblPolicyInstanceHasTblVehicleTypeList) {
-        this.tblPolicyInstanceHasTblVehicleTypeList = tblPolicyInstanceHasTblVehicleTypeList;
-    }
 }

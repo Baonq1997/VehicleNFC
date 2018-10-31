@@ -10,19 +10,19 @@
         android:id="@+id/txtFrom"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight=".3"
-        android:gravity="center"
+        android:layout_weight=".25"
+        android:gravity="left|center_vertical"
         android:text="Giờ thứ 3"
         android:textColor="#000"
-        android:textSize="18dp" />
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/txtPrice"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight=".35"
-        android:gravity="center"
-        android:text="15.000 vnđ"
+        android:gravity="right"
+        android:text="15.000"
         android:textColor="#000"
         android:textSize="18dp" />
 
@@ -30,9 +30,9 @@
         android:id="@+id/txtFee"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight=".35"
-        android:gravity="center"
-        android:text="15.000 vnđ"
+        android:layout_weight=".4"
+        android:gravity="right"
+        android:text="15.000"
         android:textColor="#000"
         android:textSize="18dp" />
 </LinearLayout>

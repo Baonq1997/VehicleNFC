@@ -1,5 +1,7 @@
 package remote;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import model.Order;
@@ -13,6 +15,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface RmaAPIService {
     @GET("/test")
@@ -78,4 +81,13 @@ public interface RmaAPIService {
     @FormUrlEncoded
     Call<Boolean> changePassword(@Field("phoneNumber") String phone,
                                  @Field("oldPassword") String currentPass, @Field("newPassword") String newPass);
+
+//    @GET("/bulk/3d78ccdddf5bd1c43a6587ff/USD")
+//    Call<JsonObject> getUSD();
+
+    @GET
+    Call<JsonObject> getUSD(@Url String url);
+
+    @GET("/user/register-token")
+    Call<Boolean> sendDeviceTokenToServer(@Query("token") String token, @Query("PhoneNumber") String phoneNumber);
 }

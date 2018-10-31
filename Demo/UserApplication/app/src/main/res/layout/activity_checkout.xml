@@ -148,15 +148,55 @@
                     android:textStyle="bold" />
             </TableRow>
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/txtFrom"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".25"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#000"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/txtPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".35"
+                    android:gravity="right"
+                    android:text="Giá/giờ"
+                    android:textColor="#000"
+                    android:textSize="16dp"
+                    android:textStyle="italic|bold" />
+
+                <TextView
+                    android:id="@+id/txtFee"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".4"
+                    android:gravity="right"
+                    android:text="Phí phạt/giờ"
+                    android:textColor="#000"
+                    android:textSize="16dp"
+                    android:textStyle="italic|bold" />
+            </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/listOrderPricing"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                tools:ignore="NestedWeights">
-            </android.support.v7.widget.RecyclerView>
+                tools:ignore="NestedWeights"></android.support.v7.widget.RecyclerView>
+
         </TableLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

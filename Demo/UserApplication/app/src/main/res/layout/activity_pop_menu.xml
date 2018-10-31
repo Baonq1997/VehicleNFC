@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:layout_weight="3"
         android:orientation="vertical"
-        android:background="#E4E4E4"
+        android:background="#F2F2F2"
         android:weightSum="10">
 
         <RelativeLayout
@@ -29,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.9"
-                    android:background="#999999">
+                    android:background="#AADBFC">
                 </View>
 
                 <TextView
@@ -41,7 +41,7 @@
                     android:textStyle="bold"
                     android:textColor="#2a737b"
                     android:gravity="bottom|center"
-                    android:textSize="18dp"
+                    android:textSize="20dp"
                     android:text="Dang Ngoc Trung" />
 
                 <TextView
@@ -53,7 +53,7 @@
                     android:textStyle="bold"
                     android:textColor="#2a737b"
                     android:gravity="bottom|center"
-                    android:textSize="12dp"
+                    android:textSize="14dp"
                     android:text="+84123456567" />
 
             </LinearLayout>
@@ -98,7 +98,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="0.8"
                     android:gravity="center"
-                    android:text="Profile"
+                    android:text="Thông tin cá nhân"
                     android:textColor="#fff"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -128,7 +128,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="History"
+                    android:text="Lịch sử gửi xe"
                     android:textColor="#fff"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -167,7 +167,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Top-up"
+                    android:text="Nạp tiền"
                     android:textColor="#fff"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -197,7 +197,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="0.8"
                     android:gravity="center"
-                    android:text="Sign out"
+                    android:text="Thoát"
                     android:textColor="#FC7D7D"
                     android:textSize="12sp" />
             </LinearLayout>

@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.entities.OrderStatus;
+import com.example.demo.entity.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

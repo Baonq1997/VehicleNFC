@@ -25,6 +25,7 @@ public class TransparentActivity extends Activity {
             case POP_TOP_UP:
                 intent = new Intent(this, ActivityTopUpExtras.class);
                 intent.putExtra("isFromProfile", getIntent().getBooleanExtra("extra", false));
+                intent.putExtra("USD", getIntent().getStringExtra("USD"));
                 break;
             case POP_PRICE_LIST:
                 intent = new Intent(this, ShowPopupPrice.class);

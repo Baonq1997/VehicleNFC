@@ -1,9 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.entities.Policy;
-import com.example.demo.entities.PolicyHasTblVehicleType;
-import com.example.demo.entities.Pricing;
-import com.example.demo.repository.PolicyHasVehicleTypeRepository;
+import com.example.demo.entity.PolicyInstanceHasTblVehicleType;
+import com.example.demo.entity.Pricing;
+import com.example.demo.repository.PolicyInstanceHasVehicleTypeRepository;
 import com.example.demo.repository.PricingRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,29 +12,33 @@ import java.util.Optional;
 @Service
 public class PricingService {
     private final PricingRepository pricingRepository;
-    private final PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository;
+    private final PolicyInstanceHasVehicleTypeRepository policyInstanceHasVehicleTypeRepository;
 
-    public PricingService(PricingRepository pricingRepository, PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository) {
+    public PricingService(PricingRepository pricingRepository, PolicyInstanceHasVehicleTypeRepository policyInstanceHasVehicleTypeRepository) {
         this.pricingRepository = pricingRepository;
-        this.policyHasVehicleTypeRepository = policyHasVehicleTypeRepository;
+        this.policyInstanceHasVehicleTypeRepository = policyInstanceHasVehicleTypeRepository;
     }
 
     public Pricing findByPolicyHasVehicleTypeId(Integer policyHasVehicleTypeId) {
-        Optional<PolicyHasTblVehicleType> policyHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId);
+        Optional<PolicyInstanceHasTblVehicleType> policyHasTblVehicleType = policyInstanceHasVehicleTypeRepository.findById(policyHasVehicleTypeId);
         if (policyHasTblVehicleType.isPresent()) {
-            PolicyHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
-            Pricing pricing =  pricingRepository.findByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB);
+            PolicyInstanceHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
+            //TODO
+//            Pricing pricing = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB.getId());
+            Pricing pricing = null;
             return pricing;
         }
-       return null;
+        return null;
     }
 
-    public List<Pricing> findAllByPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleTypeId){
-        Optional<PolicyHasTblVehicleType> policyHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasTblVehicleTypeId);
+    //Todo
+    public List<Pricing> findAllByPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleTypeId) {
+        Optional<PolicyInstanceHasTblVehicleType> policyHasTblVehicleType = policyInstanceHasVehicleTypeRepository.findById(policyHasTblVehicleTypeId);
         if (policyHasTblVehicleType.isPresent()) {
-            PolicyHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
-            List<Pricing> pricings = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB.getId());
-            return pricings;
+            PolicyInstanceHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
+//            List<Pricing> pricings = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB.getId());
+//            return pricings;
+            return null;
         }
         return null;
     }
@@ -49,7 +52,7 @@ public class PricingService {
     }
 
     public void deleteByPolicyHasTblVehicleTypeId(Integer policyHasVehicleTypeId) {
-        pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasVehicleTypeId);
+//        pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasVehicleTypeId);
     }
 
     public Pricing findById(Integer pricingId) {

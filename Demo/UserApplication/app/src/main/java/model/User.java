@@ -34,80 +34,41 @@ public class User {
     @Expose
     private String lastName;
 
-    @SerializedName("vehicleNumber")
+    @SerializedName("vehicle")
     @Expose
-    private String vehicleNumber;
+    private Vehicle vehicle;
 
-    @SerializedName("licensePlateId")
+    @SerializedName("smsNoti")
     @Expose
-    private String licensePlateId;
+    private boolean smsNoti;
 
-    @SerializedName("vehicleTypeId")
+    @SerializedName("deviceToken")
     @Expose
-    private VehicleType vehicleType;
+    private String deviceToken;
+
+    @SerializedName("confirmCode")
+    @Expose
+    private String confirmCode;
+
+    @SerializedName("activated")
+    @Expose
+    private boolean activated;
+
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public String getVehicleNumber() {
-        return vehicleNumber;
-    }
-
-    public String getMoney() {
-        return money;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getLicensePlateId() {
-        return licensePlateId;
-    }
-
-    public VehicleType getVehicleType() {
-        return vehicleType;
-    }
-
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public void setMoney(String money) {
-        this.money = money;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
-    }
-
-    public void setLicensePlateId(String licensePlateId) {
-        this.licensePlateId = licensePlateId;
-    }
-
-    public void setVehicleType(VehicleType vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getPassword() {
@@ -116,5 +77,69 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getMoney() {
+        return money;
+    }
+
+    public void setMoney(String money) {
+        this.money = money;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public boolean isSmsNoti() {
+        return smsNoti;
+    }
+
+    public void setSmsNoti(boolean smsNoti) {
+        this.smsNoti = smsNoti;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public String getConfirmCode() {
+        return confirmCode;
+    }
+
+    public void setConfirmCode(String confirmCode) {
+        this.confirmCode = confirmCode;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 }

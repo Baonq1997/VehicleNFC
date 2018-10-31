@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_policy_instance")
 public class PolicyInstance implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -20,8 +22,17 @@ public class PolicyInstance implements Serializable {
     @NotNull
     @Column(name = "allowed_parking_to", nullable = false)
     private long allowedParkingTo;
-    @OneToMany(mappedBy = "policyInstanceList")
-    private List<Location> locationList;
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tbl_location_id", nullable = false)
+    private Integer locationId;
+    @JoinColumn(name = "tbl_policy_id", referencedColumnName = "id")
+    @ManyToOne
+    private Policy policyId;
+
+    @Transient
+    private List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes;
 
     public PolicyInstance() {
     }
@@ -54,12 +65,27 @@ public class PolicyInstance implements Serializable {
         this.allowedParkingTo = allowedParkingTo;
     }
 
-    public List<Location> getLocationList() {
-        return locationList;
+    public Integer getLocationId() {
+        return locationId;
     }
 
-    public void setLocationList(List<Location> locationList) {
-        this.locationList = locationList;
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
     }
 
+    public Policy getPolicyId() {
+        return policyId;
+    }
+
+    public void setPolicyId(Policy policyId) {
+        this.policyId = policyId;
+    }
+
+    public List<PolicyInstanceHasTblVehicleType> getPolicyInstanceHasTblVehicleTypes() {
+        return policyInstanceHasTblVehicleTypes;
+    }
+
+    public void setPolicyInstanceHasTblVehicleTypes(List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes) {
+        this.policyInstanceHasTblVehicleTypes = policyInstanceHasTblVehicleTypes;
+    }
 }

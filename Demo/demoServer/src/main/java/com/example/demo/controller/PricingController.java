@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.Config.ResponseObject;
-import com.example.demo.entities.Pricing;
+import com.example.demo.entity.Pricing;
 import com.example.demo.service.PricingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,14 @@ public class PricingController {
 
     @GetMapping(value = "/get-by-policyAndVehicleType/{id}")
     public ResponseEntity<?> getPricingByPolicyAndVehicleType(@PathVariable("id") Integer id) {
-        try{
-            return ResponseEntity.status(HttpStatus.OK).body(pricingService.findByPolicyHasVehicleTypeId(id));
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found price");
-        }
+        //Todo
+        return null;
+//        try{
+//            return ResponseEntity.status(HttpStatus.OK).body(pricingService.findByPolicyHasVehicleTypeId(id));
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found price");
+//        }
     }
 
     @GetMapping(value = "/get/{id}")

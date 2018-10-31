@@ -157,10 +157,6 @@ footer {
     }
 }
 
-.main-content {
-    padding: 28px 10px;
-}
-
 .navbar + .main-content {
     padding: 105px 0 28px 5px;
 }
@@ -2549,7 +2545,7 @@ ul.activity-timeline > li:last-child:after {
 
 #main-content {
     width: 100%;
-    padding: 0 10px 10px 10px;
+    padding: 10px 0;
     height: 100%;
     box-sizing: border-box;
     display: block;
@@ -2572,26 +2568,27 @@ ul.activity-timeline > li:last-child:after {
     max-height: 58px;
 }
 
-#shortenNavBar{
+#shortenNavBar {
     max-height: none;
     height: 1000px;
     background: #252c35;
     overflow: hidden;
 }
 
-#pagination{
+#pagination {
     display: table;
     margin-right: auto;
     margin-left: auto;
 }
 
-#content-title-holder{
+#content-title-holder {
     left: 280px;
     position: relative;
     top: 15px;
+    transition: all 0.3s ease-in-out;
 }
 
-#content-title{
+#content-title {
     color: black;
     font-size: 25px;
     font-weight: 600;

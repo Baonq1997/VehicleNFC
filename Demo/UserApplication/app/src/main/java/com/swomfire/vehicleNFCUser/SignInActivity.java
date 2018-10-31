@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import Util.RmaAPIUtils;
@@ -22,15 +24,22 @@ public class SignInActivity extends Activity {
     Context context;
     EditText txtPhone, txtPassword;
     ProgressDialog progressDialog;
+    TextView lbl_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_singin);
+
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Đăng Nhập");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
+
         context = this;
         txtPhone = findViewById(R.id.txtPhone);
         txtPassword = findViewById(R.id.txtPassword);
         progressDialog = UserService.setUpProcessDialog(context);
+
     }
 
     public void signIn(View view) {
@@ -45,17 +54,29 @@ public class SignInActivity extends Activity {
                     progressDialog.cancel();
                     User result = response.body();
                     if (result != null) {
-                        SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
-                        a.clear();
+                        if (result.isActivated()) {
+                            SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                            a.clear();
+                            SharedPreferences.Editor editor = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                            editor.putString("phoneNumberSignIn", phone);
+                            editor.putString("userId", result.getId());
+                            editor.putString("userName", result.getLastName() + " " + result.getFirstName());
+                            editor.commit();
 
-                        SharedPreferences.Editor editor = getSharedPreferences("localData", MODE_PRIVATE).edit();
-                        editor.putString("phoneNumberSignIn", phone);
-                        editor.putString("userId", result.getId());
-                        editor.putString("userName", result.getLastName() + " " + result.getFirstName());
-                        editor.commit();
-
-                        Intent intent = new Intent(context, NFCActivity.class);
-                        startActivity(intent);
+                            Intent intent = new Intent(context, NFCActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(context, VerifyActivity.class);
+                            intent.putExtra("phoneNumber", phone);
+                            intent.putExtra("type", "create-account");
+                            intent.putExtra("userId", result.getId());
+                            intent.putExtra("userName", result.getLastName() + " " + result.getFirstName());
+                            startActivity(intent);
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Số điện thoại hoặc mật khẩu không đúng!", Toast.LENGTH_LONG).show();
+                        txtPhone.setText("");
+                        txtPassword.setText("");
                     }
                 }
             }

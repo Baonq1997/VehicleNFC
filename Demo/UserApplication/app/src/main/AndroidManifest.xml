@@ -35,14 +35,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".PopMenuActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenuTheme" />
         <activity
             android:name=".PaymentActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".HistoryActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".HistoryDetailActivity"
             android:screenOrientation="portrait" />
@@ -51,7 +50,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ActivityTopUpExtras"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpTheme" />
 
         <service android:name="service.CustomFBMService">
@@ -70,27 +68,23 @@
         <activity
             android:name=".VerifyActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ChangePasswordActivity"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ForgetPasswordActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ResetPasswordActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ShowPopupPrice"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpTheme" />
         <activity
             android:name=".TransparentActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.TransparentActivity"></activity>
+            android:theme="@style/AppTheme.TransparentActivity" />
+        <activity android:name=".CreateSuccessActivity">
+        </activity>
     </application>
 
 </manifest>

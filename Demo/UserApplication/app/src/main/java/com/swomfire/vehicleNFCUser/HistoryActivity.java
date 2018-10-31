@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,7 +32,7 @@ import sqliteModel.HistoryDetail;
 
 public class HistoryActivity extends Activity {
     private Context context;
-    TextView txtPos;
+    TextView txtPos,lbl_toolbar;
     List<History> historyList = new ArrayList<History>();
     ProgressDialog progressDialog;
 
@@ -40,10 +41,15 @@ public class HistoryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         context = this;
+
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Lịch Sử");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
+
+
         progressDialog = UserService.setUpProcessDialog(context);
         progressDialog.show();
         DBHelper db = new DBHelper(context);
-
         historyList = db.getAllOrder();
         if (historyList != null) {
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.historyList);
@@ -102,7 +108,7 @@ public class HistoryActivity extends Activity {
         txtPos = view.findViewById(R.id.txtPos);
         int i = Integer.parseInt((String) txtPos.getText());
 
-        Intent newActivity1 = new Intent(context, com.swomfire.vehicleNFCUser.HistoryDetailActivity.class);
+        Intent newActivity1 = new Intent(context, HistoryDetailActivity.class);
         newActivity1.putExtra("hisItem", historyList.get(i));
         startActivity(newActivity1);
 

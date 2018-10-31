@@ -47,6 +47,10 @@ public class Order {
     @Expose
     private int price;
 
+    @SerializedName("minHour")
+    @Expose
+    private int minHour;
+
     @SerializedName("locationId")
     @Expose
     private Location location;
@@ -165,5 +169,14 @@ public class Order {
 
     public void setAllowedParkingTo(long allowedParkingTo) {
         this.allowedParkingTo = allowedParkingTo;
+    }
+
+
+    public int getMinHour() {
+        return minHour;
+    }
+
+    public void setMinHour(int minHour) {
+        this.minHour = minHour;
     }
 }

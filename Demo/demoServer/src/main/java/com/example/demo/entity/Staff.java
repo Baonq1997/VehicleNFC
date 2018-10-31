@@ -1,12 +1,12 @@
 package com.example.demo.entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+@Entity
+@Table(name = "tbl_staff")
 public class Staff implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

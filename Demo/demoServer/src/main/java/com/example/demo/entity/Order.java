@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "tbl_order")
 public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +43,7 @@ public class Order implements Serializable {
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private VehicleType vehicleTypeId;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblOrderId")
+    //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblOrderId")
     @Transient
     private List<OrderPricing> orderPricingList;
     @Transient
@@ -161,4 +163,6 @@ public class Order implements Serializable {
     public void setHourHasPrices(List<HourHasPrice> hourHasPrices) {
         this.hourHasPrices = hourHasPrices;
     }
+
+
 }

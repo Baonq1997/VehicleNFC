@@ -3,9 +3,11 @@ package com.swomfire.vehicleNFCUser;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import Util.RmaAPIUtils;
@@ -14,11 +16,13 @@ import remote.RmaAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import service.DBHelper;
 import service.UserService;
 
 public class ChangePasswordActivity extends Activity {
 
     EditText edtCurPass, edtOldPass, edtNewPass;
+    TextView lbl_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,10 @@ public class ChangePasswordActivity extends Activity {
         edtCurPass = findViewById(R.id.edtCurPass);
         edtOldPass = findViewById(R.id.edtOldPass);
         edtNewPass = findViewById(R.id.edtNewPass);
+
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Đổi Mật Khẩu");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
 
     }
 
@@ -81,8 +89,20 @@ public class ChangePasswordActivity extends Activity {
                         // DO STH HERE !! show toast + chuyen ve activity profile
                         if (response.isSuccessful()) {
                             if (response.body()) {
-                                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+
+                                DBHelper db = new DBHelper(getApplicationContext());
+                                //TODO clear all records
+                                db.deleteAllContact();
+                                //Clear old id
+                                SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                                a.clear().commit();
+                                //clear sqlite db
+                                getApplicationContext().deleteDatabase("ParkingWithNFC.db");
+
+                                Intent intent = new Intent(getApplicationContext(), SignInActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
+                                finish();
+
                             }
                         }
                     }

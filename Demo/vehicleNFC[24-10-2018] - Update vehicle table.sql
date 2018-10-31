@@ -346,17 +346,9 @@ DROP TABLE IF EXISTS `tbl_vehicle_type`;
 CREATE TABLE `tbl_vehicle_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
-  `vehicle_number` varchar(255) NOT NULL,
-  `brand` varchar(255) DEFAULT NULL,
-  `expire_date` varchar(255) DEFAULT NULL,
-  `license_plate_id` varchar(255) DEFAULT NULL,
-  `size` varchar(255) DEFAULT NULL,
-  `verify_date` varchar(255) DEFAULT NULL,
-  `tbl_vehicle_type_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Dumping data for table `tbl_vehicle_type`
 --

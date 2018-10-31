@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Html;
@@ -22,13 +23,18 @@ import retrofit2.Response;
 public class VerifyActivity extends Activity {
 
     EditText edtConfirm;
-    TextView txtChangPass, txtThongBao;
+    TextView lbl_toolbar,txtChangPass, txtThongBao;
     String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verifyphone);
+
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Verify Phone Number");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
+
         phone = (String) getIntent().getExtras().get("phoneNumber");
         edtConfirm = findViewById(R.id.edtConfirm);
         txtChangPass = findViewById(R.id.txtChangpass);
@@ -64,6 +70,15 @@ public class VerifyActivity extends Activity {
                     if (response.isSuccessful()) {
                         Boolean result = response.body();
                         if (result) {
+
+                            SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                            a.clear();
+                            SharedPreferences.Editor editor = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                            editor.putString("phoneNumberSignIn", phone);
+                            editor.putString("userId", (String) getIntent().getExtras().get("userId"));
+                            editor.putString("userName", (String) getIntent().getExtras().get("userName"));
+                            editor.commit();
+
                             Intent intent = new Intent(getApplicationContext(), NFCActivity.class);
                             startActivity(intent);
                         } else {

@@ -2,9 +2,11 @@ package com.swomfire.vehicleNFCUser;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import Util.RmaAPIUtils;
@@ -16,11 +18,16 @@ import retrofit2.Response;
 public class ResetPasswordActivity extends Activity {
 
     EditText edtOldPass, edtNewPass;
+    TextView lbl_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
+
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Đổi mật khẩu");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
 
         edtNewPass = findViewById(R.id.edtNewPass);
         edtOldPass = findViewById(R.id.edtOldPass);
@@ -79,4 +86,7 @@ public class ResetPasswordActivity extends Activity {
 
         }
     }
+        public void onBackButton(View v){
+            finish();
+        }
 }

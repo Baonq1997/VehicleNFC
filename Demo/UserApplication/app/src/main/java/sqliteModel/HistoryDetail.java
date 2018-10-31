@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.swomfire.vehicleNFCUser.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -36,8 +37,7 @@ public class HistoryDetail extends Activity {
         txtVehicalID.setText(item.getVehical_id());
         txtLocation.setText(item.getTbl_location_id());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm DD/MM/YYYY ", Locale.US);
-
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm DD/MM/YYYY ");
         txtFrom.setText(sdf.format(item.getCheck_in_date()));
         txtTo.setText(sdf.format(item.getCheck_in_date()));
         txtDuration.setText(item.getDuration() + " Phút");

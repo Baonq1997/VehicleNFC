@@ -3,9 +3,11 @@ package com.swomfire.vehicleNFCUser;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import Util.RmaAPIUtils;
@@ -18,6 +20,7 @@ public class ForgetPasswordActivity extends Activity {
 
     EditText txtPhone;
     Context context;
+    TextView lbl_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,9 @@ public class ForgetPasswordActivity extends Activity {
         setContentView(R.layout.activity_forget_password);
         context = this;
         txtPhone = findViewById(R.id.txtPhone);
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Quên Mật Khẩu");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
 
     }
 

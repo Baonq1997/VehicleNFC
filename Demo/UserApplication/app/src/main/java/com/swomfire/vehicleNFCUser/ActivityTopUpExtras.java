@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,17 +31,34 @@ public class ActivityTopUpExtras extends Activity {
 
     ImageView imgPlus, imgMinus;
 
-    TextView txtMoney, txtMoneyShow, txtConvert, txtConvertShow;
+    TextView lbl_toolbar,txtMoney, txtMoneyShow, txtConvert, txtConvertShow,txt1DO;
 
     boolean isFromProfile = false;
     boolean clickPay = false;
+    double usd = 0;
 
     Context context;
+
+    public double convertVNDToUSD(double money) {
+        return money / usd;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_up_extras);
+
+        lbl_toolbar = findViewById(R.id.lbl_toolbar);
+        lbl_toolbar.setText("Top Up");
+        lbl_toolbar.setTypeface(null, Typeface.BOLD);
+
+        usd = Double.parseDouble(getIntent().getStringExtra("USD"))/1000;
+        txt1DO = findViewById(R.id.txt1DO);
+
+        String s = String.valueOf(usd);
+        s = s.substring(0,6);
+        txt1DO.setText(s + " VNĐ");
+
         isFromProfile = getIntent().getBooleanExtra("isFromProfile", false);
         context = this;
 
@@ -60,8 +77,8 @@ public class ActivityTopUpExtras extends Activity {
         txtConvertShow = findViewById(R.id.txtConvertShow);
 
         double money = Double.parseDouble(txtMoney.getText() + "");
-        txtConvert.setText(UserService.convertVNDToUSD(money) + "");
-        txtConvertShow.setText(UserService.convertMoneyUSD(UserService.convertVNDToUSD(money)));
+        txtConvert.setText(convertVNDToUSD(money) + "");
+        txtConvertShow.setText(UserService.convertMoneyUSD(convertVNDToUSD(money)));
 
         ((TextView) findViewById(R.id.lbl_toolbar)).setText("Nạp tiền bằng Paypal");
     }
@@ -82,8 +99,8 @@ public class ActivityTopUpExtras extends Activity {
 
         txtMoney.setText("" + money);
         txtMoneyShow.setText(UserService.convertMoney(money));
-        txtConvert.setText(UserService.convertVNDToUSD(money) + "");
-        txtConvertShow.setText(UserService.convertMoneyUSD(UserService.convertVNDToUSD(money)));
+        txtConvert.setText(convertVNDToUSD(money) + "");
+        txtConvertShow.setText(UserService.convertMoneyUSD(convertVNDToUSD(money)));
     }
 
     public void onClickPlus(View v) {
@@ -98,15 +115,15 @@ public class ActivityTopUpExtras extends Activity {
 
         txtMoney.setText("" + money);
         txtMoneyShow.setText(UserService.convertMoney(money));
-        txtConvert.setText(UserService.convertVNDToUSD(money) + "");
-        txtConvertShow.setText(UserService.convertMoneyUSD(UserService.convertVNDToUSD(money)));
+        txtConvert.setText(convertVNDToUSD(money) + "");
+        txtConvertShow.setText(UserService.convertMoneyUSD(convertVNDToUSD(money)));
     }
 
     public void topUpConfirm(View view) {
 //        Intent intent = new Intent(this, PaymentActivity.class);
 //        startActivity(intent);
         amount = Double.parseDouble(txtMoney.getText() + "");
-        ProductObj item = new ProductObj("Nạp tiền vào tài khoản", UserService.convertVNDToUSD(amount), "USD");
+        ProductObj item = new ProductObj("Nạp tiền vào tài khoản", convertVNDToUSD(amount), "USD");
         onBuyPressed(item);
     }
 

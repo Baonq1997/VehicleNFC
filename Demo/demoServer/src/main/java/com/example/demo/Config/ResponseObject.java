@@ -4,12 +4,14 @@ public class ResponseObject {
     private int status;
     private Object data;
     private int pageNumber;
+    private int pageSize;
     private int totalPages;
 
-    public ResponseObject(int status, Object data, int pageNumber, int totalPages) {
+    public ResponseObject(int status, Object data, int pageNumber, int pageSize, int totalPages) {
         this.status = status;
         this.data = data;
         this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
         this.totalPages = totalPages;
     }
 
@@ -46,5 +48,13 @@ public class ResponseObject {
 
     public void setTotalPages(int totalPages) {
         this.totalPages = totalPages;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 }
