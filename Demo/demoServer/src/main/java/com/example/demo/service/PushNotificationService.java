@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.Config.NotificationEnum;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderPricing;
+import com.example.demo.component.order.Order;
+import com.example.demo.component.order.OrderPricing;
+import com.example.demo.config.NotificationEnum;
 import org.json.JSONException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

@@ -63,7 +63,7 @@ public class Order {
     @Expose
     private OrderStatus orderStatus;
 
-    @SerializedName("orderPricings")
+    @SerializedName("orderPricingList")
     @Expose
     private List<OrderPricing> orderPricings;
 

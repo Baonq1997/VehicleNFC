@@ -1,4 +1,4 @@
-package com.example.demo.Config;
+package com.example.demo.config;
 
 public enum  TransactionStatusEnum{
     Open(1,"Open");

@@ -208,6 +208,7 @@ function setUpSaveFormData(vehicle) {
 }
 
 function setUpVehicleType(list, holder) {
+    $('#' + holder).empty();
     for (var i = 0; i < list.length; i++) {
         var option = "<option value='" + list[i].id + "'>" + list[i].name + "</option>";
         $('#' + holder).append(option);

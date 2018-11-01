@@ -89,14 +89,11 @@
                             <span class="title">Parking With NFC</span>
                         </div>
                     </li>
-                    <!--<li><a onclick="switchContentFragment('/user/get-user',this)" class="active pointer menu"><i-->
-                    <!--class="lnr lnr-pie-chart"></i> <span class="title">Dashboard</span></a>-->
-                    <!--</li>-->
-                    <li><a onclick="switchContentFragment('/user/vehicle','Vehicle Management',this)"
+                    <li><a onclick="switchContentFragment('/vehicle/index','Vehicle Management',this)"
                            class="active pointer menu"><i
                             class="lnr lnr-car"></i> <span class="title">Vehicles</span></a></li>
                     <li>
-                    <li><a onclick="switchContentFragment('/user/lookup-vehicle','Look up Vehicle',this)"
+                    <li><a onclick="switchContentFragment('/vehicle/lookup-vehicle','Look up Vehicle',this)"
                            class="pointer menu"><i
                             class="lnr lnr-magnifier"></i> <span class="title">Look up Vehicles</span></a></li>
                     <li>
@@ -661,7 +658,7 @@
         }
 
     });
-    switchContentFragment('/user/vehicle', 'Vehicle Management', null);
+    switchContentFragment('/vehicle/index', 'Vehicle Management', null);
 </script>
 </body>
 

@@ -1,7 +1,7 @@
 package com.example.demo.view;
 
-import com.example.demo.entity.Order;
-import com.example.demo.entity.User;
+import com.example.demo.component.order.Order;
+import com.example.demo.component.user.User;
 
 import java.io.Serializable;
 

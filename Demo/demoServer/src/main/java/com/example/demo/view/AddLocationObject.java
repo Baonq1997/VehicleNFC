@@ -1,6 +1,6 @@
 package com.example.demo.view;
 
-import com.example.demo.entity.Location;
+import com.example.demo.component.location.Location;
 
 import java.io.Serializable;
 import java.util.List;

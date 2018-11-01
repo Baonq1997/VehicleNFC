@@ -1,4 +1,4 @@
-package com.example.demo.Config;
+package com.example.demo.config;
 
 public enum NotificationEnum {
     CHECK_IN("Đã nhận yêu cầu đậu xe","",null),CHECK_OUT("Kết thúc đậu xe","",null);
