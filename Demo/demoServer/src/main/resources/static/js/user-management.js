@@ -175,7 +175,7 @@ function loadData(res) {
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
         var verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "')\" class=\"btn btn-success btnVerify\">Verify</a>" : "";
         var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].id + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
-        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].id + "')\" class=\"btn btn-danger btnAction\"><i class=\"lnr lnr-trash\"></i></a>";
+        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].id + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
         row += cellBuilder(deleteStr + edit + verify);
         row += '</tr>';
         $('#user-table tbody').append(row);

@@ -45,7 +45,7 @@ function loadData(res) {
         var edit = "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "','main-content-save-form'," + setUpSaveFormData + ",'save-vehicle-list')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
         var disable = (content[i].owner != null) ? "disabled" : "onclick=\"openDeleteModal('" + content[i].vehicleNumber + "')\" ";
         var deleteStr = "<a " + disable +
-            " href=\"#\" class=\"btn btn-danger btnAction\"><i class=\"lnr lnr-trash\"></i></a>";
+            " href=\"#\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
         row += cellBuilder(deleteStr + edit + verify);
         row += '</tr>';
         $('#user-table tbody').append(row);
