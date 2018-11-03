@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PolicyInstanceRepository extends JpaRepository<PolicyInstance, Long> {
+public interface PolicyInstanceRepository extends JpaRepository<PolicyInstance, Integer> {
 
     List<PolicyInstance> findAllByLocationId(Integer locationId);
 }

@@ -31,7 +31,7 @@ function initData(locationId) {
 
 
 function loadTable(data) {
-    var policyList = data.policyList;
+    var policyList = data.policyInstanceList;
     $('#location').text(data.location);
     $('#locationId').val(data.id);
     if (data.isActivated === true) {
@@ -41,11 +41,11 @@ function loadTable(data) {
     }
 
     for (let i = 0; i < policyList.length; i++) {
-        var vehicleList = policyList[i].policyHasTblVehicleTypeList;
+        var vehicleList = policyList[i].policyInstanceHasTblVehicleTypes;
         row = '<tr>';
         row += '<td>' + policyList[i].id + '</td>';
         row += '<td>' + msToTime(policyList[i].allowedParkingFrom) + ' - ' + msToTime(policyList[i].allowedParkingTo) + '</td>';
-        if (vehicleList.length != 0) {
+        if (vehicleList != null || vehicleList.length != 0) {
             // row += "<td><ul>";
             // for (let j = 0; j < vehicleList.length; j++) {
             //     if (j == vehicleList.length - 1 ) {
@@ -59,9 +59,9 @@ function loadTable(data) {
 
             row += '<td class="vehicle-tags">';
             for (let j = 0; j < vehicleList.length; j++) {
-                    row += '<span class="badge badge-primary">' + vehicleList[j].vehicleTypeId.name + '</span>';
+                row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
             }
-            row += '</ul>';
+            row += '</td>';
         } else {
             row += '<td> Empty </td>'
         }
@@ -158,14 +158,14 @@ function loadLocations(policyId) {
                             '<label>' + locations[i].location + '</label>\n' +
                             '                                <div class="control__indicator"></div>\n' +
                             '                            </label>';
-                        $('.control-group-location').append(item);
+                        $('.control-group').append(item);
                     } else {
                         item = ' <label class="control control--checkbox">\n' +
                             '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
                             '<label>' + locations[i].location + '</label>\n' +
                             '                                <div class="control__indicator"></div>\n' +
                             '                            </label>';
-                        $('.control-group-location').append(item);
+                        $('.control-group').append(item);
                     }
                 }
             }

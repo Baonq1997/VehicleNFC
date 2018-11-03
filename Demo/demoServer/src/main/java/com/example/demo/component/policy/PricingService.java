@@ -6,6 +6,8 @@ import com.example.demo.component.policy.PolicyInstanceHasVehicleTypeRepository;
 import com.example.demo.component.policy.PricingRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,12 +45,42 @@ public class PricingService {
         return null;
     }
 
-    public Pricing save(Pricing pricing) {
-        return pricingRepository.save(pricing);
+    public void save(Pricing pricing, Integer policyInstanceHasTblVehicleType) {
+        PolicyInstanceHasTblVehicleType instance = policyInstanceHasVehicleTypeRepository.findById(policyInstanceHasTblVehicleType).get();
+        boolean existed = false;
+        if (instance != null) {
+            List<Pricing> pricingList = instance.getPricingList();
+            for (Pricing item: pricingList) {
+                if (item.getId() == pricing.getId()) {
+                    existed = true;
+                    item.setFromHour(pricing.getFromHour());
+                    item.setLateFeePerHour(pricing.getLateFeePerHour());
+                    item.setPricePerHour(pricing.getPricePerHour());
+                }
+            }
+            if (!existed) {
+                instance.getPricingList().add(pricing);
+            }
+            policyInstanceHasVehicleTypeRepository.save(instance);
+        }
+//        return pricingRepository.save(pricing);
     }
 
-    public void deletePricing(Integer id) {
-        pricingRepository.deleteById(id);
+    @Transactional
+    public void deletePricing(Integer id, Integer policyInstanceHasTblVehicleType) {
+        PolicyInstanceHasTblVehicleType instance = policyInstanceHasVehicleTypeRepository.findById(policyInstanceHasTblVehicleType).get();
+
+        if (instance != null) {
+            Pricing pricing = pricingRepository.findById(id).get();
+            List<Pricing> pricings = new ArrayList<>();
+            pricings.add(pricing);
+
+//            policyInstanceHasVehicleTypeRepository.deleteByIdAndPricingList(instance.getPolicyInstanceId(), pricings);
+
+            policyInstanceHasVehicleTypeRepository.deletePolicyInstancePricing(instance.getPolicyInstanceId(), pricing.getId());
+            pricingRepository.deletePricingById(pricing.getId());
+        }
+
     }
 
     public void deleteByPolicyHasTblVehicleTypeId(Integer policyHasVehicleTypeId) {

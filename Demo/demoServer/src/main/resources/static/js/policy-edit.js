@@ -12,8 +12,8 @@ $(document).ready(function () {
 
     var policyIdStr = paramArr[0];
     console.log("POlicyStr: " + policyIdStr);
-    var policyId = policyIdStr.slice(policyIdStr.indexOf("=") + 1, policyIdStr.length);
-    console.log("POlicyId: " + policyId);
+    var policyInstanceId = policyIdStr.slice(policyIdStr.indexOf("=") + 1, policyIdStr.length);
+    console.log("POlicyId: " + policyInstanceId);
     //
     // var vehicleTypeIdStr = paramArr[1];
     // var vehicleTypeId = vehicleTypeIdStr.slice(vehicleTypeIdStr.indexOf("=") + 1, vehicleTypeIdStr.indexOf("=") + 2);
@@ -22,11 +22,11 @@ $(document).ready(function () {
     var locationIdStr = paramArr[1];
     var locationId = locationIdStr.slice(locationIdStr.indexOf("=") + 1, locationIdStr.indexOf("=") + 2);
     // loadPolicy(policyId, vehicleTypeId);
-    loadPolicy(policyId);
+    loadPolicy(policyInstanceId);
     // addPricing();
-    savePolicyHasVehicleType(locationId);
-    deletePolicy(locationId);
-    loadVehicleTypes(policyId);
+    savePolicyHasVehicleType(policyInstanceId);
+    deletePolicy(policyInstanceId);
+    // loadVehicleTypes(policyInstanceId);
     // savePolicyHasVehicleType(locationId);
     submitPricing();
     $('.clockpickerFrom').clockpicker({
@@ -49,27 +49,29 @@ $(document).ready(function () {
     });
 });
 
-function loadPolicy(policyId) {
+function loadPolicy(policyInstanceId) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        // url: 'http://localhost:8080/policy-vehicleType/get-by-policy-vehicleType?policyId=' + policyId + '&vehicleTypeId=' + vehicleTypeId,
-        url: 'http://localhost:8080/policy-vehicleType/get-by-policy?policyId=' + policyId,
+        // url: 'http://localhost:8080/policy-vehicleType/get-by-policy?policyId=' + policyId,
+        url: 'http://localhost:8080/policy-instance-vehicle/policy-instance-vehicles?policyInstanceId='+policyInstanceId,
         success: function (res) {
             console.log(res);
             loadData(res);
-            getPolicy(policyId);
+            getPolicy(policyInstanceId);
+            loadVehicleTypes(res);
         }, error: function (res) {
             console.log(res);
         }
     });
 }
 
-function getPolicy(policyId) {
+function getPolicy(policyInstanceId) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: "http://localhost:8080/policy/get/" + policyId,
+        // url: "http://localhost:8080/policy/get/" + policyInstanceId,
+        url: 'http://localhost:8080/policy-instance/get/'+policyInstanceId,
         success: function (data) {
             $('#ParkingFrom').val(convertDate(data.allowedParkingFrom));
             $('#ParkingTo').val(convertDate(data.allowedParkingTo));
@@ -84,16 +86,6 @@ function getPolicy(policyId) {
 }
 
 function loadData(data) {
-    // $('#vehicleType').val(data.vehicleTypeId.name);
-
-
-    // hidden inputs
-    // $('#policyHasTblVehicleTypeId').val(data.id);
-    // policyHasVehicleType = data.id;
-
-    // $('#vehicleTypeId').val(data.vehicleTypeId.id);
-
-
     for (let i = 0; i < data.length; i++) {
         var navTabs = '<ul class="nav nav-tabs">';
         var tabPanes = '<div class="tab-content">'
@@ -121,17 +113,20 @@ function loadData(data) {
             createTable(vehicleId, data[j].id);
             policyHasVehicleTypeId.push(data[j].id);
             // policyHasVehicleTypeId.push(data[i].id);
-            var pricings = data[j].pricings;
-            for (let i = 0; i < pricings.length; i++) {
-                var row = '<tr>';
-                row += '<td>' + pricings[i].fromHour + '</td>';
-                row += '<td>' + pricings[i].pricePerHour + '</td>';
-                row += '<td>' + pricings[i].lateFeePerHour + '</td>';
-                row += '<td><a href="#" onclick="savePricing(' + data[j].id + ' , ' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
-                row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ')" class="btn btn-danger delBtn">Delete</a></td>'
-                row += '</tr>';
-                $('#pricing-vehicle-' + vehicleId + ' tbody').append(row);
+            var pricings = data[j].pricingList;
+            if (pricings != null) {
+                for (let i = 0; i < pricings.length; i++) {
+                    var row = '<tr>';
+                    row += '<td>' + pricings[i].fromHour + '</td>';
+                    row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
+                    row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
+                    row += '<td><a href="#" onclick="savePricing(' + data[j].id + ' , ' + pricings[i].id + ')" class="btn btn-primary saveBtn btnBG"><i class="lnr lnr-pencil"></i></a></td>'
+                    row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + data[j].id + ')" class="btn btn-danger delBtn"><i class="lnr lnr-trash"></i></a></td>'
+                    row += '</tr>';
+                    $('#pricing-vehicle-' + vehicleId + ' tbody').append(row);
+                }
             }
+
             console.log(vehicleId);
         }
     }
@@ -172,12 +167,12 @@ function submitPricing() {
     frm.submit(function (e) {
         var vehicleTypeId = $('#save-pricing #vehicleTypeId').val();
         console.log("SubmitPricing - VehicleTypeId: " + vehicleTypeId);
-
+        var policyInstanceVehicleId = $('#save-pricing #policyHasTblVehicleTypeId').val();
         console.log("VehicleTypeId: " + vehicleTypeId);
         e.preventDefault();
         $.ajax({
             type: frm.attr('method'),
-            url: frm.attr('action'),
+            url: frm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicleId,
             data: frm.serialize(),
             success: function (data) {
 
@@ -196,7 +191,7 @@ function submitPricing() {
 }
 
 function createTable(vehicleTypeId, policyHasVehicleTypeId) {
-    var btnAddPricing = '<button class="btn btn-primary" type="button" value="Add Pricing" onclick="addPricing(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')" id="btn-add-pricing">Add Pricing\n' +
+    var btnAddPricing = '<button class="btn btn-primary btnBG" type="button" value="Add Pricing" onclick="addPricing(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')" id="btn-add-pricing">Add Pricing\n' +
         '                                </button>';
     var table = ' <table class="table table-hover" id="pricing-vehicle-' + vehicleTypeId + '">\n' +
         '                                    <thead>\n' +
@@ -204,6 +199,7 @@ function createTable(vehicleTypeId, policyHasVehicleTypeId) {
         '                                        <th>From Hour:</th>\n' +
         '                                        <th>Price Per Hour</th>\n' +
         '                                        <th>Late Fee Per Hour</th>\n' +
+        '                                        <th colspan="2">Action</th>\n' +
         '                                    </tr>\n' +
         '                                    </thead>\n' +
         '                                    <tbody>\n' +
@@ -226,7 +222,7 @@ function addPricing(policyHasVehicleTypeId, vehicleTypeId) {
 
 }
 
-function savePricing(policyHasVehicleTypeId, pricingId) {
+function savePricing(policyInstanceVehicleId, pricingId) {
 
     $('#updatePricingModal').modal();
     var updateFrm = $('#update-pricing');
@@ -236,17 +232,17 @@ function savePricing(policyHasVehicleTypeId, pricingId) {
         e.preventDefault();
         $.ajax({
             type: updateFrm.attr('method'),
-            url: updateFrm.attr('action'),
+            url: updateFrm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicleId,
             data: updateFrm.serialize(),
             success: (res) => {
-                console.log(res);
-                console.log("Update Successfully");
-                $('#updatePricingModal').modal('hide');
-            }, error: (res) => {
-                console.log("Failed to save");
-                console.log(res);
-            }
-        });
+            console.log(res);
+        console.log("Update Successfully");
+        $('#updatePricingModal').modal('hide');
+    }, error: (res) => {
+            console.log("Failed to save");
+            console.log(res);
+        }
+    });
     });
 }
 
@@ -275,14 +271,14 @@ function savePricing(policyHasVehicleTypeId, pricingId) {
 //     });
 // }
 
-function deleteModal(pricingId) {
+function deleteModal(pricingId, policyInstanceVehicleId) {
     $('#deleteModal').modal();
     var frm = $('#delete-form');
     frm.submit(function (e) {
         e.preventDefault();
         $.ajax({
             type: frm.attr('method'),
-            url: frm.attr('action') + "/" + pricingId,
+            url: frm.attr('action') + "?id=" + pricingId + "&policyInstanceVehicleId="+policyInstanceVehicleId,
             success: function (res) {
                 console.log(res);
                 $('#deleteModal').modal('hide');
@@ -302,7 +298,7 @@ function savePolicyHasVehicleType(locationId) {
             type: "POST",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            url: 'http://localhost:8080/policy/create',
+            url: 'http://localhost:8080/policy-instance/create',
             data: JSON.stringify(json),
             success: function (res) {
                 console.log(res);
@@ -362,29 +358,29 @@ function convertTime(dateTypeLong) {
 
 var locationHasVehicles = [];
 
-function loadVehicleTypes(policyId) {
+function loadVehicleTypes(data) {
 
-    $.ajax({
-        type: "GET",
-        dataType: "json",
-        url: 'http://localhost:8080/policy-vehicleType/get-by-policy?policyId=' + policyId,
-        success: function (data) {
-            console.log("Number Of policy's vehicles: " + data.length);
-            for (let i = 0; i < data.length; i++) {
-                var vehicleType = data[i].vehicleTypeId;
-                locationHasVehicles.push(vehicleType);
-                // locationHasVehicles =  appendCheckedVehicleTypes(vehicleType);
-            }
-            console.log("ArrayLENGTH: " + locationHasVehicles.length);
-            loadVehiclesCheckedBoxes(locationHasVehicles);
+    // $.ajax({
+    //     type: "GET",
+    //     dataType: "json",
+    //     url: 'http://localhost:8080/policy-vehicleType/get-by-policy?policyId=' + policyId,
+    //     success: function (data) {
+    //         console.log("Number Of policy's vehicles: " + data.length);
+    for (let i = 0; i < data.length; i++) {
+        var vehicleType = data[i].vehicleTypeId;
+        locationHasVehicles.push(vehicleType);
+        // locationHasVehicles =  appendCheckedVehicleTypes(vehicleType);
+    }
+    console.log("ArrayLENGTH: " + locationHasVehicles.length);
+    loadVehiclesCheckedBoxes(locationHasVehicles);
 
-            // locationHasVehicles = data;
-            // loadVehiclesCheckedBoxes(locationHasVehicles);
-        }, error: function (data) {
-            console.log("Could not load vehicle types in location");
-            console.log(data);
-        }
-    })
+    // locationHasVehicles = data;
+    // loadVehiclesCheckedBoxes(locationHasVehicles);
+    // }, error: function (data) {
+    //     console.log("Could not load vehicle types in location");
+    //     console.log(data);
+    // }
+    // })
 }
 
 function loadVehiclesCheckedBoxes(locationHasVehiclesArr) {
@@ -392,7 +388,7 @@ function loadVehiclesCheckedBoxes(locationHasVehiclesArr) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/vehicleType/get-all',
+        url: 'http://localhost:8080/vehicle-type/get-all',
         success: function (data) {
             console.log("VehicleTypes: " + data);
             for (i = 0; i < data.length; i++) {
@@ -408,9 +404,9 @@ function loadVehiclesCheckedBoxes(locationHasVehiclesArr) {
                 }
                 let chk = "";
                 if (isFound) {
-                    chk = '<input type="checkbox"  name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '" checked><label>' + data[i].name + '</label>';
+                    chk = '<input type="checkbox" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '" checked><label>' + data[i].name + '</label>';
                 } else {
-                    chk = '<input type="checkbox"  name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label>' + data[i].name + '</label>';
+                    chk = '<input type="checkbox" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label>' + data[i].name + '</label>';
                 }
                 $('#vehicleTypeArr').append(chk);
 
@@ -480,8 +476,8 @@ function createPolicyHasVehicleTypeJson(locationId) {
     }
     var json = {
         locationId: locationId,
-        policy: policyJson,
-        policyHasVehicleTypeId: policyHasVehicleTypeId,
+        policyInstance: policyJson,
+        // policyHasVehicleTypeId: policyHasVehicleTypeId,
         vehicleTypes: vehicleArr
     }
 
@@ -513,17 +509,9 @@ function parseTimeToLong(clockPicker, type) {
     $('#allowed' + type).val(ms);
 }
 
-// function convertDate(dateTypeLong) {
-//     if (dateTypeLong === undefined) {
-//         return "Please Choose Time";
-//     }
-//     var minute =
-//     var dateStr = new Date(dateTypeLong),
-//         dformat =
-//             [dateStr.getHours(),
-//                 dateStr.getMinutes()].join(':');
-//     return dformat;
-// }
+function convertMoney(money) {
+    return (money * 1000).toLocaleString() + " VNĐ";
+}
 function convertDate(dateTypeLong) {
     if (dateTypeLong === undefined) {
         return "Please Choose Time";

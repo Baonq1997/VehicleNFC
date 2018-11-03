@@ -16,10 +16,13 @@ public class PolicyInstanceHasTblVehicleType implements Serializable {
     private Integer id;
     @Column(name = "min_hour")
     private Integer minHour;
-    @JoinTable(name = "tbl_policy_instance_has_tbl_vehicle_type_has_tbl_pricing", joinColumns = {
-            @JoinColumn(name = "tbl_policy_instance_has_tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
-            @JoinColumn(name = "tbl_pricing_id", referencedColumnName = "id", nullable = false)})
-    @ManyToMany
+//    @JoinTable(name = "tbl_policy_instance_has_tbl_vehicle_type_has_tbl_pricing", joinColumns = {
+//            @JoinColumn(name = "tbl_policy_instance_has_tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
+//            @JoinColumn(name = "tbl_pricing_id", referencedColumnName = "id", nullable = false)})
+//    @ManyToMany(cascade = {CascadeType.ALL})
+////    @ManyToMany
+//    private List<Pricing> pricingList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "policyInstanceHasTblVehicleTypeId")
     private List<Pricing> pricingList;
 
     @Basic(optional = false)

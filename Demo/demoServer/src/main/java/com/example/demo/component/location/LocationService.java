@@ -123,13 +123,14 @@ public class LocationService {
         return vehicleTypeList;
     }
 
-    public List<Location> getLocationsByPolicyId(Integer policyId) {
+    public List<Location> getLocationsByPolicyId(Integer policyInstanceId) {
 //        Optional<Policy> policyOpt = policyRepository.findById(policyId);
-//        if (policyOpt.isPresent()) {
-//            List<Policy> policyList = new ArrayList<>();
-//            policyList.add(policyOpt.get());
-//            return locationRepository.findByPolicyList(policyList);
-//        }
+        Optional<PolicyInstance> policyInstanceOptional = policyInstanceRepository.findById(policyInstanceId);
+        if (policyInstanceOptional.isPresent()) {
+            List<PolicyInstance> policyInstanceList = new ArrayList<>();
+            policyInstanceList.add(policyInstanceOptional.get());
+            return locationRepository.findByPolicyInstanceList(policyInstanceList);
+        }
         return null;
     }
 }

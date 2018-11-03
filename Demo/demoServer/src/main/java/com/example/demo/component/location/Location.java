@@ -25,8 +25,8 @@ public class Location implements Serializable {
     private String description;
     @Column(name = "is_activated")
     private Boolean isActivated;
-
-    @Transient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "locationId")
+//    @Transient
     private List<PolicyInstance> policyInstanceList;
     //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblLocationId")
     @Transient

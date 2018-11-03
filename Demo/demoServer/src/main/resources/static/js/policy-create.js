@@ -129,7 +129,7 @@ function savePolicyVehicle(locationId) {
         }
         var json = {
             locationId: locationId,
-            policy: policyJson,
+            policyInstance: policyJson,
             vehicleTypes: vehicleArr
         }
         $.ajax({
@@ -137,7 +137,7 @@ function savePolicyVehicle(locationId) {
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(json),
-            url: 'http://localhost:8080/policy/create',
+            url: 'http://localhost:8080/policy-instance/create',
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);
@@ -225,7 +225,7 @@ function loadVehicleTypes() {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/vehicleType/get-all',
+        url: 'http://localhost:8080/vehicle-type/get-all',
         success: function (data) {
             console.log("VehicleTypes: " + data);
             for (i = 0; i < data.length; i++) {
@@ -247,7 +247,7 @@ function loadVehiclesCheckedBoxes() {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/vehicleType/get-all',
+        url: 'http://localhost:8080/vehicle-type/get-all',
         success: function (data) {
             console.log("VehicleTypes: " + data);
             for (i = 0; i < data.length; i++) {
