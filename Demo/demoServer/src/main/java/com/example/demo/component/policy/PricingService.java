@@ -68,20 +68,20 @@ public class PricingService {
 
     @Transactional
     public void deletePricing(Integer id, Integer policyInstanceHasTblVehicleType) {
-        PolicyInstanceHasTblVehicleType instance = policyInstanceHasVehicleTypeRepository.findById(policyInstanceHasTblVehicleType).get();
+//        PolicyInstanceHasTblVehicleType instance = policyInstanceHasVehicleTypeRepository.findById(policyInstanceHasTblVehicleType).get();
 
-        if (instance != null) {
+//        if (instance != null) {
             Pricing pricing = pricingRepository.findById(id).get();
-            List<Pricing> pricings = new ArrayList<>();
-            pricings.add(pricing);
+//            List<Pricing> pricings = new ArrayList<>();
+//            pricings.add(pricing);
 
 //            policyInstanceHasVehicleTypeRepository.deleteByIdAndPricingList(instance.getPolicyInstanceId(), pricings);
 
-            policyInstanceHasVehicleTypeRepository.deletePolicyInstancePricing(instance.getPolicyInstanceId(), pricing.getId());
-            pricingRepository.deletePricingById(pricing.getId());
+//            policyInstanceHasVehicleTypeRepository.deletePolicyInstancePricing(instance.getPolicyInstanceId(), pricing.getId());
+            pricingRepository.delete(pricing);
         }
 
-    }
+
 
     public void deleteByPolicyHasTblVehicleTypeId(Integer policyHasVehicleTypeId) {
 //        pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasVehicleTypeId);

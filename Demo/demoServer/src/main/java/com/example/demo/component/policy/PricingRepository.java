@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface PricingRepository extends JpaRepository<Pricing, Integer> {
+import java.util.List;
 
-    @Modifying
-    @Query(value = "DELETE FROM tbl_pricing WHERE id = :id", nativeQuery = true)
-    void deletePricingById(@Param("id") Integer id);
+public interface PricingRepository extends JpaRepository<Pricing, Integer> {
+    List<Pricing> findByPolicyInstanceHasTblVehicleTypeId(PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType);
+//    @Modifying
+//    @Query(value = "DELETE FROM tbl_pricing WHERE id = :id", nativeQuery = true)
+//    void deletePricingById(@Param("id") Integer id);
 
 //    Pricing findByPolicyHasTblVehicleTypeId(PolicyHasTblVehicleType policyHasTblVehicleType);
 

@@ -25,9 +25,12 @@ public class Pricing implements Serializable {
     private Integer lateFeePerHour;
 //    @ManyToMany(mappedBy = "pricingList")
 
-    @JoinColumn(name = "tbl_policy_has_tbl_vehicle_type_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleTypeId;
+//    @JoinColumn(name = "tbl_policy_has_tbl_vehicle_type_id", referencedColumnName = "id")
+//    @ManyToOne(optional = false)
+    @Column(name = "tbl_policy_has_tbl_vehicle_type_id")
+    private Integer policyInstanceHasTblVehicleTypeId;
+//    @Transient
+//    private PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleTypeId;
     public Pricing() {
     }
 
@@ -63,11 +66,11 @@ public class Pricing implements Serializable {
         this.lateFeePerHour = lateFeePerHour;
     }
 
-    public PolicyInstanceHasTblVehicleType getPolicyInstanceHasTblVehicleTypeId() {
+    public Integer getPolicyInstanceHasTblVehicleTypeId() {
         return policyInstanceHasTblVehicleTypeId;
     }
 
-    public void setPolicyInstanceHasTblVehicleTypeId(PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleTypeId) {
+    public void setPolicyInstanceHasTblVehicleTypeId(Integer policyInstanceHasTblVehicleTypeId) {
         this.policyInstanceHasTblVehicleTypeId = policyInstanceHasTblVehicleTypeId;
     }
 }
