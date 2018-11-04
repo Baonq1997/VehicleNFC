@@ -18,13 +18,13 @@ public class PolicyInstanceHasVehicleTypeService {
         List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes
                 = policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policyInstanceId);
 
-//        for (PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType:policyInstanceHasTblVehicleTypes) {
-////            List<Pricing> pricings = pricingRepository.findByPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType);
-////            if (pricings != null) {
-////                policyInstanceHasTblVehicleType.setPricingList(pricings);
-////            }
-//
-//        }
+        for (PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType:policyInstanceHasTblVehicleTypes) {
+            List<Pricing> pricings = pricingRepository.findPricingByPolicyInstanceVehicle(policyInstanceHasTblVehicleType.getId());
+            if (pricings != null) {
+                policyInstanceHasTblVehicleType.setPricingList(pricings);
+            }
+
+        }
         return policyInstanceHasTblVehicleTypes;
     }
 }

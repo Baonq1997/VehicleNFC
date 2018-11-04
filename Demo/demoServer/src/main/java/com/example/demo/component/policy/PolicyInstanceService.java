@@ -83,4 +83,37 @@ public class PolicyInstanceService {
         }
         return policyInstanceDB;
     }
+
+    @Transactional
+    public void deleteBylocationIdAndPolicyInstanceId(Integer locationId, Integer policyInstanceId) {
+        Optional<Location> locationOpt = locationRepository.findById(locationId);
+        Optional<PolicyInstance> policyInstanceOptional = policyInstanceRepository.findById(policyInstanceId);
+        if (locationOpt.isPresent() && policyInstanceOptional.isPresent()) {
+            Location location = locationOpt.get();
+            PolicyInstance policyInstance = policyInstanceOptional.get();
+            List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes = policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policyInstance.getId());
+            for (PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType: policyInstanceHasTblVehicleTypes) {
+                pricingRepository.deleteByPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType.getId());
+                policyInstanceHasVehicleTypeRepository.deleteById(policyInstanceHasTblVehicleType.getId());
+            }
+            policyInstanceRepository.delete(policyInstance);
+        }
+    }
+    @Transactional
+    public void deletePolicyInstance(Integer locationId, PolicyInstance policyInstance, List<Integer> policyHasVehicleTypeId) {
+        if (!policyHasVehicleTypeId.isEmpty()) {
+            for (Integer id:policyHasVehicleTypeId) {
+                pricingRepository.deleteByPolicyInstanceHasTblVehicleTypeId(id);
+            }
+        }
+//
+        for (int i = 0; i < policyHasVehicleTypeId.size(); i++) {
+            Optional<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleType = policyInstanceHasVehicleTypeRepository.findById(policyHasVehicleTypeId.get(i));
+            if (policyInstanceHasTblVehicleType.isPresent()) {
+                policyInstanceHasVehicleTypeRepository.delete(policyInstanceHasTblVehicleType.get());
+            }
+
+        }
+        policyInstanceRepository.delete(policyInstance);
+    }
 }

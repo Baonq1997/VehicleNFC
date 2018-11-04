@@ -36,10 +36,12 @@ function loadTable(data) {
     $('#locationId').val(data.id);
     if (data.isActivated === true) {
         $('#status').text("Active");
+
     } else {
         $('#status').text("De-active");
+        // var h1 = 'This location is de-active.'
+        // $('#policies').append();
     }
-
     for (let i = 0; i < policyList.length; i++) {
         var vehicleList = policyList[i].policyInstanceHasTblVehicleTypes;
         row = '<tr>';
@@ -72,20 +74,21 @@ function loadTable(data) {
         row += '</tr>';
         $('#location-policies tbody').append(row);
     }
+
 }
 
-function editPolicy(policyId) {
+function editPolicy(policyInstanceId) {
     let locationId = $('#locationId').val();
-    let url = "http://localhost:8080/policy/edit?policyId=" + policyId + "&locationId=" + locationId;
+    let url = "http://localhost:8080/policy-instance/edit?policyInstanceId=" + policyInstanceId + "&locationId=" + locationId;
     window.location.href = url;
 }
 
-function deletePolicy(policyId) {
+function deletePolicy(policyInstanceId) {
     let locationId = $('#locationId').val();
-
     $.ajax({
         type: "POST",
-        url: 'http://localhost:8080/policy/delete-by-location-policy?locationId=' + locationId + '&policyId=' + policyId,
+        // url: 'http://localhost:8080/policy/delete-by-location-policy?locationId=' + locationId + '&policyId=' + policyId,
+        url: 'http://localhost:8080/policy-instance/delete-by-location-policy?locationId=' + locationId + '&policyInstanceId=' + policyInstanceId,
         success: function (data) {
             console.log("Delete Successfully");
             location.reload(true);

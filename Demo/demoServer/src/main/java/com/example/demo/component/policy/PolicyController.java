@@ -27,13 +27,13 @@ public class PolicyController {
         }
     }
 
-    @GetMapping("/edit")
-    public ModelAndView index(ModelAndView mav
-                            , @RequestParam("policyId") Integer policyId
-                            , @RequestParam("locationId") Integer locaitonId) {
-        mav.setViewName("policy-edit");
-        return mav;
-    }
+//    @GetMapping("/edit")
+//    public ModelAndView index(ModelAndView mav
+//                            , @RequestParam("policyInstanceId") Integer policyId
+//                            , @RequestParam("locationId") Integer locaitonId) {
+//        mav.setViewName("policy-edit");
+//        return mav;
+//    }
 
     @GetMapping("/create")
     public ModelAndView createPage(ModelAndView mav) {

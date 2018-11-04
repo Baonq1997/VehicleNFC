@@ -235,6 +235,7 @@ function savePricing(policyInstanceVehicleId, pricingId) {
             url: updateFrm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicleId,
             data: updateFrm.serialize(),
             success: (res) => {
+                location.reload(true);
             console.log(res);
         console.log("Update Successfully");
         $('#updatePricingModal').modal('hide');
@@ -330,7 +331,7 @@ function deletePolicy(locationId) {
             type: "POST",
             contentType: "application/json; charset=utf-8",
             // dataType: "json",
-            url: 'http://localhost:8080/policy/delete',
+            url: 'http://localhost:8080/policy-instance/delete',
             data: JSON.stringify(json),
             success: function (res) {
                 console.log(res);
@@ -477,7 +478,7 @@ function createPolicyHasVehicleTypeJson(locationId) {
     var json = {
         locationId: locationId,
         policyInstance: policyJson,
-        // policyHasVehicleTypeId: policyHasVehicleTypeId,
+        policyHasVehicleTypeId: policyHasVehicleTypeId,
         vehicleTypes: vehicleArr
     }
 

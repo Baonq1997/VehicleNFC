@@ -16,6 +16,9 @@ public interface PolicyInstanceHasVehicleTypeRepository extends JpaRepository<Po
 
     Optional<PolicyInstanceHasTblVehicleType> findByPolicyInstanceIdAndVehicleTypeId(Integer policyInstanceId, VehicleType vehicleType);
 
+    @Query(value = "DELETE FROM tbl_policy_instance_has_tbl_vehicle_type WHERE id = :id"
+    , nativeQuery = true)
+    void deletePolicyHasVehicleTypeById(@Param("id") Integer id);
 //    void deleteByIdAndPricingList(Integer policyInstanceHasTblVehicleTypeId, List<Pricing> pricings);
 //    void deleteByPricingList(List<Pricing> pricings);
 //    @Modifying
