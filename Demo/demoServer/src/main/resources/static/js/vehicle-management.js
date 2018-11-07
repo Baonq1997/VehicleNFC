@@ -1,15 +1,8 @@
 $(document).ready(function (e) {
-    $.ajax({
-        type: "GET",
-        dataType: "json",
-        url: 'get-vehicles',
-        success: function (data) {
-            console.log(data);
-            loadData(data);
-        }, error: function () {
-            alert("Can't load data")
-        }
-
+    searchVehicle(0);
+    $('#searchBtn').on('click', function (e) {
+        e.preventDefault();
+        searchVehicle(0);
     });
 });
 
@@ -29,7 +22,7 @@ function loadData(res) {
     content = res.data;
     var row = "";
     for (i = 0; i < content.length; i++) {
-        row = (content[i].verified) ? '<tr>' : '<tr class="not-verified">';
+        row = '<tr>';
         var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "Empty";
         var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "Empty";
         row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
@@ -40,13 +33,11 @@ function loadData(res) {
         row += cellBuilder(content[i].size, "text-right");
         row += cellBuilder(convertDate(content[i].expireDate), "text-right");
         row += cellBuilder(ownerPhone, "text-right");
-
-        var verify = (!content[i].verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "','main-content-verify-form'," + setUpFormData + ",'vehicle-list')\" class=\"btn btn-success btnVerify\">Verify</a>" : "";
         var edit = "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "','main-content-save-form'," + setUpSaveFormData + ",'save-vehicle-list')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
         var disable = (content[i].owner != null) ? "disabled" : "onclick=\"openDeleteModal('" + content[i].vehicleNumber + "')\" ";
         var deleteStr = "<a " + disable +
             " href=\"#\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
-        row += cellBuilder(deleteStr + edit + verify);
+        row += cellBuilder(deleteStr + edit);
         row += '</tr>';
         $('#user-table tbody').append(row);
     }
@@ -59,13 +50,13 @@ function loadData(res) {
     for (currentPage = 0; currentPage < res.totalPages; currentPage++) {
         if (currentPage === pageNumber) {
             li = '<li class="nav-item active">\n' +
-                '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">' + (currentPage + 1) + '</a>\n' +
+                '<a href="#" class="nav-link" onclick="searchVehicle(' + currentPage + ')">' + (currentPage + 1) + '</a>\n' +
                 '</li>';
             $('#pagination').append(li);
         } else {
 
             li = '<li class="nav-item">\n' +
-                '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">\n' +
+                '<a href="#" class="nav-link" onclick="searchVehicle(' + currentPage + ')">\n' +
                 +(currentPage + 1) + '</a>\n' +
                 '</li>';
             $('#pagination').append(li);
@@ -101,31 +92,27 @@ $(document).ready(function (e) {
     // end sort table headers
 });
 
-$(document).ready(function (e) {
-    $('#searchBtn').on('click', function (e) {
-        e.preventDefault();
-        searchUser(0);
-    });
-});
-
-function searchUser(pageNumber) {
+function searchVehicle(pageNumber) {
     var url = "search-vehicle";
     if (pageNumber != null) {
         url = url + "?page=" + pageNumber;
     }
+    var listFilterObject = [];
     var vehicleType = $('#search-filter option:selected').val();
     var searchValue = $('#searchValue').val();
+
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
-
-    // var filterObject = createSearchObject(vehicleType, ":", searchValue);
+    var verifyObject = createSearchObject("isVerified", "=", true);
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
+    listFilterObject.push(filterObject);
+    listFilterObject.push(verifyObject);
     $.ajax({
         type: 'POST',
         url: url,
         dataType: "json",
         contentType: 'application/json',
-        data: JSON.stringify(filterObject),
+        data: JSON.stringify(listFilterObject),
         success: function (response) {
             emptyTable();
             emptyPaginationLi();

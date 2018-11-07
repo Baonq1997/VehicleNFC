@@ -2,6 +2,7 @@ package com.example.demo.component.vehicle;
 
 import com.example.demo.component.vehicleType.VehicleType;
 import com.example.demo.component.user.User;
+import com.example.demo.view.Owner;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,7 +38,7 @@ public class Vehicle {
     private VehicleType vehicleTypeId;
 
     @Transient
-    private User owner;
+    private Owner owner;
 
     public Vehicle() {
     }
@@ -98,11 +99,11 @@ public class Vehicle {
         this.vehicleTypeId = vehicleTypeId;
     }
 
-    public User getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 }

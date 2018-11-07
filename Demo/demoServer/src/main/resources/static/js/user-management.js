@@ -32,7 +32,7 @@ function loadData(res) {
     content = res.data;
     var row = "";
     for (i = 0; i < content.length; i++) {
-        row = (content[i].vehicle.verified) ? '<tr>' : '<tr class="not-verified">';
+        row = '<tr>';
         // row += '<td>' + content[i].id + '</td>';
         row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
         row += '<td class="text-right">' + content[i].phoneNumber + '</td>';
@@ -44,10 +44,9 @@ function loadData(res) {
             ? content[i].vehicle.vehicleTypeId.name : "Empty";
         row += '<td class="text-center">' + vehicleType + '</td>';
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
-        var verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "')\" class=\"btn btn-success btnVerify\">Verify</a>" : "";
         var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].id + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
         var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].id + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
-        row += cellBuilder(deleteStr + edit + verify);
+        row += cellBuilder(deleteStr + edit);
         row += '</tr>';
         $('#user-table tbody').append(row);
     }
@@ -115,18 +114,20 @@ function searchUser(pageNumber) {
     if (pageNumber != null) {
         url = url + "?page=" + pageNumber;
     }
+    var listFilterObject = [];
     var vehicleType = $('#search-filter option:selected').val();
     var searchValue = $('#searchValue').val();
+
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
-
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
+    listFilterObject.push(filterObject);
     $.ajax({
         type: 'POST',
         url: url,
         dataType: "json",
         contentType: 'application/json',
-        data: JSON.stringify(filterObject),
+        data: JSON.stringify(listFilterObject),
         success: function (response) {
             emptyTable();
             emptyPaginationLi();

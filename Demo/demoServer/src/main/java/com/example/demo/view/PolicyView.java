@@ -1,7 +1,6 @@
 package com.example.demo.view;
 
-import com.example.demo.component.policy.Policy;
-import com.example.demo.component.policy.PolicyInstance;
+import  com.example.demo.component.policy.Policy;
 import com.example.demo.component.vehicleType.VehicleType;
 
 import java.io.Serializable;
@@ -9,7 +8,7 @@ import java.util.List;
 
 public class PolicyView implements Serializable {
     private Integer locationId;
-    private PolicyInstance policyInstance;
+    private Policy policy;
     private List<VehicleType> vehicleTypes;
 
     public PolicyView() {
@@ -23,12 +22,12 @@ public class PolicyView implements Serializable {
         this.locationId = locationId;
     }
 
-    public PolicyInstance getPolicyInstance() {
-        return policyInstance;
+    public Policy getPolicy() {
+        return policy;
     }
 
-    public void setPolicyInstance(PolicyInstance policyInstance) {
-        this.policyInstance = policyInstance;
+    public void setPolicy(Policy policy) {
+        this.policy = policy;
     }
 
     public List<VehicleType> getVehicleTypes() {

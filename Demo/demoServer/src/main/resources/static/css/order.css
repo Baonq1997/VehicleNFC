@@ -46,11 +46,7 @@
 form#search-box > *:not(:last-child) {
     margin-right: 10px;
 }
-#search-filter {
-    float: right;
-    height: 100%;
-    position: relative;
-}
+
 .form-container {
     width: 100%;
     float: right;

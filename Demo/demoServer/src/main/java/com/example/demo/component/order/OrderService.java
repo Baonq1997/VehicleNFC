@@ -31,10 +31,9 @@ public class OrderService {
     private final OrderPricingRepository orderPricingRepository;
     private final PricingRepository pricingRepository;
     private final VehicleRepository vehicleRepository;
-    private final PolicyInstanceHasVehicleTypeRepository policyInstanceHasVehicleTypeRepository;
     private final LocationService locationService;
 
-    public OrderService(OrderRepository orderRepository, OrderStatusRepository orderStatusRepository, UserRepository userRepository, LocationRepository locationRepository, OrderPricingRepository orderPricingRepository, PricingRepository pricingRepository, VehicleRepository vehicleRepository, PolicyInstanceHasVehicleTypeRepository policyInstanceHasVehicleTypeRepository, LocationService locationService) {
+    public OrderService(OrderRepository orderRepository, OrderStatusRepository orderStatusRepository, UserRepository userRepository, LocationRepository locationRepository, OrderPricingRepository orderPricingRepository, PricingRepository pricingRepository, VehicleRepository vehicleRepository, LocationService locationService) {
         this.orderRepository = orderRepository;
         this.orderStatusRepository = orderStatusRepository;
         this.userRepository = userRepository;
@@ -42,13 +41,13 @@ public class OrderService {
         this.orderPricingRepository = orderPricingRepository;
         this.pricingRepository = pricingRepository;
         this.vehicleRepository = vehicleRepository;
-        this.policyInstanceHasVehicleTypeRepository = policyInstanceHasVehicleTypeRepository;
         this.locationService = locationService;
     }
 
     public Optional<Order> getOrderById(Integer id) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isPresent()) {
+            order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
             if (order.get().getCheckOutDate() != null) {
                 TimeDuration duration = TimeService.compareTwoDates(order.get().getCheckInDate(), order.get().getCheckOutDate());
 
@@ -115,9 +114,7 @@ public class OrderService {
             Optional<Order> order = orderRepository.findFirstByUserIdAndOrderStatusId(user.get()
                     , orderStatusRepository.findByName(OrderStatusEnum.Open.getName()).get());
             if (order.isPresent()) {
-                order.get().getUserId().setVehicle(
-                        vehicleRepository.findByVehicleNumber(order.get().getUserId().getVehicleNumber()).get()
-                );
+                order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
                 order.get().setOrderPricingList(orderPricingRepository.findByOrderId(order.get().getId()));
             }
             return order;
@@ -134,30 +131,30 @@ public class OrderService {
         Order order = null;
         try {
             order = orderRepository.findByUserIdAndLocationIdAndOrderStatusId(checkInUser,
-                    location, orderStatus).get();
+                    location.getId(), orderStatus).get();
         } catch (NoSuchElementException e) {
         }
 
         if (order != null) {
+            order.setLocation(location);
             checkOutOrder(order, userTokenList, checkInUser);
-
             return Optional.of(order);
         }
 
         order = new Order();
+        order.setLocation(location);
         order.setOrderStatusId(orderStatus);
 
-        Vehicle vehicle = vehicleRepository.findByVehicleNumber(checkInUser.getVehicleNumber()).get();
+//        Vehicle vehicle = vehicleRepository.findByVehicleNumber(checkInUser.getVehicleNumber()).get();
+        Vehicle vehicle = checkInUser.getVehicle();
         order.setVehicleTypeId(vehicle.getVehicleTypeId());
 
         order.setUserId(checkInUser);
-        order.setLocationId(locationRepository.findById(location.getId()).get());
+        order.setLocationId(locationRepository.findById(location.getId()).get().getId());
 
         order.setCheckInDate(new Date().getTime());
 
         //TODO kiểm tra thời điểm hiện tại để chọn policy
-        PolicyInstance policy = order.getLocationId().getPolicyInstanceList().get(0);
-
         List<Pricing> pricings = getPricingList(order, checkInUser);
         if (pricings == null) {
             return null;
@@ -176,33 +173,17 @@ public class OrderService {
     }
 
     public List<Pricing> getPricingList(Order order, User user) {
-        List<PolicyInstance> policies = order.getLocationId().getPolicyInstanceList();
-        List<PolicyInstance> matchPolicies = new ArrayList<>();
-        for (PolicyInstance policy : policies) {
-            if (policy.getAllowedParkingFrom() < order.getCheckInDate()
-                    && policy.getAllowedParkingTo() > order.getCheckInDate()) {
-                matchPolicies.add(policy);
-            }
-        }
-        PolicyInstance choosedPolicy = null;
-        PolicyInstanceHasTblVehicleType policyHasTblVehicleType = null;
-        for (PolicyInstance policy : matchPolicies) {
-            while (choosedPolicy == null) {
-                Vehicle vehicle = vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get();
-                policyHasTblVehicleType = policyInstanceHasVehicleTypeRepository
-                        .findByPolicyInstanceIdAndVehicleTypeId(policy.getId(), vehicle.getVehicleTypeId()).get();
-                if (policyHasTblVehicleType != null) {
-                    choosedPolicy = policy;
-                    break;
+        List<Policy> policies = order.getLocation().getPolicies();
+        for (Policy policy : policies) {
+            if (!isOutOfTheLine(order.getCheckInDate(), policy.getTime().getAllowedParkingFrom(), policy.getTime().getAllowedParkingTo())) {
+                if (policy.getVehicleTypeId().getId() == user.getVehicle().getVehicleTypeId().getId()) {
+                    order.setAllowedParkingFrom(policy.getTime().getAllowedParkingFrom());
+                    order.setAllowedParkingTo(policy.getTime().getAllowedParkingTo());
+                    order.setMinHour(policy.getMinHour());
+                    List<Pricing> pricings = policy.getPricings();
+                    return pricings;
                 }
             }
-        }
-        if (policyHasTblVehicleType != null) {
-            order.setAllowedParkingFrom(choosedPolicy.getAllowedParkingFrom());
-            order.setAllowedParkingTo(choosedPolicy.getAllowedParkingTo());
-            order.setMinHour(policyHasTblVehicleType.getMinHour());
-            List<Pricing> pricings = policyHasTblVehicleType.getPricingList();
-            return pricings;
         }
         return null;
     }
@@ -210,42 +191,21 @@ public class OrderService {
     @Transactional
     public Optional<Order> checkOutOrder(Order order, Map<String, String> userToken, User user) {
         order.setCheckOutDate(new Date().getTime());
-        TimeDuration duration = TimeService.compareTwoDates(order.getCheckInDate(), order.getCheckOutDate());
-        //TODO kiểm tra có bị lố giờ để phạt tiền thêm
-        //code here
+
+//        List<OrderPricing> orderPricings = orderPricingRepository.findByOrderId(order.getId());
+        List<OrderPricing> orderPricings = order.getOrderPricingList();
+        List<HourHasPrice> hourHasPrices = composeHourPrice(new Date().getTime() - order.getCheckInDate()
+                , order.getCheckInDate(), order.getAllowedParkingFrom(), order.getAllowedParkingTo(), order.getMinHour(), orderPricings);
 
         double totalPrice = 0;
-        int totalHour = duration.getHour();
-        int totalMinute = duration.getMinute();
-        List<HourHasPrice> hourHasPrices = new ArrayList<>();
-
-        if (totalHour < order.getMinHour()) {
-            totalHour = order.getMinHour();
-            totalMinute = 0;
-        }
-
-        while (totalHour > 0) {
-            hourHasPrices.add(new HourHasPrice(totalHour, null));
-            totalHour--;
-        }
-
-        List<OrderPricing> orderPricings = orderPricingRepository.findByOrderId(order.getId());
-        double lastPrice = 0;
-        for (OrderPricing orderPricing : orderPricings) {
-            if (orderPricing.getPricePerHour() > lastPrice) {
-                lastPrice = orderPricing.getPricePerHour();
-            }
-            for (HourHasPrice hourHasPrice : hourHasPrices) {
-                if (orderPricing.getFromHour() < hourHasPrice.getHour()) {
-                    hourHasPrice.setPrice(orderPricing.getPricePerHour());
-                }
-            }
-        }
-
         for (HourHasPrice hourHasPrice : hourHasPrices) {
-            totalPrice += hourHasPrice.getPrice();
+            double money = (hourHasPrice.isLate()) ? hourHasPrice.getFine() : hourHasPrice.getPrice();
+            if (hourHasPrice.isFullHour()) {
+                totalPrice += money;
+            } else {
+                totalPrice += Math.ceil(money * ((double) hourHasPrice.getMinutes() / 60));
+            }
         }
-        totalPrice += lastPrice * ((double) totalMinute / 60);
 
         order.setDuration(order.getCheckOutDate() - order.getCheckInDate());
         order.setTotal(round(totalPrice, 0));
@@ -263,11 +223,13 @@ public class OrderService {
     public void sendNotification(User user, Order
             order, Map<String, String> userToken, List<OrderPricing> orderPricings, NotificationEnum notification) {
         order.setOrderPricingList(orderPricings);
-        if (user.getSmsNoti()) {
-            PushNotificationService.sendNotificationToSendSms(NFCServerProperties.getSmsHostToken(), notification, order);
-        } else {
-            if (userToken != null) {
-                PushNotificationService.sendNotification(userToken.get(user.getPhoneNumber()), notification, order.getId());
+        if (user.getSmsNoti() != null) {
+            if (user.getSmsNoti()) {
+                PushNotificationService.sendNotificationToSendSms(NFCServerProperties.getSmsHostToken(), notification, order);
+            } else {
+                if (userToken != null) {
+                    PushNotificationService.sendNotification(userToken.get(user.getPhoneNumber()), notification, order.getId());
+                }
             }
         }
     }
@@ -291,7 +253,7 @@ public class OrderService {
         List<Order> result = new ArrayList<>();
         for (Order order : orders) {
             User user = order.getUserId();
-            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
+//            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
             order.setUserId(user);
             result.add(order);
         }
@@ -359,8 +321,6 @@ public class OrderService {
                         Predicate vehiclePredicate = builder.equal(join.get("vehicleNumber"), param.getValue());
                         predicate = builder.and(predicate, vehiclePredicate);
                     }
-
-
                 } else {
                     predicate = builder.and(predicate,
                             builder.equal(r.get(param.getKey()), param.getValue()));
@@ -378,7 +338,7 @@ public class OrderService {
 //        List<Order> result = new ArrayList<>();
         for (Order order : orderList) {
             User user = order.getUserId();
-            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
+//            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
             order.setUserId(user);
 //            result.add(order);
         }
@@ -392,9 +352,9 @@ public class OrderService {
         List<Order> orders = orderRepository.findByUserIdOrderByCheckInDateDesc(userRepository.findById(userId).get());
 
         for (Order order : orders) {
-            order.getUserId().setVehicle(
-                    vehicleRepository.findByVehicleNumber(order.getUserId().getVehicleNumber()).get()
-            );
+//            order.getUserId().setVehicle(
+//                    vehicleRepository.findByVehicleNumber(order.getUserId().getVehicle()).get()
+//            );
             order.setOrderPricingList(orderPricingRepository.findByOrderId(order.getId()));
         }
         return orders;
@@ -427,4 +387,79 @@ public class OrderService {
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
+
+    public static List<HourHasPrice> composeHourPrice(long duration, long startTime
+            , long limitFromTime, long limitToTime, int minHour, List<OrderPricing> pricings) {
+        int totalHour = (int) (duration / 3600000);
+        int totalMinute = (int) (duration - totalHour * 3600000) / 60000;
+        List<HourHasPrice> hourHasPrices = new ArrayList<>();
+//        startTime += duration;
+        if (totalHour < minHour) {
+            totalHour = minHour;
+            totalMinute = 0;
+        }
+
+        boolean foreverLate = false;
+        for (int i = 1; i <= totalHour; i++) {
+            if (i == totalHour && totalMinute != 0) {
+                startTime += totalMinute * 60000;
+                HourHasPrice notFull = new HourHasPrice(i, null);
+                notFull.setFullHour(false);
+                notFull.setMinutes(totalMinute);
+                if (isOutOfTheLine(startTime, limitFromTime, limitToTime)) {
+                    foreverLate = true;
+                }
+                notFull.setLate(foreverLate);
+                hourHasPrices.add(notFull);
+                totalMinute = 0;
+            }
+            startTime += 3600000;
+            HourHasPrice hourHasPrice = new HourHasPrice(i, null);
+            if (isOutOfTheLine(startTime, limitFromTime, limitToTime)) {
+                foreverLate = true;
+            }
+            hourHasPrice.setLate(foreverLate);
+            hourHasPrices.add(hourHasPrice);
+        }
+
+        for (
+                OrderPricing orderPricing : pricings)
+
+        {
+            for (HourHasPrice hourHasPrice : hourHasPrices) {
+                if (orderPricing.getFromHour() < hourHasPrice.getHour()) {
+                    hourHasPrice.setPrice(orderPricing.getPricePerHour());
+                    if (hourHasPrice.isLate()) {
+                        hourHasPrice.setFine(orderPricing.getLateFeePerHour());
+                    }
+                }
+            }
+        }
+
+        return hourHasPrices;
+    }
+
+    public static boolean isOutOfTheLine(long current, long limitFrom, long limitTo) {
+        Calendar cur = Calendar.getInstance(), from = Calendar.getInstance(), to = Calendar.getInstance();
+        cur.setTimeInMillis(current);
+        from.setTimeInMillis(limitFrom);
+        to.setTimeInMillis(limitTo);
+//        String a = cur.get(Calendar.HOUR_OF_DAY)+":"+cur.get(Calendar.MINUTE);
+//        String b = from.get(Calendar.HOUR_OF_DAY)+":"+from.get(Calendar.MINUTE);
+//        String c = to.get(Calendar.HOUR_OF_DAY)+":"+to.get(Calendar.MINUTE);
+        if (cur.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
+                || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY)) {
+            return true;
+        }
+        if (cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY)
+                || cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY)) {
+            if (cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)
+                    || cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
+

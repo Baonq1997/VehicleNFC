@@ -1,4 +1,4 @@
-.not-verified{
+.not-verified {
     border-left: 5px solid #d9534f !important;
 }
 
@@ -65,11 +65,6 @@
     border-radius: 0;
 }
 
-#search-filter {
-    width: 39%;
-    border-radius: 5px 0 0 5px;
-}
-
 .panel-tool {
     margin: 0;
     float: left;
@@ -80,7 +75,6 @@
 }
 
 #user-table tr {
-    border-left: 5px solid transparent;
     box-sizing: border-box;
     vertical-align: center;
 }
@@ -88,6 +82,11 @@
 #user-table td {
     vertical-align: middle;
     padding-left: 15px;
+    border-right: 2px solid;
+}
+
+#user-table td:last-of-type {
+    border-right: 0;
 }
 
 #user-table thead th {
@@ -95,10 +94,10 @@
     vertical-align: middle;
 }
 
-.text-center{
+.text-center {
     text-align: center;
 }
 
-.text-right{
+.text-right {
     text-align: right;
 }

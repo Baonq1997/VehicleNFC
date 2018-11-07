@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div class="panel" id="main-content-user-list">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Verify Users
+            </span>
+            <form action="search-user" id="search-box-user" method="post">
+                <select id="search-filter" class="form-control">
+                    <option value="phoneNumber" selected="selected">Search By phone number</option>
+                    <option value="lastName">Search By LastName</option>
+                    <option value="licensePlateId">Search By License Plate</option>
+                </select>
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 50%; float: left;"/>
+                <button class="btn btn-primary btnAction" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="content-list-table">
+            <div class="row">
+                <table class="table table-hover" id="user-table">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Phone</th>
+                        <th>Name</th>
+                        <th>Money</th>
+                        <th>Vehicle Number</th>
+                        <th>Vehicle Type</th>
+                        <th style="text-align: center;width: 193px;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="show-userID-modal" tabindex="-1" role="dialog"
+     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="user-hashed-id">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">UserID for NFC</h5>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong class="hashed-id"></strong>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="panel" id="main-content-save-form" style="display: none">
+    <div class="panel-body">
+        <form id="save-user-form" autocomplete="off">
+            <input type="hidden" class="form-control" id="id" name="id" value=""/>
+            <div class="form-group">
+                <label for="phoneNumber" class="col-form-label">PhoneNumber:</label>
+                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value=""/>
+            </div>
+            <div class="form-group">
+                <label for="firstName" class="col-form-label">First name:</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" value=""/>
+            </div>
+            <div class="form-group">
+                <label for="lastName" class="col-form-label">Last name:</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" value=""/>
+            </div>
+            <div class="form-group">
+                <label for="lastName" class="col-form-label">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" value=""/>
+            </div>
+            <div class="form-group">
+                <label for="vehicleNumber" class="col-form-label">VehicleNumber:</label>
+                <input type="text" class="form-control" id="vehicleNumber" name="vehicleNumber"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="licensePlateId" class="col-form-label">LicensePlateId:</label>
+                <input type="text" class="form-control" id="licensePlateId" name="licensePlateId"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-secondary" onclick="closeForm()">Close
+                </button>
+                <input type="submit" class="btn btn-primary" value="Save"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel" id="main-content-verify-form" style="display: none">
+    <div class="panel-body">
+        <form id="verify-vehicle-form" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="vehicleNumberShow" class="col-form-label">Vehicle Number:</label>
+                <input type="text" class="form-control" id="vehicleNumberShow"
+                       disabled
+                       value=""/>
+                <input type="hidden" class="form-control" id="verify-vehicleNumber" name="vehicleNumber"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="licenseIdShow" class="col-form-label">License Id:</label>
+                <input type="text" class="form-control" id="licenseIdShow"
+                       disabled
+                       value=""/>
+                <input type="hidden" class="form-control" id="licenseId" name="licensePlateId"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="brand" class="col-form-label">Brand:</label>
+                <input type="text" class="form-control" id="brand" name="brand" required
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="size" class="col-form-label">Size:</label>
+                <input type="text" class="form-control" id="size" name="size" value="" required/>
+            </div>
+            <div class="form-group">
+                <label for="expireDate" class="col-form-label">Expire Date:</label>
+                <!--<input type="date" class="form-control" id="expireDateShow" onchange="setLongFromExpireDate()"-->
+                <!--value=""/>-->
+                <input id="datepicker" data-date-format="dd/mm/yyyy" class="form-control" required
+                       onchange="setLongFromExpireDate()">
+                <input type="hidden" class="form-control" id="expireDate" name="expireDate"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label">VehicleType:</label>
+                <select class="form-control" id="verify-vehicle-list" name="vehicleTypeId" required>
+
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-secondary" onclick="closeForm()">Close
+                </button>
+                <input type="submit" class="btn btn-primary" value="Save"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="deleteModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to delete this record ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="delete-id" onclick="deleteUser($(this).val())" class="btn btn-danger">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/user-verify-management.js"></script>
+</body>
+</html>

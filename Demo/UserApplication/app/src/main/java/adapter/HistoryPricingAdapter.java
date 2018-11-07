@@ -22,28 +22,50 @@ import service.UserService;
 public class HistoryPricingAdapter extends RecyclerView.Adapter<HistoryPricingAdapter.MyViewHolder> {
     private List<HourHasPrice> hourHasPrices;
     private long checkInDate, checkOutDate;
-    private int minutes;
+    private int layoutId;
 
-    public HistoryPricingAdapter(List<HourHasPrice> hourHasPrices, int minutes, long checkInDate, long checkOutDate) {
-        this.minutes = minutes;
+    public HistoryPricingAdapter(List<HourHasPrice> hourHasPrices, long checkInDate, long checkOutDate, int layoutId) {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
+        this.layoutId = layoutId;
         this.hourHasPrices = new ArrayList<>();
 
         for (HourHasPrice hourHasPrice : hourHasPrices) {
             if (this.hourHasPrices.size() < 1) {
-                hourHasPrice.setTotal(hourHasPrice.getPrice());
+                double money = (hourHasPrice.isLate()) ? hourHasPrice.getFine() : hourHasPrice.getPrice();
+                if (hourHasPrice.isFullHour()) {
+                    hourHasPrice.setTotal(money);
+                } else {
+                    hourHasPrice.setFullHour(false);
+                    hourHasPrice.setTotal(Math.ceil((double) hourHasPrice.getMinutes() / 60 * money));
+                }
                 this.hourHasPrices.add(hourHasPrice);
             } else {
+                boolean different = true;
                 HourHasPrice tmp = this.hourHasPrices.get(this.hourHasPrices.size() - 1);
-                if ((Double.compare(tmp.getPrice(), hourHasPrice.getPrice()) == 0)) {
-                    if (tmp.getTotal() == null) {
-                        tmp.setTotal(hourHasPrice.getPrice());
-                    } else {
-                        tmp.setTotal(tmp.getTotal() + hourHasPrice.getPrice());
+                if (tmp.isLate() == hourHasPrice.isLate()) {
+                    boolean tmpBoolean = (tmp.isLate()) ? (Double.compare(tmp.getFine(), hourHasPrice.getFine()) == 0) : (Double.compare(tmp.getPrice(), hourHasPrice.getPrice()) == 0);
+                    if (tmpBoolean) {
+                        different = false;
+                        double money = (hourHasPrice.isLate()) ? hourHasPrice.getFine() : hourHasPrice.getPrice();
+                        if (hourHasPrice.isFullHour()) {
+                            tmp.setHour(tmp.getHour() + 1);
+                            tmp.setTotal(tmp.getTotal() + money);
+                        } else {
+                            tmp.setFullHour(false);
+                            tmp.setMinutes(hourHasPrice.getMinutes());
+                            tmp.setTotal(tmp.getTotal() + Math.ceil(((double) hourHasPrice.getMinutes() / 60) * money));
+                        }
                     }
-                } else {
-                    hourHasPrice.setTotal(hourHasPrice.getPrice());
+                }
+                if (different) {
+                    double money = (hourHasPrice.isLate()) ? hourHasPrice.getFine() : hourHasPrice.getPrice();
+                    if (hourHasPrice.isFullHour()) {
+                        hourHasPrice.setTotal(money);
+                    } else {
+                        hourHasPrice.setFullHour(false);
+                        hourHasPrice.setTotal(Math.ceil((double) hourHasPrice.getMinutes() / 60 * money));
+                    }
                     this.hourHasPrices.add(hourHasPrice);
                 }
             }
@@ -55,11 +77,12 @@ public class HistoryPricingAdapter extends RecyclerView.Adapter<HistoryPricingAd
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view_history_pricing, parent, false);
+                .inflate(layoutId, parent, false);
         return new MyViewHolder(itemView);
     }
 
     private int passHour = 0;
+    private int isLate = 0;
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
@@ -69,8 +92,8 @@ public class HistoryPricingAdapter extends RecyclerView.Adapter<HistoryPricingAd
 
         long mili = UserService.convertToMilliseconds(hourHasPrice.getHour() - passHour, true);
 
-        if (position == hourHasPrices.size() - 1) {
-            mili += UserService.convertToMilliseconds(minutes, false);
+        if (position == hourHasPrices.size() - 1 && !hourHasPrice.isFullHour()) {
+            mili += UserService.convertToMilliseconds(hourHasPrice.getMinutes(), false);
         }
 
         String toHour = "";
@@ -82,20 +105,31 @@ public class HistoryPricingAdapter extends RecyclerView.Adapter<HistoryPricingAd
         }
 
         holder.txtFrom.setText(sdf.format(checkInDate));
-        holder.txtTo.setText(toHour+": ");
+        holder.txtTo.setText(toHour + ": ");
 
-        if (position != hourHasPrices.size() - 1) {
-            holder.txtTotal.setText(UserService.convertMoneyNoVND(hourHasPrice.getPrice()) + " vnđ x " + (hourHasPrice.getHour() - passHour) + " giờ");
-            holder.txtEnd.setText(UserService.convertMoney(hourHasPrice.getPrice() * (hourHasPrice.getHour() - passHour)));
+        if (!hourHasPrice.isLate()) {
+            if (position != hourHasPrices.size() - 1) {
+                holder.txtTotal.setText(UserService.convertMoneyNoVND(hourHasPrice.getPrice()) + " VNĐ x " + (hourHasPrice.getHour() - passHour) + " giờ");
+                holder.txtEnd.setText(UserService.convertMoney(hourHasPrice.getTotal()));
+            } else {
+                int min = hourHasPrice.getMinutes();
+                holder.txtTotal.setText(UserService.convertMoneyNoVND(hourHasPrice.getPrice()) + " VNĐ x " + (hourHasPrice.getHour() - passHour + " giờ " + min + " p"));
+                holder.txtEnd.setText(UserService.convertMoney(hourHasPrice.getTotal()));
+            }
         } else {
-            double min = minutes;
-            min = min/60;
-            min = (int)(min * 100 + 0.5) / 100.0;
-
-            holder.txtTotal.setText(UserService.convertMoneyNoVND(hourHasPrice.getPrice()) + " vnđ x " + (hourHasPrice.getHour()  - passHour + min + " giờ"));
-            holder.txtEnd.setText(UserService.convertMoney(hourHasPrice.getPrice() * (hourHasPrice.getHour()+min - passHour)));
+            isLate++;
+            if (position != hourHasPrices.size() - 1) {
+                holder.txtTotal.setText(UserService.convertMoneyNoVND(hourHasPrice.getFine()) + " VNĐ x " + (hourHasPrice.getHour() - passHour) + " giờ");
+                holder.txtEnd.setText(UserService.convertMoney(hourHasPrice.getTotal()));
+            } else {
+                int min = hourHasPrice.getMinutes();
+                holder.txtTotal.setText(UserService.convertMoneyNoVND(hourHasPrice.getFine()) + " VNĐ x " + (hourHasPrice.getHour() - passHour + " giờ " + min + " p"));
+                holder.txtEnd.setText(UserService.convertMoney(hourHasPrice.getTotal()));
+            }
         }
-
+        if (isLate == 1) {
+            holder.txtIsLate.setVisibility(View.VISIBLE);
+        }
         checkInDate += mili;
         passHour = hourHasPrice.getHour();
     }
@@ -107,7 +141,7 @@ public class HistoryPricingAdapter extends RecyclerView.Adapter<HistoryPricingAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView txtFrom, txtTo, txtTotal, txtEnd, txtThongBao;
+        private TextView txtFrom, txtTo, txtTotal, txtEnd, txtThongBao, txtIsLate;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -116,9 +150,7 @@ public class HistoryPricingAdapter extends RecyclerView.Adapter<HistoryPricingAd
             txtTotal = itemView.findViewById(R.id.txtTotal);
             txtEnd = itemView.findViewById(R.id.txtEnd);
             txtThongBao = itemView.findViewById(R.id.txtThongBao);
-
+            txtIsLate = itemView.findViewById(R.id.isLate);
         }
     }
-
-
 }

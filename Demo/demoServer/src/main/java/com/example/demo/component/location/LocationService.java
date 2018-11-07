@@ -23,33 +23,29 @@ import java.util.Optional;
 @Service
 public class LocationService {
     private final LocationRepository locationRepository;
-    private final PolicyRepository policyRepository;
     private final PricingRepository pricingRepository;
-    private final PolicyInstanceHasVehicleTypeRepository policyInstanceHasVehicleTypeRepository;
-    private final PolicyInstanceRepository policyInstanceRepository;
+    private final PolicyRepository policyRepository;
 
     @Autowired
     private EntityManager entityManager;
 
-    public LocationService(LocationRepository locationRepository, PolicyRepository policyRepository, PricingRepository pricingRepository, PolicyInstanceHasVehicleTypeRepository policyInstanceHasVehicleTypeRepository, PolicyInstanceRepository policyInstanceRepository) {
+    public LocationService(LocationRepository locationRepository, PolicyRepository policyRepository, PricingRepository pricingRepository, PolicyRepository policyRepository1) {
         this.locationRepository = locationRepository;
-        this.policyRepository = policyRepository;
         this.pricingRepository = pricingRepository;
-        this.policyInstanceHasVehicleTypeRepository = policyInstanceHasVehicleTypeRepository;
-        this.policyInstanceRepository = policyInstanceRepository;
+        this.policyRepository = policyRepository1;
     }
 
     public Optional<Location> getMeterById(Integer id) {
         Optional<Location> location = locationRepository.findById(id);
-        if (location.isPresent()) {
-            List<PolicyInstance> policyInstances = policyInstanceRepository.findAllByLocationId(location.get().getId());
-            for (PolicyInstance policy : policyInstances) {
-                List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes =
-                        policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policy.getId());
-                policy.setPolicyInstanceHasTblVehicleTypes(policyInstanceHasTblVehicleTypes);
-            }
-            location.get().setPolicyInstanceList(policyInstances);
-        }
+//        if (location.isPresent()) {
+//            List<PolicyHasTblVehicleType> policyInstances = policyHasVehicleTypeRepository.findAllByLocationId(location.get().getId());
+//            for (PolicyHasTblVehicleType policy : policyInstances) {
+//                List<PolicyHasTblVehicleType> policyInstanceHasTblVehicleTypes =
+//                        policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policy.getId());
+//                policy.setPolicyInstanceHasTblVehicleTypes(policyInstanceHasTblVehicleTypes);
+//            }
+//            location.get().setPolicyInstanceList(policyInstances);
+//        }
         return location;
     }
 
@@ -80,57 +76,57 @@ public class LocationService {
     @Transactional
     public void addPolicy(AddLocationObject addLocationObject) {
 
-        Optional<PolicyInstance> policy = policyInstanceRepository.findById(addLocationObject.getPolicyId());
-        List<Location> locationList = addLocationObject.getLocationArr();
-        List<Location> existedLocations = addLocationObject.getCurrentLocationId();
-        if (!locationList.isEmpty() && policy.isPresent()) {
-            PolicyInstance policyDB = policy.get();
-            for (Location location : locationList) {
-                for (Location existedLocation:existedLocations) {
-                    if (existedLocation.getId() != location.getId()) {
-                        if (location.getIsDelete().equalsIgnoreCase("true")) {
-                            policyInstanceRepository.deleteById(policyDB.getId());
-                        } else {
-                            PolicyInstance policyInstance = new PolicyInstance();
-                            policyInstance.setAllowedParkingFrom(policyDB.getAllowedParkingFrom());
-                            policyInstance.setAllowedParkingTo(policyDB.getAllowedParkingTo());
-                            policyInstance.setLocationId(location.getId());
-                            List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes = policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policyDB.getId());
-                            policyInstanceRepository.save(policyInstance);
-                            if (policyInstanceHasTblVehicleTypes != null) {
-                                List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypeList = policyInstanceHasTblVehicleTypes;
-                                for (PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType : policyInstanceHasTblVehicleTypes) {
-                                    PolicyInstanceHasTblVehicleType duplicatePolicyVehicle = new PolicyInstanceHasTblVehicleType();
-
-                                    duplicatePolicyVehicle.setPolicyInstanceId(policyInstance.getId());
-
-                                    if (policyInstanceHasTblVehicleType.getMinHour() != null) {
-                                        duplicatePolicyVehicle.setMinHour(policyInstanceHasTblVehicleType.getMinHour());
-                                    }
-                                    if (policyInstanceHasTblVehicleType.getVehicleTypeId() != null) {
-                                        duplicatePolicyVehicle.setVehicleTypeId(policyInstanceHasTblVehicleType.getVehicleTypeId());
-                                    }
-                                    policyInstanceHasVehicleTypeRepository.save(duplicatePolicyVehicle);
-                                    List<Pricing> pricingList = pricingRepository.findByPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType.getId());
-                                    if (pricingList != null) {
-                                        for (Pricing pricing : pricingList) {
-                                            Pricing duplicatePricing = new Pricing();
-                                            duplicatePricing.setPolicyInstanceHasTblVehicleTypeId(duplicatePolicyVehicle.getId());
-                                            duplicatePricing.setPricePerHour(pricing.getPricePerHour());
-                                            duplicatePricing.setLateFeePerHour(pricing.getLateFeePerHour());
-                                            duplicatePricing.setFromHour(pricing.getFromHour());
-                                            pricingRepository.save(duplicatePricing);
-                                        }
-                                        duplicatePolicyVehicle.setPricingList(policyInstanceHasTblVehicleType.getPricingList());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
+//        Optional<PolicyInstance> policy = policyInstanceRepository.findById(addLocationObject.getPolicyId());
+//        List<Location> locationList = addLocationObject.getLocationArr();
+//        List<Location> existedLocations = addLocationObject.getCurrentLocationId();
+//        if (!locationList.isEmpty() && policy.isPresent()) {
+//            PolicyInstance policyDB = policy.get();
+//            for (Location location : locationList) {
+//                for (Location existedLocation:existedLocations) {
+//                    if (existedLocation.getId() != location.getId()) {
+//                        if (location.getIsDelete().equalsIgnoreCase("true")) {
+//                            policyInstanceRepository.deleteById(policyDB.getId());
+//                        } else {
+//                            PolicyInstance policyInstance = new PolicyInstance();
+//                            policyInstance.setAllowedParkingFrom(policyDB.getAllowedParkingFrom());
+//                            policyInstance.setAllowedParkingTo(policyDB.getAllowedParkingTo());
+//                            policyInstance.setLocationId(location.getId());
+//                            List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes = policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policyDB.getId());
+//                            policyInstanceRepository.save(policyInstance);
+//                            if (policyInstanceHasTblVehicleTypes != null) {
+//                                List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypeList = policyInstanceHasTblVehicleTypes;
+//                                for (PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType : policyInstanceHasTblVehicleTypes) {
+//                                    PolicyInstanceHasTblVehicleType duplicatePolicyVehicle = new PolicyInstanceHasTblVehicleType();
+//
+//                                    duplicatePolicyVehicle.setPolicyInstanceId(policyInstance.getId());
+//
+//                                    if (policyInstanceHasTblVehicleType.getMinHour() != null) {
+//                                        duplicatePolicyVehicle.setMinHour(policyInstanceHasTblVehicleType.getMinHour());
+//                                    }
+//                                    if (policyInstanceHasTblVehicleType.getVehicleTypeId() != null) {
+//                                        duplicatePolicyVehicle.setVehicleTypeId(policyInstanceHasTblVehicleType.getVehicleTypeId());
+//                                    }
+//                                    policyInstanceHasVehicleTypeRepository.save(duplicatePolicyVehicle);
+//                                    List<Pricing> pricingList = pricingRepository.findByPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType.getId());
+//                                    if (pricingList != null) {
+//                                        for (Pricing pricing : pricingList) {
+//                                            Pricing duplicatePricing = new Pricing();
+//                                            duplicatePricing.setPolicyInstanceHasTblVehicleTypeId(duplicatePolicyVehicle.getId());
+//                                            duplicatePricing.setPricePerHour(pricing.getPricePerHour());
+//                                            duplicatePricing.setLateFeePerHour(pricing.getLateFeePerHour());
+//                                            duplicatePricing.setFromHour(pricing.getFromHour());
+//                                            pricingRepository.save(duplicatePricing);
+//                                        }
+//                                        duplicatePolicyVehicle.setPricingList(policyInstanceHasTblVehicleType.getPricingList());
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            }
+//        }
 
     }
 
@@ -161,12 +157,12 @@ public class LocationService {
 
     public List<Location> getLocationsByPolicyId(Integer policyInstanceId) {
 //        Optional<Policy> policyOpt = policyRepository.findById(policyId);
-        Optional<PolicyInstance> policyInstanceOptional = policyInstanceRepository.findById(policyInstanceId);
-        if (policyInstanceOptional.isPresent()) {
-            List<PolicyInstance> policyInstanceList = new ArrayList<>();
-            policyInstanceList.add(policyInstanceOptional.get());
-            return locationRepository.findByPolicyInstanceList(policyInstanceList);
-        }
+//        Optional<PolicyInstance> policyInstanceOptional = policyInstanceRepository.findById(policyInstanceId);
+//        if (policyInstanceOptional.isPresent()) {
+//            List<PolicyInstance> policyInstanceList = new ArrayList<>();
+//            policyInstanceList.add(policyInstanceOptional.get());
+//            return locationRepository.findByPolicyInstanceList(policyInstanceList);
+//        }
         return null;
     }
 }

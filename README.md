@@ -71,3 +71,19 @@ Sample JSON:
   "licensePlateId": 4381249327
 }
 ```
+### Vehicle
+
+- Replace
+
+`localhost:8080/vehicle/replace-vehicle`
+
+Method used: `POST`
+
+Params: "phoneNumber","vehicleNumber","licenseId"
+
+Return: true (Success), false (Failed)
+
+Sample URL:
+```
+localhost:8080/vehicle/replace-vehicle?phoneNumber=+541422223&vehicleNumber=21A2-21392&licenseId=KC-1234982
+```

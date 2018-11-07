@@ -16,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.List;
@@ -37,9 +34,6 @@ public class UserService {
 
     public Optional<User> getUserById(Integer userId) {
         Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
-        }
         return user;
     }
 
@@ -59,7 +53,8 @@ public class UserService {
             //TODO check if phoneNumber exist
             Vehicle vehicle = null;
             if (user.getId() != null) {
-                vehicle = vehicleRepository.findByVehicleNumber(userRepository.findById(user.getId()).get().getVehicleNumber()).get();
+//                vehicle = vehicleRepository.findByVehicleNumber(userRepository.findById(user.getId()).get().getVehicleNumber()).get();
+                vehicle = user.getVehicle();
             }
             if (user.getId() == null || !userRepository.findById(user.getId()).isPresent()
                     || !vehicle.getVehicleNumber().equals(user.getVehicle().getVehicleNumber())
@@ -68,9 +63,9 @@ public class UserService {
                 user.getVehicle().setVerified(false);
                 user.setActivated(false);
                 vehicleRepository.save(user.getVehicle());
-                user.setVehicleNumber(user.getVehicle().getVehicleNumber());
+//                user.setVehicleNumber(user.getVehicle().getVehicleNumber());
             }
-            user.setVehicleNumber(user.getVehicle().getVehicleNumber());
+//            user.setVehicleNumber(user.getVehicle().getVehicleNumber());
             userRepository.save(user);
             if (needVerify) {
                 try {
@@ -91,9 +86,9 @@ public class UserService {
 
     public Optional<User> getUserByPhone(String phone) {
         Optional<User> user = userRepository.findByPhoneNumber(phone);
-        if (user.isPresent()) {
-            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
-        }
+//        if (user.isPresent()) {
+//            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
+//        }
         return user;
 
     }
@@ -117,38 +112,56 @@ public class UserService {
     @Autowired
     private EntityManager entityManager;
 
-    public ResponseObject searchUser(SearchCriteria param, int pagNumber, int pageSize) {
+    public ResponseObject searchUser(List<SearchCriteria> params, int pagNumber, int pageSize) {
         ResponseObject responseObject = new ResponseObject();
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root r = query.from(User.class);
 
         Predicate predicate = builder.conjunction();
+        for (SearchCriteria param : params) {
 
-        if (param.getOperation().equalsIgnoreCase(">")) {
-            predicate = builder.and(predicate,
-                    builder.greaterThanOrEqualTo(r.get(param.getKey()),
-                            param.getValue().toString()));
-        } else if (param.getOperation().equalsIgnoreCase("<")) {
-            predicate = builder.and(predicate,
-                    builder.lessThanOrEqualTo(r.get(param.getKey()),
-                            param.getValue().toString()));
-        } else if (param.getOperation().equalsIgnoreCase(":")) {
-            if (r.get(param.getKey()).getJavaType() == String.class) {
+            if (param.getOperation().equalsIgnoreCase(">")) {
                 predicate = builder.and(predicate,
-                        builder.like(r.get(param.getKey()),
-                                "%" + param.getValue() + "%"));
+                        builder.greaterThanOrEqualTo(r.get(param.getKey()),
+                                param.getValue().toString()));
+            } else if (param.getOperation().equalsIgnoreCase("<")) {
+                predicate = builder.and(predicate,
+                        builder.lessThanOrEqualTo(r.get(param.getKey()),
+                                param.getValue().toString()));
+            } else if (param.getOperation().equalsIgnoreCase(":")) {
+                Object type = param.getType();
+                if (type == null) {
+                    predicate = builder.and(predicate,
+                            builder.like(r.get(param.getKey()),
+                                    "%" + param.getValue() + "%"));
+                } else if (type.equals("vehicle")) {
+                    Join<User, Vehicle> join = r.join("vehicle");
+                    predicate = builder.and(predicate,
+                            builder.like(join.get(param.getKey()),
+                                    "%" + param.getValue() + "%"));
+                    predicate = builder.and(predicate, predicate);
+                }
             } else {
-                predicate = builder.and(predicate,
-                        builder.equal(r.get(param.getKey()), param.getValue()));
+                Object type = param.getType();
+                if (type == null) {
+                    predicate = builder.and(predicate,
+                            builder.equal(r.get(param.getKey()), param.getValue()));
+                } else if (type.equals("vehicle")) {
+                    Join<User, Vehicle> join = r.join("vehicle");
+                    predicate = builder.and(predicate,
+                            builder.equal(join.get(param.getKey()),
+                                    param.getValue()));
+                    predicate = builder.and(predicate, predicate);
+                }
             }
         }
         query.where(predicate);
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
         List<User> result = typedQuery.getResultList();
-        for (User user : result) {
-            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
-        }
+//        for (User user : result) {
+//            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicle()).get());
+//      1  }
         int totalPages = (int) Math.ceil((double) result.size() / pageSize);
         typedQuery.setFirstResult(pagNumber * pageSize);
         typedQuery.setMaxResults(pageSize);
@@ -160,6 +173,7 @@ public class UserService {
         return responseObject;
     }
 
+
     public List<User> getUsers(int pagNumber, int pageSize) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
@@ -169,12 +183,12 @@ public class UserService {
         typedQuery.setFirstResult(pagNumber * pageSize);
         typedQuery.setMaxResults(pageSize);
         List<User> listUsers = typedQuery.getResultList();
-        for (User user : listUsers) {
-            Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.getVehicleNumber());
-            if (vehicle.isPresent()) {
-                user.setVehicle(vehicle.get());
-            }
-        }
+//        for (User user : listUsers) {
+//            Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.getVehicleNumber());
+//            if (vehicle.isPresent()) {
+//                user.setVehicle(vehicle.get());
+//            }
+//        }
         return listUsers;
     }
 
@@ -191,18 +205,19 @@ public class UserService {
 
     public Optional<User> login(String phone, String password) {
         Optional<User> user = userRepository.findByPhoneNumberAndPassword(phone, password);
-        if (user.isPresent()) {
-            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
-        }
+//        if (user.isPresent()) {
+//            user.get().setVehicle(vehicleRepository.findByVehicleNumber(user.get().getVehicleNumber()).get());
+//        }
         return user;
     }
 
-    public void updateUserSmsNoti(User user) {
-        User userDB = userRepository.findByPhoneNumber(user.getPhoneNumber()).get();
-        if (userDB != null) {
-            userDB.setSmsNoti(user.getSmsNoti());
-            userRepository.save(userDB);
+    public Optional<User> updateUserSmsNoti(User user) {
+        Optional<User> userDB = userRepository.findByPhoneNumber(user.getPhoneNumber());
+        if (userDB.isPresent()) {
+            userDB.get().setSmsNoti(user.getSmsNoti());
+            userRepository.save(userDB.get());
         }
+        return userDB;
     }
 
     public void activateUser(String phoneNumber) {
@@ -242,6 +257,14 @@ public class UserService {
     }
 
     public Optional<User> getUserByVehicleNumber(String vehicleNumber) {
-        return userRepository.findByVehicleNumber(vehicleNumber);
+        Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(vehicleNumber);
+        if (vehicle.isPresent()) {
+            return userRepository.findByVehicle(vehicle.get());
+        }
+        return null;
+    }
+
+    public Optional<User> saveUser(User user){
+        return Optional.of(userRepository.save(user));
     }
 }

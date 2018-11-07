@@ -40,17 +40,18 @@ public class Order implements Serializable {
     @JoinColumn(name = "tbl_user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
-    @JoinColumn(name = "tbl_location_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Location locationId;
+    @Column(name = "tbl_location_id")
+    private Integer locationId;
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private VehicleType vehicleTypeId;
-    //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblOrderId")
-    @Transient
+    @OneToMany(mappedBy = "orderId")
     private List<OrderPricing> orderPricingList;
     @Transient
     private List<HourHasPrice> hourHasPrices;
+
+    @Transient
+    private Location location;
 
     public Order() {
     }
@@ -135,12 +136,20 @@ public class Order implements Serializable {
         this.userId = userId;
     }
 
-    public Location getLocationId() {
+    public Integer getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Location locationId) {
+    public void setLocationId(Integer locationId) {
         this.locationId = locationId;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public VehicleType getVehicleTypeId() {

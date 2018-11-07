@@ -3,7 +3,6 @@ package com.example.demo.component.policy;
 import com.example.demo.component.vehicleType.VehicleType;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,26 +12,28 @@ public class Policy implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "allowed_parking_from")
-    private long allowedParkingFrom;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "allowed_parking_to")
-    private long allowedParkingTo;
-    @JoinTable(name = "tbl_policy_has_tbl_vehicle_type", joinColumns = {
-            @JoinColumn(name = "tbl_policy_id", referencedColumnName = "id")}, inverseJoinColumns = {
-            @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")})
-    @ManyToMany
-    private List<VehicleType> vehicleTypeList;
-    @OneToMany(mappedBy = "policyId")
-    private List<PolicyInstance> policyInstanceList;
 
-    public Policy() {
-    }
+    @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false)
+    private VehicleType vehicleTypeId;
+
+    @JoinColumn(name = "tbl_time_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false)
+    private Time time;
+
+    @Basic(optional = false)
+    @Column(name = "tbl_location_id", nullable = false)
+    private Integer locationId;
+
+    @Basic(optional = false)
+    @Column(name = "min_hour", nullable = false)
+    private Integer minHour;
+
+    @JoinColumn(name = "tbl_policy_id")
+    @OneToMany
+    private List<Pricing> pricings;
 
     public Integer getId() {
         return id;
@@ -42,27 +43,43 @@ public class Policy implements Serializable {
         this.id = id;
     }
 
-    public long getAllowedParkingFrom() {
-        return allowedParkingFrom;
+    public VehicleType getVehicleTypeId() {
+        return vehicleTypeId;
     }
 
-    public void setAllowedParkingFrom(long allowedParkingFrom) {
-        this.allowedParkingFrom = allowedParkingFrom;
+    public void setVehicleTypeId(VehicleType vehicleTypeId) {
+        this.vehicleTypeId = vehicleTypeId;
     }
 
-    public long getAllowedParkingTo() {
-        return allowedParkingTo;
+    public Time getTime() {
+        return time;
     }
 
-    public void setAllowedParkingTo(long allowedParkingTo) {
-        this.allowedParkingTo = allowedParkingTo;
+    public void setTime(Time time) {
+        this.time = time;
     }
 
-    public List<VehicleType> getVehicleTypeList() {
-        return vehicleTypeList;
+    public Integer getLocationId() {
+        return locationId;
     }
 
-    public void setVehicleTypeList(List<VehicleType> vehicleTypeList) {
-        this.vehicleTypeList = vehicleTypeList;
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
+    }
+
+    public Integer getMinHour() {
+        return minHour;
+    }
+
+    public void setMinHour(Integer minHour) {
+        this.minHour = minHour;
+    }
+
+    public List<Pricing> getPricings() {
+        return pricings;
+    }
+
+    public void setPricings(List<Pricing> pricings) {
+        this.pricings = pricings;
     }
 }

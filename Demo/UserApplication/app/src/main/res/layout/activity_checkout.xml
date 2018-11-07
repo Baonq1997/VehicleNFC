@@ -13,9 +13,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
         android:layout_weight=".2"
         android:background="@drawable/cell_shape"
         android:gravity="center">
@@ -26,13 +26,13 @@
             android:gravity="center"
             android:orientation="vertical">
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đã đậu xe trong vòng"
                 android:textColor="#006699"
-                android:textSize="18dp" />
+                android:textSize="18dp"
+                android:textStyle="bold|italic" />
 
             <Chronometer
                 android:id="@+id/chroParking"
@@ -40,15 +40,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-10dp"
                 android:textColor="#000000"
-                android:textSize="50dp" />
+                android:textSize="40dp" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_weight=".7"
         android:background="@drawable/cell_shape"
         android:orientation="vertical"
@@ -59,22 +59,8 @@
             android:layout_height="match_parent"
             android:background="#fff"
             android:orientation="vertical"
-            android:padding="10dp"
             android:weightSum="1">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/lblOrderLocation"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/label_nor_height"
-                    android:gravity="center"
-                    android:text="Bi Cong  St, 1st District, HCM"
-                    android:textColor="#000000"
-                    android:textSize="19dp" />
-            </LinearLayout>
 
             <TableRow android:weightSum="1">
 
@@ -102,11 +88,12 @@
             <TableRow android:weightSum="1">
 
                 <TextView
+                    android:id="@+id/lblOrderLocation"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/label_nor_height"
                     android:layout_weight=".5"
                     android:gravity="center"
-                    android:text="Bắt đầu từ :"
+                    android:text="Quang trung"
                     android:textColor="#000000"
                     android:textSize="16dp" />
 
@@ -121,90 +108,86 @@
                     android:textSize="16dp" />
             </TableRow>
 
-
             <TableRow
                 android:layout_width="match_parent"
-                android:weightSum="1">
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:gravity="center">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/label_nor_height"
-                    android:layout_weight=".5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Tổng cộng :"
+                    android:text="Bảng Giá Chi Tiết"
                     android:textColor="#000000"
                     android:textSize="16dp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/lblTotal"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/label_nor_height"
-                    android:layout_weight=".5"
-                    android:gravity="center"
-                    android:text="190.000 vnđ"
-                    android:textColor="#000000"
-                    android:textSize="16dp"
-                    android:textStyle="bold" />
+                    android:textStyle="italic|bold" />
             </TableRow>
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:weightSum="1">
+            <TableRow>
 
                 <TextView
-                    android:id="@+id/txtFrom"
-                    android:layout_width="0dp"
+                    android:id="@+id/txtThongBao"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight=".25"
-                    android:gravity="left|center_vertical"
-                    android:textColor="#000"
-                    android:textSize="10dp" />
-
-                <TextView
-                    android:id="@+id/txtPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".35"
-                    android:gravity="right"
-                    android:text="Giá/giờ"
-                    android:textColor="#000"
+                    android:layout_marginLeft="15dp"
+                    android:gravity="left"
+                    android:text="Đỗ xe từ:"
+                    android:textColor="#000000"
                     android:textSize="16dp"
-                    android:textStyle="italic|bold" />
-
-                <TextView
-                    android:id="@+id/txtFee"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".4"
-                    android:gravity="right"
-                    android:text="Phí phạt/giờ"
-                    android:textColor="#000"
-                    android:textSize="16dp"
-                    android:textStyle="italic|bold" />
-            </LinearLayout>
+                    android:visibility="visible" />
+            </TableRow>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/listOrderPricing"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:scrollbarSize="5dp"
+                android:fadeScrollbars="false"
+                android:scrollbarThumbVertical="@color/colorPrimary"
+                android:scrollbars="vertical"
                 tools:ignore="NestedWeights"></android.support.v7.widget.RecyclerView>
 
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:gravity="center_vertical|end">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:paddingRight="2dp"
+                    android:text="Tổng cộng: "
+                    android:textColor="#000000"
+                    android:textSize="18dp"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:id="@+id/lblTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:text="50k"
+                    android:textColor="#000000"
+                    android:textSize="18dp"
+                    android:textStyle="bold|italic" />
+            </TableRow>
         </TableLayout>
+
     </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight=".1"
         android:background="@drawable/cell_shape"
         android:gravity="center">
@@ -213,6 +196,7 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textStyle="bold|italic"
             android:gravity="center"
             android:text="Sẵn sàng trả chỗ"
             android:textColor="#006699"

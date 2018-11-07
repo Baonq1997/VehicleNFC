@@ -2,7 +2,7 @@ package com.example.demo.component.location;
 
 
 import com.example.demo.component.order.Order;
-import com.example.demo.component.policy.PolicyInstance;
+import com.example.demo.component.policy.Policy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -25,19 +25,16 @@ public class Location implements Serializable {
     private String description;
     @Column(name = "is_activated")
     private Boolean isActivated;
-//    @JoinColumn(name = "tbl_location_id", nullable = false)
-//    @OneToMany
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "locationId")
-//    @Transient
-    private List<PolicyInstance> policyInstanceList;
-    //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblLocationId")
+
+    @JoinColumn(name = "tbl_location_id")
+    @OneToMany
+    private List<Policy> policies;
+
     @Transient
     private List<Order> orderList;
+
     @Transient
     private String isDelete;
-
-    public Location() {
-    }
 
     public Integer getId() {
         return id;
@@ -71,14 +68,6 @@ public class Location implements Serializable {
         isActivated = activated;
     }
 
-    public List<Order> getorderList() {
-        return orderList;
-    }
-
-    public void setTblOrderList(List<Order> orderList) {
-        this.orderList = orderList;
-    }
-
     public String getIsDelete() {
         return isDelete;
     }
@@ -87,12 +76,20 @@ public class Location implements Serializable {
         this.isDelete = isDelete;
     }
 
-    public List<PolicyInstance> getPolicyInstanceList() {
-        return policyInstanceList;
+    public List<Order> getOrderList() {
+        return orderList;
     }
 
-    public void setPolicyInstanceList(List<PolicyInstance> policyInstanceList) {
-        this.policyInstanceList = policyInstanceList;
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
+    }
+
+    public List<Policy> getPolicies() {
+        return policies;
+    }
+
+    public void setPolicies(List<Policy> policies) {
+        this.policies = policies;
     }
 }
 

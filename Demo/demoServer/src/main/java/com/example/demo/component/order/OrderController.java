@@ -1,5 +1,6 @@
 package com.example.demo.component.order;
 
+import com.example.demo.component.location.Location;
 import com.example.demo.config.AppConstant;
 import com.example.demo.config.SearchCriteria;
 import com.example.demo.component.user.User;
@@ -43,7 +44,9 @@ public class OrderController {
     @PostMapping(value = "/create")
     public ResponseEntity<Optional<Order>> create(@RequestBody Order order) {
         Map<String, String> registerTokenList = (Map<String, String>) servletContext.getAttribute("registerTokenList");
-        Optional<Order> transaction1 = orderService.createOrder(order.getUserId(), order.getLocationId(), registerTokenList);
+        User user = order.getUserId();
+        Location location = order.getLocation();
+        Optional<Order> transaction1 = orderService.createOrder(user, location, registerTokenList);
         return ResponseEntity.status(HttpStatus.CREATED).body(transaction1);
     }
 

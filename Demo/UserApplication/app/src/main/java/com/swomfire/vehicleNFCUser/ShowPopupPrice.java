@@ -33,7 +33,7 @@ import service.UserService;
 
 public class ShowPopupPrice extends Activity {
 
-    TextView txtTime, txtTotal,txtThongBao;
+    TextView txtTime, txtTotal, txtThongBao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,43 +63,23 @@ public class ShowPopupPrice extends Activity {
                         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM");
 
                         txtTime.setText(sdf.format(result.getCheckInDate()) + " đến " + sdf.format(result.getCheckOutDate()));
-                        txtTotal.setText("Tổng tiền: "+ UserService.convertMoney(result.getTotal()));
+                        txtTotal.setText("Tổng tiền: " + UserService.convertMoney(result.getTotal()));
 
                         List<OrderPricing> orderPricings = result.getOrderPricings();
                         int h = (int) (result.getDuration() / 3600000);
-                        int h2 = h;
-
-                        int m = (int) (result.getDuration() - h * 3600000) / 60000;
-
                         if (h < result.getMinHour()) {
                             txtThongBao.setVisibility(View.VISIBLE);
-                            txtThongBao.setText("Thời gian đỗ tối thiểu quy đinh là: "+ result.getMinHour() + " giờ");
-                            h = result.getMinHour();
+                            txtThongBao.setText("Thời gian đỗ tối thiểu quy đinh là: " + result.getMinHour() + " giờ");
                         } else {
 
                             txtThongBao.setVisibility(View.GONE);
                         }
-
-                        List<HourHasPrice> hourHasPrices = new ArrayList<>();
-
-                        while (h > 0) {
-                            hourHasPrices.add(new HourHasPrice(h, null));
-                            h--;
-                        }
-
-                        double lastPrice = 0;
-                        for (OrderPricing orderPricing : orderPricings) {
-                            if (orderPricing.getPricePerHour() > lastPrice) {
-                                lastPrice = orderPricing.getPricePerHour();
-                            }
-                            for (HourHasPrice hourHasPrice : hourHasPrices) {
-                                if (orderPricing.getFromHour() < hourHasPrice.getHour()) {
-                                    hourHasPrice.setPrice(orderPricing.getPricePerHour());
-                                }
-                            }
-                        }
+                        List<HourHasPrice> hourHasPrices = UserService.composeHourPrice(result.getDuration()
+                                , result.getCheckInDate(), result.getAllowedParkingFrom(), result.getAllowedParkingTo()
+                                , result.getMinHour(), result.getOrderPricings());
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listHistoryPricing);
-                        HistoryPricingAdapter historyPricingAdapter = new HistoryPricingAdapter(hourHasPrices, m, result.getCheckInDate(), result.getCheckOutDate());
+                        HistoryPricingAdapter historyPricingAdapter = new HistoryPricingAdapter(hourHasPrices
+                                , result.getCheckInDate(), result.getCheckOutDate(),R.layout.card_view_history_pricing);
                         GridLayoutManager gLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
                         recyclerView.setLayoutManager(gLayoutManager);
                         recyclerView.setItemAnimator(new DefaultItemAnimator());

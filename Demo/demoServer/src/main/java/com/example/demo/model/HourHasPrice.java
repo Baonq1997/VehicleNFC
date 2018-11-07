@@ -3,14 +3,26 @@ package com.example.demo.model;
 import java.util.List;
 
 public class HourHasPrice {
-    int hour;
-    Double price;
-    Double total;
-    Integer minutes;
+    private int hour;
+    private Double price;
+    private Double fine;
+    private Double total;
+    private Integer minutes;
+    private boolean isLate = false;
+    private boolean fullHour = true;
 
     public HourHasPrice(int hour, Double price) {
         this.hour = hour;
         this.price = price;
+    }
+
+    public HourHasPrice(int hour, Double price, Double fine, Double total, Integer minutes, boolean fullHour) {
+        this.hour = hour;
+        this.price = price;
+        this.fine = fine;
+        this.total = total;
+        this.minutes = minutes;
+        this.fullHour = fullHour;
     }
 
     public int getHour() {
@@ -54,9 +66,31 @@ public class HourHasPrice {
     }
 
     public static List<HourHasPrice> sort(List<HourHasPrice> hourHasPrices) {
-
         hourHasPrices.sort((o1, o2) -> o1.compare(o2));
-
         return hourHasPrices;
+    }
+
+    public Double getFine() {
+        return fine;
+    }
+
+    public void setFine(Double fine) {
+        this.fine = fine;
+    }
+
+    public boolean isFullHour() {
+        return fullHour;
+    }
+
+    public void setFullHour(boolean fullHour) {
+        this.fullHour = fullHour;
+    }
+
+    public boolean isLate() {
+        return isLate;
+    }
+
+    public void setLate(boolean late) {
+        isLate = late;
     }
 }

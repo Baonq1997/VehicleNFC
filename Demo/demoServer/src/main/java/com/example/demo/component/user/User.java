@@ -36,12 +36,12 @@ public class User implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @Basic(optional = false)
-    @Column(name = "tbl_vehicle_vehicle_number")
-    private String vehicleNumber;
-
-    @Transient
+    @JoinColumn(name = "tbl_vehicle_vehicle_number", referencedColumnName = "vehicle_number")
+    @ManyToOne(optional = false)
     private Vehicle vehicle;
+
+//    @Transient
+//    private Vehicle vehicle;
 
     @Basic(optional = false)
     @Column(name = "sms_noti")
@@ -106,13 +106,13 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getVehicleNumber() {
-        return vehicleNumber;
-    }
-
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
-    }
+//    public String getVehicleNumber() {
+//        return vehicleNumber;
+//    }
+//
+//    public void setVehicleNumber(String vehicleNumber) {
+//        this.vehicleNumber = vehicleNumber;
+//    }
 
     public Vehicle getVehicle() {
         return vehicle;

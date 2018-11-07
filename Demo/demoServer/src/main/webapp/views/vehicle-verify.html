@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div class="panel" id="main-content-vehicle-list">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Verify vehicles
+            </span>
+            <form action="search-user" id="search-box-user" method="post">
+                <select id="search-filter" class="form-control">
+                    <option value="vehicleNumber" selected="selected">Search By Vehicle Number</option>
+                    <option value="licensePlateId">Search By License Plate</option>
+                </select>
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 50%; float: left;"/>
+                <button class="btn btn-primary btnAction" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="content-list-table">
+            <div class="row">
+                <table class="table table-hover" id="user-table">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Vehicle Number</th>
+                        <th>License Id</th>
+                        <th>Vehicle Type</th>
+                        <th>Brand</th>
+                        <th>Size</th>
+                        <th>Expire</th>
+                        <th>Owner phone</th>
+                        <th colspan="3" style="text-align: center;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel" id="main-content-verify-form" style="display: none">
+    <div class="panel-body">
+        <form id="verify-vehicle-form" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="vehicleNumberShow" class="col-form-label">Vehicle Number:</label>
+                <input type="text" class="form-control" id="vehicleNumberShow"
+                       disabled
+                       value=""/>
+                <input type="hidden" class="form-control" id="vehicleNumber" name="vehicleNumber"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="licenseIdShow" class="col-form-label">License Id:</label>
+                <input type="text" class="form-control" id="licenseIdShow"
+                       disabled
+                       value=""/>
+                <input type="hidden" class="form-control" id="licenseId" name="licensePlateId"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="brand" class="col-form-label">Brand:</label>
+                <input type="text" class="form-control" id="brand" name="brand" required
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="size" class="col-form-label">Size:</label>
+                <input type="text" class="form-control" id="size" name="size" value="" required/>
+            </div>
+            <div class="form-group">
+                <label for="expireDate" class="col-form-label">Expire Date:</label>
+                <input id="datepicker" data-date-format="dd/mm/yyyy" class="form-control"
+                       onchange="setLongFromExpireDate('datepicker','expireDate')" required>
+                <input type="hidden" class="form-control" id="expireDate" name="expireDate"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label">VehicleType:</label>
+                <select class="form-control" id="vehicle-list" name="vehicleTypeId">
+
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-secondary" onclick="closeForm()">Close
+                </button>
+                <input type="submit" class="btn btn-primary" value="Save"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel" id="main-content-save-form" style="display: none">
+    <div class="panel-body">
+        <form id="save-vehicle-form" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="vehicleNumberShow" class="col-form-label">Vehicle Number:</label>
+                <input type="text" class="form-control" id="save-VehicleNumber" name="vehicleNumber" required
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="licenseIdShow" class="col-form-label">License Id:</label>
+                <input type="text" class="form-control" id="save-licenseId" name="licensePlateId" required
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="brand" class="col-form-label">Brand:</label>
+                <input type="text" class="form-control" id="save-brand" name="brand" required
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="size" class="col-form-label">Size:</label>
+                <input type="text" class="form-control" id="save-size" name="size" value="" required/>
+            </div>
+            <div class="form-group">
+                <label for="expireDate" class="col-form-label">Expire Date:</label>
+                <input id="save-datepicker" data-date-format="dd/mm/yyyy" class="form-control"
+                       onchange="setLongFromExpireDate('save-datepicker','save-expireDate')" required>
+                <input type="hidden" class="form-control" id="save-expireDate" name="expireDate"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label">VehicleType:</label>
+                <select class="form-control" id="save-vehicle-list" name="vehicleTypeId">
+
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-secondary" onclick="closeForm()">Close
+                </button>
+                <input type="submit" class="btn btn-primary" value="Save"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="deleteModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to delete this record ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="delete-vehicleNumber" onclick="deleteVehicle($(this).val())"
+                        class="btn btn-danger">Delete
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/vehicle-verify-management.js"></script>
+</body>
+</html>

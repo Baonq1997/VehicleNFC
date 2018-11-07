@@ -25,7 +25,7 @@ public class OrderPricing implements Serializable {
     @Column(name = "price_per_hour")
     private double pricePerHour;
     @Column(name = "late_fee_per_hour")
-    private Integer lateFeePerHour;
+    private Double lateFeePerHour;
 
     @Basic
     @Column(name = "tbl_order_id")
@@ -58,11 +58,11 @@ public class OrderPricing implements Serializable {
         this.pricePerHour = pricePerHour;
     }
 
-    public Integer getLateFeePerHour() {
+    public Double getLateFeePerHour() {
         return lateFeePerHour;
     }
 
-    public void setLateFeePerHour(Integer lateFeePerHour) {
+    public void setLateFeePerHour(Double lateFeePerHour) {
         this.lateFeePerHour = lateFeePerHour;
     }
 

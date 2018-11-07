@@ -51,7 +51,7 @@ public class Order {
     @Expose
     private int minHour;
 
-    @SerializedName("locationId")
+    @SerializedName("location")
     @Expose
     private Location location;
 

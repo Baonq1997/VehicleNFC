@@ -9,15 +9,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PricingRepository extends JpaRepository<Pricing, Integer> {
-    List<Pricing> findByPolicyInstanceHasTblVehicleTypeId(Integer policyInstanceHasTblVehicleType);
+    List<Pricing> findByPolicyId(Integer policyId);
 
-    @Query(value = "SELECT * FROM tbl_pricing WHERE tbl_policy_has_tbl_vehicle_type_id = :policyInstanceHasTblVehicleType"
-    ,nativeQuery = true)
-    List<Pricing> findPricingByPolicyInstanceVehicle(@Param("policyInstanceHasTblVehicleType") Integer policyInstanceHasTblVehicleType);
+    @Query(value = "SELECT * FROM tbl_pricing WHERE tbl_policy_id = :policyId"
+            , nativeQuery = true)
+    List<Pricing> findPricingByPolicyId(@Param("policyId") Integer policyInstanceHasTblVehicleType);
 
     @Modifying
     @Query(value = "DELETE FROM tbl_pricing WHERE id = :id",
-     nativeQuery = true)
+            nativeQuery = true)
     void deletePricingById(@Param("id") Integer id);
 //    @Modifying
 //    @Query(value = "DELETE FROM tbl_pricing WHERE id = :id", nativeQuery = true)
@@ -27,7 +27,7 @@ public interface PricingRepository extends JpaRepository<Pricing, Integer> {
 
 //    List<Pricing> findAllByPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleTypeId);\
 
-    void deleteByPolicyInstanceHasTblVehicleTypeId(Integer policyInstanceHasVehicleId);
+    void deleteByPolicyId(Integer policyId);
 //
 //    void deleteByPolicyHasTblVehicleTypeIdIn(List<Integer> listPolicyHasTblVehicleTypeId);
 }

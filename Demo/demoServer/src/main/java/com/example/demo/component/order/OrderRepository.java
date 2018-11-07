@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
-    Optional<Order> findByUserIdAndLocationId(User user, Location location);
+//    Optional<Order> findByUserIdAndLocationId(User user, Location location);
 
-    Optional<Order> findByUserIdAndLocationIdAndOrderStatusId(User user, Location location, OrderStatus orderStatus);
+    Optional<Order> findByUserIdAndLocationIdAndOrderStatusId(User user, Integer locationId, OrderStatus orderStatus);
 
     List<Order> findByUserIdOrderByCheckInDateDesc(User user);
 

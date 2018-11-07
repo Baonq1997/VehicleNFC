@@ -10,6 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" android:paddingLeft="5dp">
 
+        <TableRow>
+            <TextView
+                android:id="@+id/isLate"
+                android:text="Phí Phạt:"
+                android:textStyle="bold|italic"
+                android:layout_marginTop="-5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="#006699"
+                android:textSize="18dp"
+                android:visibility="gone" />
+        </TableRow>
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,6 +40,7 @@
                     android:id="@+id/txtFrom"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:textStyle="bold|italic"
                     android:layout_marginRight="5dp"
                     android:gravity="right"
                     android:text="3:11 "
@@ -40,6 +52,7 @@
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
                     android:text="đến"
+                    android:textStyle="bold|italic"
                     android:layout_marginRight="2dp"
                     android:textColor="#000"
                     android:textSize="16dp" />
@@ -48,6 +61,7 @@
                     android:id="@+id/txtTo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold|italic"
                     android:gravity="right"
                     android:paddingLeft="3dp"
                     android:text="14:11 21/10"
@@ -80,8 +94,7 @@
                 android:gravity="left"
                 android:text="15.000 vnđ"
                 android:textColor="#000"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textSize="18dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -90,8 +103,7 @@
                 android:gravity="center"
                 android:text="="
                 android:textColor="#000"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textSize="18dp" />
 
             <TextView
                 android:id="@+id/txtEnd"
@@ -102,8 +114,7 @@
                 android:paddingRight="15dp"
                 android:text="15.000 vnđ"
                 android:textColor="#000"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textSize="18dp" />
         </TableRow>
 
     </TableLayout>

@@ -17,78 +17,64 @@ public class PolicyController {
     public PolicyController(PolicyService policyService) {
         this.policyService = policyService;
     }
-    @GetMapping(value = {"/get/{id}"})
-    public ResponseEntity<?> getPolicyById(@PathVariable("id") Integer id){
-        try{
-            return ResponseEntity.status(HttpStatus.OK).body(policyService.getPolicyById(id));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found Policy");
-        }
-    }
-
-//    @GetMapping("/edit")
-//    public ModelAndView index(ModelAndView mav
-//                            , @RequestParam("policyInstanceId") Integer policyId
-//                            , @RequestParam("locationId") Integer locaitonId) {
-//        mav.setViewName("policy-edit");
-//        return mav;
-//    }
-
-    @GetMapping("/create")
-    public ModelAndView createPage(ModelAndView mav) {
-        mav.setViewName("policy-create");
-        return mav;
-    }
-
-
-    //Todo
-//    @PostMapping(value = "/create")
-//    public ResponseEntity createPolicy(@RequestBody PolicyView policyView) {
-//        try {
-//            Integer locationId = policyView.getLocationId();
-//            Policy policy = policyView.getPolicy();
-////            List<VehicleType> vehicleTypeList = policyView.getVehicleTypes();
-//
-////            return ResponseEntity.status(HttpStatus.OK).body(policyService.savePolicy(policy, vehicleTypeList, locationId));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        }
-//    }
-
-    //Todo
-//    @PostMapping(value = "/delete")
-//    public ResponseEntity deletePolicy(@RequestBody DeletePolicyObject deletePolicyObject) {
+    @GetMapping("/get-by-policy-vehicleType")
+    public ResponseEntity<?> getByPolicyAndVehicleType
+            (@RequestParam(value = "policyId") Integer policyID
+                    ,@RequestParam(value = "vehicleTypeId") Integer vehicleTypeId) {
+        // Todo
+        return null;
 //        try{
-//            Integer locationId = deletePolicyObject.getLocationId();
-//            Policy policy = deletePolicyObject.getPolicy();
-//            List<Integer> policyHasVehicleTypeIdList = deletePolicyObject.getPolicyHasVehicleTypeId();
-//            List<VehicleType> vehicleTypeList  = deletePolicyObject.getVehicleTypes();
-//            policyService.deletePolicy(locationId, policy, policyHasVehicleTypeIdList);
-//            return ResponseEntity.status(HttpStatus.OK).body("Success");
+//            return ResponseEntity.status(HttpStatus.OK).body(policyHasVehicleTypeService.findByPolicyAndVehicleType(policyID,vehicleTypeId));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found PolicyHasVehicleType");
+//        }
+    }
+
+    @GetMapping("/get-vehicleTypes/{id}")
+    public ResponseEntity<?> getByPolicyID(@PathVariable("id") Integer id) {
+        // Todo
+//        try {
+//            return ResponseEntity.status(HttpStatus.OK).body(policyHasVehicleTypeService.findByPolicyId(id));
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found PolicyHasVehicleType");
 //        }
+        return null;
+    }
+    @PostMapping("/get-vehicleTypes-byPolicies")
+    public ResponseEntity<?> getByListPolicy(@RequestBody List<Policy> policyList) {
+        return null;
+        //Todo
+//        try {
+//            return ResponseEntity.status(HttpStatus.OK).body(policyHasVehicleTypeService.findByPolicyList(policyList));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not load PolicyHasVehicleType");
+//        }
+    }
+
+    //Todo
+//    @PostMapping("/save")
+//    public String save(@RequestBody PolicyHasTblVehicleType policyHasTblVehicleType) {
+//            policyHasVehicleTypeService.save(policyHasTblVehicleType);
+//            return "Success";
 //    }
 
-    @PostMapping(value = "/delete-by-location-policy")
-    public ResponseEntity deleteByLocationIdAndId(@RequestParam("locationId") Integer locationId
-                                                , @RequestParam("policyId") Integer policyId) {
-        policyService.deleteByIdAndLocationId(locationId, policyId);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+    //Todo
+//    @PostMapping("/delete")
+//    public String delete(@RequestBody PolicyHasTblVehicleType policyHasTblVehicleType) {
+//        policyHasVehicleTypeService.delete(policyHasTblVehicleType);
+//        return "Success";
+//    }
 
-    @GetMapping(value = "/policies")
-    public ResponseEntity getAllPolicies() {
-       List<Policy> policyList =policyService.getAllPolicies();
-       if (policyList.isEmpty()) {
-           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Could not load polices");
-       } else {
-           return ResponseEntity.status(HttpStatus.OK).body(policyList);
-       }
+    @GetMapping("/get-by-policy")
+    public ResponseEntity getByPolicy(@RequestParam("policyId") Integer policyId) {
+        // TOdo
+        return null;
+//        List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeService.findListByPolicyId(policyId);
+//        if (policyHasTblVehicleTypes.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body(policyHasTblVehicleTypes);
     }
-
 
 }

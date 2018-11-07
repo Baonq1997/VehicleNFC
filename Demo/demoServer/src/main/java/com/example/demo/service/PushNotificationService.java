@@ -103,6 +103,8 @@ public class PushNotificationService {
             System.out.println(response);
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Cannot send notification");
         }
     }
 
@@ -115,12 +117,12 @@ public class PushNotificationService {
 
                 String date = simpleDateFormat.format(new Date(order.getCheckInDate()));
 
-                body += "Bắt đầu đậu xe tại: " + order.getLocationId().getLocation() + "\n";
+                body += "Quý khách đậu xe tại: " + order.getLocation().getPolicies() + "\n";
                 body += "Vào lúc: " + date + "\n";
                 body += "Bảng giá cho loại xe: " + order.getVehicleTypeId().getName() + "\n";
                 for (OrderPricing orderPricing : order.getOrderPricingList()) {
-                    body += (orderPricing.getFromHour() == 0) ? "Từ Giờ đầu: " + convertMoneyNoVND(orderPricing.getPricePerHour()) + "VNĐ/h\n"
-                            : "Từ giờ thứ " + orderPricing.getFromHour() + ": " + convertMoneyNoVND(orderPricing.getPricePerHour()) + "VNĐ/h\n";
+                    body += (orderPricing.getFromHour() == 0) ? "Từ Giờ đầu: " + convertMoneyNoVND(orderPricing.getPricePerHour()) + " VNĐ/h\n"
+                            : "Từ giờ thứ " + orderPricing.getFromHour() + ": " + convertMoneyNoVND(orderPricing.getPricePerHour()) + " VNĐ/h\n";
                 }
             } else if (title.equals(NotificationEnum.CHECK_OUT.getTitle())) {
                 String pattern = "HH:mm dd-MM-yyyy";
@@ -129,9 +131,9 @@ public class PushNotificationService {
                 String checkInDate = simpleDateFormat.format(new Date(order.getCheckInDate()));
                 String checkOutDate = simpleDateFormat.format(new Date(order.getCheckOutDate()));
 
-                body += "Rời nơi đậu xe: " + order.getLocationId().getLocation() + "\n";
+                body += "Quý khách rời nơi đậu xe: " + order.getLocation().getLocation() + "\n";
                 body += "Thời gian đậu Từ: " + checkInDate + " đến: " + checkOutDate + "\n";
-                body += "Phí đậu xe: " + convertMoneyNoVND(order.getTotal()) + "VNĐ\n";
+                body += "Phí đậu xe: " + convertMoneyNoVND(order.getTotal()) + " VNĐ\n";
             }
         }
         return body;
@@ -164,11 +166,11 @@ public class PushNotificationService {
     }
 
     public static String convertMoneyNoVND(double money) {
-        String base = (long) money * 1000 + "";
+        String base = (long) money + "";
         String[] strings = base.split("");
         String result = "";
         int count = 0;
-        for (int i = strings.length - 1; i > 0; i--) {
+        for (int i = strings.length - 1; i >= 0; i--) {
             count++;
             result = strings[i] + result;
             if (count == 3) {
@@ -178,6 +180,6 @@ public class PushNotificationService {
                 }
             }
         }
-        return result;
+        return result + "K";
     }
 }

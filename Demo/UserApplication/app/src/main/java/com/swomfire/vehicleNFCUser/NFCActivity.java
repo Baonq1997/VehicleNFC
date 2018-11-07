@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 
 import Util.RmaAPIUtils;
+import adapter.HistoryPricingAdapter;
 import adapter.OrderPricingAdapter;
 import model.HourHasPrice;
 import model.NotificationSerial;
@@ -77,7 +78,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         token = FirebaseInstanceId.getInstance().getToken();
         SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
         String phoneNumber = prefs.getString("phoneNumberSignIn", "1");
-        sendTokenToServer(token,phoneNumber);
+        sendTokenToServer(token, phoneNumber);
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
 
@@ -117,48 +118,48 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         startActivity(intent);
     }
 
-    public void updatePrice(int h, int m, Order order) {
+    public void updatePrice(long duration, Order order) {
         //TODO update price after every chrono tick.
         List<OrderPricing> orderPricings = order.getOrderPricings();
         lblTotal = findViewById(R.id.lblTotal);
+        TextView txtThongBao = findViewById(R.id.txtThongBao);
+        List<HourHasPrice> hourHasPrices = UserService.composeHourPrice(duration
+                , order.getCheckInDate(), order.getAllowedParkingFrom(), order.getAllowedParkingTo(), order.getMinHour(), orderPricings);
+
         double totalPrice = 0;
-        List<HourHasPrice> hourHasPrices = new ArrayList<>();
-        if (h < order.getMinHour()) {
-            h = order.getMinHour();
-            m = 0;
-        }
-
-        while (h > 0) {
-            hourHasPrices.add(new HourHasPrice(h, null));
-            h--;
-        }
-
-        double lastPrice = 0;
-        for (OrderPricing orderPricing : orderPricings
-                ) {
-            if (orderPricing.getPricePerHour() > lastPrice) {
-                lastPrice = orderPricing.getPricePerHour();
-            }
-            for (HourHasPrice hourHasPrice : hourHasPrices) {
-                if (orderPricing.getFromHour() < hourHasPrice.getHour()) {
-                    hourHasPrice.setPrice(orderPricing.getPricePerHour());
-                }
+        for (HourHasPrice hourHasPrice : hourHasPrices) {
+            double money = (hourHasPrice.isLate()) ? hourHasPrice.getFine() : hourHasPrice.getPrice();
+            if (hourHasPrice.isFullHour()) {
+                totalPrice += money;
+            } else {
+                totalPrice += Math.ceil(money * ((double) hourHasPrice.getMinutes() / 60));
             }
         }
 
-        for (
-                HourHasPrice hourHasPrice : hourHasPrices
-                ) {
-            totalPrice += hourHasPrice.getPrice();
-        }
-
-        totalPrice += lastPrice * ((double) m / 60);
         try {
             lblTotal.setText(UserService.convertMoney(totalPrice));
-        } catch (NullPointerException e) {}
+        } catch (NullPointerException e) {
+        }
+        int h = (int) (duration / 3600000);
+        if (h < order.getMinHour()) {
+            txtThongBao.setVisibility(View.VISIBLE);
+            txtThongBao.setText("Thời gian đỗ tối thiểu quy đinh: " + order.getMinHour() + " giờ");
+        } else {
+
+            txtThongBao.setVisibility(View.GONE);
+        }
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listOrderPricing);
+        HistoryPricingAdapter historyPricingAdapter = new HistoryPricingAdapter(hourHasPrices
+                , order.getCheckInDate(), order.getCheckInDate() + duration, R.layout.card_view_history_pricing_small);
+        GridLayoutManager gLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        recyclerView.setLayoutManager(gLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(historyPricingAdapter);
     }
 
     TextView lblTotal;
+
+    private int minutes = -1;
 
     private void setUpChrono(Order order) {
         System.out.println(new Date().getTime());
@@ -170,7 +171,10 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
             String timeString = (blink) ? String.format("%02d %02d", h, m) : String.format("%02d:%02d", h, m);
             blink = !blink;
             chronometer.setText(timeString);
-            updatePrice(h, m, order);
+            if (minutes != m) {
+                updatePrice(time, order);
+                minutes = m;
+            }
         });
         parkingChorno.start();
     }
@@ -250,23 +254,15 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         lblVehicleType = findViewById(R.id.lblUserVehicleType);
         lblCheckInDate = findViewById(R.id.lblCheckin);
 
-        String pattern = "HH:mm dd-MM-yyyy";
+        String pattern = "HH:mm dd/MM";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
         String date = simpleDateFormat.format(new Date(order.getCheckInDate()));
-
         lblCheckInDate.setText(date);
         lblLocation.setText(order.getLocation().getLocation());
 
         lblVehicleNumber.setText(order.getUser().getVehicle().getVehicleNumber());
         lblVehicleType.setText(order.getUser().getVehicle().getVehicleTypeId().getName());
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listOrderPricing);
-        OrderPricingAdapter orderPricingAdapter = new OrderPricingAdapter(order.getOrderPricings());
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this, 1);
-        recyclerView.setLayoutManager(gLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(orderPricingAdapter);
     }
 
     @Override
@@ -300,9 +296,9 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         pause = true;
     }
 
-    public void sendTokenToServer(String token, String phoneNumber){
+    public void sendTokenToServer(String token, String phoneNumber) {
         RmaAPIService mService = RmaAPIUtils.getAPIService();
-        mService.sendDeviceTokenToServer(token,phoneNumber).enqueue(new Callback<Boolean>() {
+        mService.sendDeviceTokenToServer(token, phoneNumber).enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()) {

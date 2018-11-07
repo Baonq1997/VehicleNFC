@@ -1,138 +1,81 @@
 package com.example.demo.component.policy;
 
-import com.example.demo.component.location.LocationRepository;
-import com.example.demo.component.policy.Policy;
-import com.example.demo.component.policy.PolicyInstanceRepository;
 import com.example.demo.component.policy.PolicyRepository;
 import com.example.demo.component.policy.PricingRepository;
-import com.example.demo.component.vehicleType.VehicleType;
+import com.example.demo.component.vehicleType.VehicleTypeRepository;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PolicyService {
-
     private final PolicyRepository policyRepository;
-//    private final PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository;
-    private final LocationRepository locationRepository;
+    private final VehicleTypeRepository vehicleTypeRepository;
     private final PricingRepository pricingRepository;
-    private final PolicyInstanceRepository policyInstanceRepository;
 
-    public PolicyService(PolicyRepository policyRepository, LocationRepository locationRepository, PricingRepository pricingRepository, PolicyInstanceRepository policyInstanceRepository) {
+    public PolicyService(PolicyRepository policyRepository, VehicleTypeRepository vehicleTypeRepository, PricingRepository pricingRepository) {
         this.policyRepository = policyRepository;
-        this.locationRepository = locationRepository;
+        this.vehicleTypeRepository = vehicleTypeRepository;
         this.pricingRepository = pricingRepository;
-        this.policyInstanceRepository = policyInstanceRepository;
-    }
-
-    public Optional<Policy> getPolicyById(Integer policyId) {
-        return policyRepository.findById(policyId);
-    }
-
-    public List<Policy> getAllPolicies() {
-        return policyRepository.findAll();
     }
 
     //Todo
-    @Transactional
-    public Policy savePolicy(Policy policy, List<VehicleType> vehicleTypeList, Integer locationId) {
-
-//        Policy policyDB = new Policy();
-//        if (policy.getId() == 0) {
-//            // create
-//            policyDB = policyRepository.save(policy);
-//            Location location = locationRepository.findById(locationId).get();
-//            List<Policy> policyList = location.getPolicyList();
-//            policyList.add(policyDB);
-//            location.setPolicyList(policyList);
-//            locationRepository.save(location);
-//
-//        } else {
-//            policyDB = policyRepository.findById(policy.getId()).get();
-//            if (policyDB != null) {
-//                policyDB.setAllowedParkingFrom(policy.getAllowedParkingFrom());
-//                policyDB.setAllowedParkingTo(policy.getAllowedParkingTo());
-//                policyRepository.save(policyDB);
-//            }
+//    public List<PolicyHasTblVehicleType> findByPolicyId(Integer policyId) {
+//        Policy policy = policyRepository.findById(policyId).get();
+//        List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findByPolicyId(policy.getId());
+////        for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
+////            policyHasTblVehicleType.setPricings(pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleType));
+////        }
+//        for (int i = 0; i < policyHasTblVehicleTypes.size(); i++) {
+//            PolicyHasTblVehicleType policyHasTblVehicleType = policyHasTblVehicleTypes.get(i);
+//            policyHasTblVehicleType.setPricings(pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId()));
+//            policyHasTblVehicleTypes.set(i,policyHasTblVehicleType);
 //        }
+//        return policyHasTblVehicleTypes;
+//    }
+
+//    public Optional<PolicyHasTblVehicleType> findByPolicyAndVehicleType(Integer policyId, Integer vehicleTypeId) {
+//        Policy policy = policyRepository.findById(policyId).get();
+//        VehicleType vehicleType = vehicleTypeRepository.findById(vehicleTypeId).get();
+//
+//        PolicyHasTblVehicleType policyHasTblVehicleType=  policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policy.getId(), vehicleType).get();
+//        List<Pricing> pricing = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId());
+//        policyHasTblVehicleType.setPricings(pricing);
+//        return Optional.of(policyHasTblVehicleType);
+//    }
+        //Todo
+//    public List<PolicyHasTblVehicleType> findByPolicyList(List<Policy> policyList) {
+//        return policyHasVehicleTypeRepository.findByPolicyIdIn(policyList);
+//    }
+
+    //Todo
+//    public void save(PolicyHasTblVehicleType policyHasTblVehicleType) {
+//        Policy policy = policyRepository.getOne(policyHasTblVehicleType.getPolicyId());
+//        VehicleType vehicleType = policyHasTblVehicleType.getVehicleTypeId();
+//        policyRepository.save(policy);
+//        vehicleTypeRepository.save(vehicleType);
+//        policyHasVehicleTypeRepository.save(policyHasTblVehicleType);
+//    }
+
+    //Todo
+//    @Transactional
+//    public void delete(PolicyHasTblVehicleType policyHasTblVehicleType) {
+//        Policy policy = policyRepository.getOne(policyHasTblVehicleType.getPolicyId());
+//        VehicleType vehicleType = policyHasTblVehicleType.getVehicleTypeId();
+//        pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId());
+//        policyHasVehicleTypeRepository.deleteById(policyHasTblVehicleType.getId());
+////        policyRepository.delete(policy);
+////        vehicleTypeRepository.delete(vehicleType);
+//    }
+
+    //Todo
+//    public List<PolicyHasTblVehicleType> findListByPolicyId(Integer policyId) {
+//        Policy policy = policyRepository.findById(policyId).get();
+//        List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findByPolicyId(policyId);
 //        List<PolicyHasTblVehicleType> policyHasTblVehicleTypeList = new ArrayList<>();
-//        List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findByPolicyId(policyDB.getId());
-//        for (int i = 0; i < vehicleTypeList.size(); i++) {
-//            if (policyHasTblVehicleTypes.size() == 0) {
-//                PolicyHasTblVehicleType policyHasTblVehicleType1 = new PolicyHasTblVehicleType();
-//                policyHasTblVehicleType1.setPolicyId(policyDB.getId());
-//                policyHasTblVehicleType1.setVehicleTypeId(vehicleTypeList.get(i));
-//                policyHasVehicleTypeRepository.saveAndFlush(policyHasTblVehicleType1);
-//            } else {
-//                if (vehicleTypeList.get(i).getIsDelete().equalsIgnoreCase("true")) {
-//                    PolicyHasTblVehicleType instance = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i)).get();
-//                    List<Pricing> pricing = pricingRepository.findAllByPolicyHasTblVehicleTypeId(instance.getId());
-//                    if (!pricing.isEmpty()) {
-//                        pricingRepository.deleteByPolicyHasTblVehicleTypeId(instance.getId());
-//                    }
-//                    policyHasVehicleTypeRepository.deletePolicyHasVehicleById(instance.getId());
-////                    break;
-//                } else {
-//                    Optional<PolicyHasTblVehicleType> policyHasTblVehicleType1 = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i));
-//                    if (!policyHasTblVehicleType1.isPresent()) {
-//                        PolicyHasTblVehicleType dto =  new PolicyHasTblVehicleType();
-//                        dto.setPolicyId(policyDB.getId());
-//                        dto.setVehicleTypeId(vehicleTypeList.get(i));
-//                        policyHasVehicleTypeRepository.saveAndFlush(dto);
-//                    }
-//
-//                }
-//            }
+//        for (PolicyHasTblVehicleType policyHasTblVehicleType: policyHasTblVehicleTypes) {
+//            List<Pricing> pricings = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId());
+//            policyHasTblVehicleType.setPricings(pricings);
+//            policyHasTblVehicleTypeList.add(policyHasTblVehicleType);
 //        }
-//        return policyDB;
-        return null;
-    }
-
-    //Todo
-    @Transactional
-    public void deletePolicy(Integer locationId, Policy policy, List<Integer> policyHasVehicleTypeId) {
-//        if (!policyHasVehicleTypeId.isEmpty()) {
-//            pricingRepository.deleteByPolicyHasTblVehicleTypeIdIn(policyHasVehicleTypeId);
-//        }
-//
-//        for (int i = 0; i < policyHasVehicleTypeId.size(); i++) {
-//            Optional<PolicyHasTblVehicleType> policyHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId.get(i));
-//            if (policyHasTblVehicleType.isPresent()) {
-//                policyHasVehicleTypeRepository.delete(policyHasTblVehicleType.get());
-//            }
-//
-//        }
-//        if (locationId != null) {
-//            Location location = locationRepository.findById(locationId).get();
-//            locationRepository.deleteLocationPolicyByPolicyId(policy.getId());
-//        }
-//
-//        policyRepository.delete(policy);
-    }
-
-    //Todo
-    @Transactional
-    public void deleteByIdAndLocationId (Integer locationId, Integer policyId) {
-//        Optional<Location> locationOpt = locationRepository.findById(locationId);
-//        Optional<Policy> policyOpt = policyRepository.findById(policyId);
-//        if (locationOpt.isPresent() && policyOpt.isPresent()) {
-//            Location location = locationOpt.get();
-//            Policy policy = policyOpt.get();
-//            List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findByPolicyId(policy.getId());
-//            for (PolicyHasTblVehicleType policyHasTblVehicleType: policyHasTblVehicleTypes) {
-//                pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId());
-//                policyHasVehicleTypeRepository.deleteById(policyHasTblVehicleType.getId());
-//            }
-//            locationRepository.deleteLocationPolicyByPolicyId(policy.getId());
-//            policyRepository.delete(policy);
-//        }
-    }
-
-    public List<Policy> getPolicies() {
-        List<Policy> policyList = policyRepository.findAll();
-    return policyList;
-    }
+//        return policyHasTblVehicleTypeList;
+//    }
 }

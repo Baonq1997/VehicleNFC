@@ -112,9 +112,8 @@ public class UserController {
     }
 
     @PostMapping("/update-user-sms")
-    public String updateUserSms(@RequestBody User user) {
-        userService.updateUserSmsNoti(user);
-        return "Success";
+    public ResponseEntity<Optional<User>> updateUserSms(@RequestBody User user) {
+        return status(OK).body(userService.updateUserSmsNoti(user));
     }
 
     @PostMapping("/delete-user")
@@ -141,6 +140,18 @@ public class UserController {
         return mav;
     }
 
+    @GetMapping("/get-verify")
+    public ModelAndView verify(ModelAndView mav) {
+        mav.setViewName("user-verify");
+        return mav;
+    }
+
+    @GetMapping("/get-create")
+    public ModelAndView create(ModelAndView mav) {
+        mav.setViewName("user-create");
+        return mav;
+    }
+
     @PostMapping(value = "/login")
     public ResponseEntity<Optional<User>> create(@Param("phone") String phone, @Param("password") String password) {
         Optional<User> result = userService.login(phone, password);
@@ -151,7 +162,7 @@ public class UserController {
     }
 
     @PostMapping("/search-user")
-    public ResponseEntity<ResponseObject> searchUser(@RequestBody SearchCriteria params
+    public ResponseEntity<ResponseObject> searchUser(@RequestBody List<SearchCriteria> params
             , @RequestParam(defaultValue = "0") Integer page) {
         ResponseObject response = new ResponseObject();
         response.setData(userService.searchUser(params, page, PaginationEnum.userPageSize.getNumberOfRows()));
@@ -217,7 +228,7 @@ public class UserController {
             registerTokenList = new HashMap<>();
         }
         registerTokenList.put(phoneNumber, token);
-        System.err.println("Token: "+ phoneNumber+", " +token);
+        System.err.println("Token: " + phoneNumber + ", " + token);
         servletContext.setAttribute("registerTokenList", registerTokenList);
         return ResponseEntity.status(OK).body(true);
     }
