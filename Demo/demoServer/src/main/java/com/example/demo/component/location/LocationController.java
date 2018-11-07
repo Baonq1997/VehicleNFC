@@ -1,11 +1,14 @@
 package com.example.demo.component.location;
 
 import com.example.demo.config.ResponseObject;
+import com.example.demo.config.SearchCriteria;
 import com.example.demo.view.AddLocationObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/location")
@@ -60,4 +63,5 @@ public class LocationController {
     public ResponseEntity getLocationsByPolicy(@RequestParam("policyId") Integer policyId) {
         return ResponseEntity.status(HttpStatus.OK).body(locationService.getLocationsByPolicyId(policyId));
     }
+
 }

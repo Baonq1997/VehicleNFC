@@ -7,6 +7,7 @@ import java.util.List;
 
 public class AddLocationObject implements Serializable {
     private Integer policyId;
+    private List<Location> currentLocationId;
     private List<Location> locationArr;
 
     public AddLocationObject() {
@@ -31,5 +32,13 @@ public class AddLocationObject implements Serializable {
 
     public void setLocationArr(List<Location> locationArr) {
         this.locationArr = locationArr;
+    }
+
+    public List<Location> getCurrentLocationId() {
+        return currentLocationId;
+    }
+
+    public void setCurrentLocationId(List<Location> currentLocationId) {
+        this.currentLocationId = currentLocationId;
     }
 }

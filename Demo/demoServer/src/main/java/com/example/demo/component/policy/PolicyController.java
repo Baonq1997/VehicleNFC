@@ -41,11 +41,7 @@ public class PolicyController {
         return mav;
     }
 
-    @GetMapping("/index")
-    public ModelAndView index(ModelAndView mav) {
-        mav.setViewName("policies");
-        return mav;
-    }
+
     //Todo
 //    @PostMapping(value = "/create")
 //    public ResponseEntity createPolicy(@RequestBody PolicyView policyView) {

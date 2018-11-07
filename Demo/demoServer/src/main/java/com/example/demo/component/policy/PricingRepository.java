@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PricingRepository extends JpaRepository<Pricing, Integer> {
-    List<Pricing> findByPolicyInstanceHasTblVehicleTypeId(PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType);
+    List<Pricing> findByPolicyInstanceHasTblVehicleTypeId(Integer policyInstanceHasTblVehicleType);
 
     @Query(value = "SELECT * FROM tbl_pricing WHERE tbl_policy_has_tbl_vehicle_type_id = :policyInstanceHasTblVehicleType"
     ,nativeQuery = true)

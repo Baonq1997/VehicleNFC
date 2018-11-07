@@ -18,16 +18,13 @@ $(document).ready(function () {
     // var vehicleTypeIdStr = paramArr[1];
     // var vehicleTypeId = vehicleTypeIdStr.slice(vehicleTypeIdStr.indexOf("=") + 1, vehicleTypeIdStr.indexOf("=") + 2);
     // console.log(vehicleTypeId);
-    // parseTimeToLong();
-    var locationIdStr = paramArr[1];
-    var locationId = locationIdStr.slice(locationIdStr.indexOf("=") + 1, locationIdStr.indexOf("=") + 2);
-    // loadPolicy(policyId, vehicleTypeId);
+    // // parseTimeToLong();
+    // var locationIdStr = paramArr[1];
+    // var locationId = locationIdStr.slice(locationIdStr.indexOf("=") + 1, locationIdStr.indexOf("=") + 2);
+
     loadPolicy(policyInstanceId);
-    // addPricing();
     savePolicyHasVehicleType(policyInstanceId);
     deletePolicy(policyInstanceId);
-    // loadVehicleTypes(policyInstanceId);
-    // savePolicyHasVehicleType(locationId);
     submitPricing();
     $('.clockpickerFrom').clockpicker({
         placement: 'bottom',
@@ -101,7 +98,6 @@ function loadData(data) {
                     '</li>';
                 tabPanes += ' <div class="tab-pane container" id="vehicle-' + data[i].vehicleTypeId.id + '"></div>';
             }
-
         }
         navTabs += '</ul>';
         $('.pricing-container').append(navTabs);
@@ -126,8 +122,6 @@ function loadData(data) {
                     $('#pricing-vehicle-' + vehicleId + ' tbody').append(row);
                 }
             }
-
-            console.log(vehicleId);
         }
     }
 }
@@ -175,7 +169,6 @@ function submitPricing() {
             url: frm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicleId,
             data: frm.serialize(),
             success: function (data) {
-
                 console.log("Add Successfully");
                 console.log(data);
                 $('#savePricingModal').modal('hide');
@@ -279,7 +272,7 @@ function deleteModal(pricingId, policyInstanceVehicleId) {
         e.preventDefault();
         $.ajax({
             type: frm.attr('method'),
-            url: frm.attr('action') + "?id=" + pricingId + "&policyInstanceVehicleId="+policyInstanceVehicleId,
+            url: frm.attr('action') + "?id=" + pricingId,
             success: function (res) {
                 console.log(res);
                 $('#deleteModal').modal('hide');
@@ -515,7 +508,7 @@ function convertMoney(money) {
 }
 function convertDate(dateTypeLong) {
     if (dateTypeLong === undefined) {
-        return "Please Choose Time";
+        return "N/A";
     }
     var defaultYear = 1970;
     var defaultMonth = 1;

@@ -20,7 +20,7 @@ public class PolicyInstanceHasTblVehicleType implements Serializable {
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "policyInstanceHasTblVehicleTypeId")
     private List<Pricing> pricingList;
 
-    @Basic(optional = false)
+//    @Basic(optional = false)
     @Column(name = "tbl_policy_instance_id", nullable = false)
     private Integer policyInstanceId;
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)

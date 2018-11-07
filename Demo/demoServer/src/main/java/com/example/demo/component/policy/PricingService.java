@@ -45,7 +45,7 @@ public class PricingService {
         return null;
     }
 
-    public void save(Pricing pricing, Integer policyInstanceHasTblVehicleType) {
+    public Pricing  save(Pricing pricing, Integer policyInstanceHasTblVehicleType) {
 //        PolicyInstanceHasTblVehicleType instance = policyInstanceHasVehicleTypeRepository.findById(policyInstanceHasTblVehicleType).get();
 //        boolean existed = false;
 //        if (instance != null) {
@@ -63,14 +63,14 @@ public class PricingService {
 //                instance.setPricingList(pricingList);
 //            }
 //            policyInstanceHasVehicleTypeRepository.save(instance);
-        pricing.setPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType);
-            pricingRepository.save(pricing);
+              pricing.setPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType);
+            return pricingRepository.save(pricing);
         }
 //        return pricingRepository.save(pricing);
 
 
     @Transactional
-    public void deletePricing(Integer id, Integer policyInstanceHasTblVehicleType) {
+    public void deletePricing(Integer id) {
         Optional<Pricing> pricing = pricingRepository.findById(id);
         if (pricing.isPresent()) {
             pricingRepository.deletePricingById(pricing.get().getId());

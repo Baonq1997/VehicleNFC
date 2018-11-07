@@ -6,6 +6,7 @@ var tabs = "";
 var policyId = 0;
 $(document).ready(function () {
     // addPricing();
+    localStorage.clear();
     submitPricing();
     // submitPricing();
     loadVehicleTypes();
@@ -142,9 +143,10 @@ function savePolicyVehicle(locationId) {
                 console.log("Save successfully");
                 console.log(data);
                 $('#policyId').val(data.id);
+                $('.pricing-container').show();
                 $('.pricing-container').empty();
                 $('.button-wrapper').show();
-                $('.pricing-container').show();
+
                 policyId = data.id;
                 createPricingTabs(data.id);
                 $('#vehicleTypeArr').empty();
@@ -156,11 +158,11 @@ function savePolicyVehicle(locationId) {
     });
 }
 
-function createPricingTabs(policyId) {
+function createPricingTabs(policyInstanceId) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/policy-vehicleType/get-by-policy?policyId=' + policyId,
+        url: 'http://localhost:8080/policy-instance-vehicle/policy-instance-vehicles?policyInstanceId='+policyInstanceId,
         success: function (data) {
             let navTabs = '<ul class="nav nav-tabs">';
             let tabPanes = '<div class="tab-content">'
@@ -208,12 +210,14 @@ function createTable(vehicleTypeId, policyHasVehicleTypeId) {
         '                                        <th>From Hour:</th>\n' +
         '                                        <th>Price Per Hour</th>\n' +
         '                                        <th>Late Fee Per Hour</th>\n' +
+        '                                        <th colspan="2">Action</th>\n' +
         '                                    </tr>\n' +
         '                                    </thead>\n' +
         '                                    <tbody>\n' +
         '\n' +
         '                                    </tbody>\n' +
         '                                </table>';
+
 
     var tableData = btnAddPricing + table;
     $('#vehicle-' + vehicleTypeId).append(btnAddPricing);
@@ -321,7 +325,7 @@ function savePricing(policyHasVehicleTypeId, vehicleTypeId, pricingId) {
             fromHour: $('#updatePricingModal #fromHour').val(),
             pricePerHour: $('#updatePricingModal #pricePerHour').val(),
             lateFeePerHour: $('#updatePricingModal #lateFeePerHour').val(),
-            policyHasTblVehicleTypeId: policyHasVehicleTypeId
+             policyInstanceHasTblVehicleTypeId: policyHasVehicleTypeId
         }
 
         var pricingJson = JSON.parse(localStorage.getItem('pricingList-'+vehicleTypeId));
@@ -329,7 +333,7 @@ function savePricing(policyHasVehicleTypeId, vehicleTypeId, pricingId) {
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             type: 'POST',
-            url: 'http://localhost:8080/pricing/save-pricing-json',
+            url: 'http://localhost:8080/pricing/save-pricing-json?policyInstanceVehicleId='+policyHasVehicleTypeId,
             data: JSON.stringify(pricingObject),
             success: function (res) {
                 console.log(res);
@@ -354,6 +358,7 @@ function submitPricing() {
     var frm = $('#save-pricing');
     frm.submit(function (e) {
         var vehicleTypeId  = $('#save-pricing #vehicleTypeId').val();
+        var policyInstanceVehicle = $('#save-pricing #policyHasTblVehicleTypeId').val();
         console.log("SubmitPricing - VehicleTypeId: "+vehicleTypeId);
         var pricings = [];
         if (localStorage.getItem('pricingList-'+vehicleTypeId) != null){
@@ -362,8 +367,8 @@ function submitPricing() {
         console.log("VehicleTypeId: "+vehicleTypeId);
         e.preventDefault();
         $.ajax({
-            type: frm.attr('method'),
-            url: frm.attr('action'),
+            type: "POST",
+            url: frm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicle,
             data: frm.serialize(),
             success: function (data) {
 
@@ -427,7 +432,7 @@ function deleteModal(pricingId, vehicleTypeId) {
             type: "POST",
             // dataType: "json",
             // contentType: "application/json; charset=utf-8",
-            url: 'http://localhost:8080/pricing/delete-pricing/' + pricingId,
+            url: 'http://localhost:8080/pricing/delete-pricing/?id=' + pricingId,
             success: function (res) {
                 console.log(res);
                 $('#deleteModal').modal('hide');
@@ -460,7 +465,7 @@ function deletePolicy(locationId) {
         }
         var json = {
             locationId: locationId,
-            policy: policyJson,
+            policyInstance: policyJson,
             policyHasVehicleTypeId: policyHasVehicleTypeId,
             vehicleTypes: vehicleTypeArr
         }
@@ -469,7 +474,7 @@ function deletePolicy(locationId) {
             // dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(json),
-            url: 'http://localhost:8080/policy/delete',
+            url: 'http://localhost:8080/policy-instance/delete',
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);

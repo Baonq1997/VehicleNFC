@@ -5,7 +5,25 @@ $(document).ready(function () {
     var id = url.slice(idIndex + 1, url.length);
     console.log("ID: " + id);
     initData(id);
+    loadVehicles();
+    filterPolicies();
     // addLocations();
+    $('.clockpickerFrom').clockpicker({
+        placement: 'bottom',
+        align: 'left',
+        donetext: 'Done',
+        afterDone: function () {
+            parseTimeToLong("clockpickerFrom", "ParkingFrom");
+        }
+    });
+    $('.clockpickerTo').clockpicker({
+        placement: 'bottom',
+        align: 'left',
+        donetext: 'Done',
+        afterDone: function () {
+            parseTimeToLong("clockpickerTo", "ParkingTo");
+        }
+    });
 });
 
 function initData(locationId) {
@@ -18,10 +36,6 @@ function initData(locationId) {
             if (data != null) {
                 loadTable(data);
             }
-
-            // emptyTable();
-            // emptyLi();
-            // loadPolicyTable(data);
         }, error: function () {
             alert("Can't load data")
         }
@@ -29,9 +43,29 @@ function initData(locationId) {
     // console.log(policiesListJson);
 }
 
+function loadVehicles() {
+    $.ajax({
+        type: "GET",
+        data: "json",
+        url: 'http://localhost:8080/vehicle-type/get-all',
+        success: function (data) {
+            if (data != null) {
+                var ul = "<ul>";
+                for (var i = 0; i < data.length; i++) {
+                    ul += '<li> <input type="checkbox" name="vehicle" value="' + data[i].id + '"><label>' + data[i].name + '</label></li>'
+                }
+                ul += '</ul>';
+                $('#filter').append(ul);
+            }
+        }, error: function (data) {
+            console.log(data);
+        }
+    })
+}
 
 function loadTable(data) {
     var policyList = data.policyInstanceList;
+    
     $('#location').text(data.location);
     $('#locationId').val(data.id);
     if (data.isActivated === true) {
@@ -74,12 +108,11 @@ function loadTable(data) {
         row += '</tr>';
         $('#location-policies tbody').append(row);
     }
-
 }
 
 function editPolicy(policyInstanceId) {
     let locationId = $('#locationId').val();
-    let url = "http://localhost:8080/policy-instance/edit?policyInstanceId=" + policyInstanceId + "&locationId=" + locationId;
+    let url = "http://localhost:8080/policy-instance/edit?policyInstanceId=" + policyInstanceId;
     window.location.href = url;
 }
 
@@ -142,7 +175,7 @@ function getExistedLocations(policyId) {
         }
     });
 }
-
+var existedLocations = [];
 function loadLocations(policyId) {
     // getExistedLocations(policyId);
     $.ajax({
@@ -161,14 +194,14 @@ function loadLocations(policyId) {
                             '<label>' + locations[i].location + '</label>\n' +
                             '                                <div class="control__indicator"></div>\n' +
                             '                            </label>';
-                        $('.control-group').append(item);
+                        $('.control-group location').append(item);
                     } else {
                         item = ' <label class="control control--checkbox">\n' +
                             '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
                             '<label>' + locations[i].location + '</label>\n' +
                             '                                <div class="control__indicator"></div>\n' +
                             '                            </label>';
-                        $('.control-group').append(item);
+                        $('.control-group location').append(item);
                     }
                 }
             }
@@ -205,29 +238,21 @@ function addPolicyToLocation(policyId) {
                         var temp = {
                             id: existedLocation.id,
                             location: existedLocation.location,
-                            // name: "true",
                             isDelete: "true"
 
                         }
                         if(!containsObject(temp, locations)) {
                             locations.push(temp);
-                            // break;
                         }
-
-
                     } else {
                         var temp = {
                             id: checkedLocation.id,
                             location: checkedLocation.location,
-                            // name: "false",
                             isDelete: "false"
                         }
                         if(!containsObject(temp, locations)) {
                             locations.push(temp);
-                            // break;
                         }
-                        // vehicleArr.push(temp);
-                        // break;
                     }
                 }
             }
@@ -235,7 +260,8 @@ function addPolicyToLocation(policyId) {
         
         var jsonObject = {
             policyId: policyId,
-            locationArr: locations
+            locationArr: locations,
+            currentLocationId: existedLocations
         }
         
         $.ajax({
@@ -253,8 +279,102 @@ function addPolicyToLocation(policyId) {
     });
 }
 
+function filterPolicies(pageNumber) {
+
+    $('#filter-btn').on('click', function (e) {
+        var vehicleTypeArr = [];
+        var locationId = $('#locationId').val();
+        var url = "http://localhost:8080/policy-instance/filter-policies?locationId="+locationId;
+        if (pageNumber != null) {
+            url = url+"&page="+pageNumber;
+        }
+       var allowedParkingFrom = $('#allowedParkingFrom').val();
+       var allowedParkingTo = $('#allowedParkingTo').val();
+        var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
+            var vehicleType = {
+                id: this.value,
+                name: $(this).next('label').text()
+            }
+            vehicleTypeArr.push(vehicleType.name);
+            return this;
+        }).get();
+        console.log("ARR" + vehicleTypeArr);
+        var listSearchParam = [];
+        if (allowedParkingFrom !== "") {
+            var allowedParkingFromObj = createSearchObject("allowedParkingFrom", ">", allowedParkingFrom);
+            listSearchParam.push(allowedParkingFromObj);
+        }
+        if (allowedParkingTo !== "") {
+            var allowedParkingToObj = createSearchObject("allowedParkingTo", "<", allowedParkingTo);
+            listSearchParam.push(allowedParkingToObj);
+        }
+        if (vehicleTypeArr!= null && vehicleTypeArr.length > 0) {
+
+            var vehicleTypes = createSearchObject("vehicleTypes", ":", vehicleTypeArr);
+            listSearchParam.push(vehicleTypes);
+        }
+        $.ajax({
+            type:'POST',
+            url: url,
+            dataType:"json",
+            contentType: 'application/json',
+            data: JSON.stringify(listSearchParam),
+            success:function(response){
+
+                emptyTable();
+                // emptyPaginationLi();
+                loadTableAfterFilter(response);
+                console.log(response);
+            }, error: function (res) {
+                console.log(res);
+            }
+        });
+    });
+}
+
+function emptyTable() {
+    $('#location-policies tbody').empty();
+}
+function loadTableAfterFilter(response) {
+    var data = response.data;
+    if (data.length != 0) {
+        for (var i = 0; i < data.length; i++) {
+            var vehicleList = data[i].policyInstanceHasTblVehicleTypes;
+            row = '<tr>';
+            row += '<td>' + data[i].id + '</td>';
+            row += '<td>' + msToTime(data[i].allowedParkingFrom) + ' - ' + msToTime(data[i].allowedParkingTo) + '</td>';
+            if (vehicleList != null || vehicleList.length != 0) {
+                row += '<td class="vehicle-tags">';
+                for (let j = 0; j < vehicleList.length; j++) {
+                    row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
+                }
+                row += '</td>';
+            } else {
+                row += '<td> N/A </td>'
+            }
+            row += '<td> <button class="btn btn-success" onclick="getExistedLocations(' + data[i].id + ')">Add To Location</button>';
+            row += '<td> <button class="btn btn-primary" onclick="editPolicy(' + data[i].id + ')">Edit</button>';
+            row += '<td> <button class="btn btn-danger" onclick="deletePolicy(' + data[i].id + ')">Delete</button>';
+            row += '</tr>';
+            $('#location-policies tbody').append(row);
+        }
+    } else {
+        var row = '<td colspan="4"><strong> No data </strong></td>';
+        $('#location-policies tbody').append(row);
+    }
+}
+
 function emptyLocationCheckboxes() {
-    $('.control-group-location').empty();
+    $('.control-group location').empty();
+}
+
+function createSearchObject(key, operation, value) {
+    var obj = {
+        key: key,
+        operation: operation,
+        value: value
+    };
+    return obj;
 }
 
 function containsObject(obj, list) {
@@ -266,6 +386,14 @@ function containsObject(obj, list) {
     }
     return false;
 }
+function parseTimeToLong(clockPicker, type) {
+    var time = $('.' + clockPicker + ' #' + type).val();
+    var temp = time.split(":")
+    var hour = temp[0];
+    var minute = temp[1];
+    var ms = (parseInt(hour * 3600000) + parseInt(minute * 60000));
+    $('#allowed' + type).val(ms);
+}
 function msToTime (ms) {
     var seconds = parseInt(ms/1000);
     var minutes = parseInt(seconds/60, 10);
@@ -275,20 +403,3 @@ function msToTime (ms) {
 
     return hours + ':' + minutes;
 }
-// function getVehiclesByPolicy(policyId) {
-//     var
-//     $.ajax({
-//         type: "GET",
-//         dataType: "json",
-//         // contentType: "application/json",
-//         // data: JSON.stringify(content),
-//         url: 'http://localhost:8080/policy-vehicleType/get-vehicleTypes/' + policyId,
-//         success: function (data) {
-//             console.log("Policies: " + data);
-//
-//             loadPolicy(data,locationId);
-//         }, error: function () {
-//             console.log("Could not load policy")
-//         }
-//     });
-// }

@@ -1,18 +1,20 @@
 package com.example.demo.component.location;
 
+import com.example.demo.component.order.Order;
+import com.example.demo.component.order.OrderStatus;
 import com.example.demo.component.policy.*;
+import com.example.demo.component.user.User;
 import com.example.demo.component.vehicleType.VehicleType;
 import com.example.demo.config.ResponseObject;
 
+import com.example.demo.config.SearchCriteria;
 import com.example.demo.view.AddLocationObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,23 +80,57 @@ public class LocationService {
     @Transactional
     public void addPolicy(AddLocationObject addLocationObject) {
 
-//        Optional<Policy> policy = policyRepository.findById(addLocationObject.getPolicyId());
-//        List<Location> locationList = addLocationObject.getLocationArr();
-//        if (!locationList.isEmpty() && policy.isPresent()) {
-//            Policy policyDB = policy.get();
-//            for (Location location : locationList) {
-//                if (location.getIsDelete().equalsIgnoreCase("true")) {
-//                    locationRepository.deleteLocationPolicyByPolicyIdAndLocationId(policyDB.getId(), location.getId());
-//                } else {
-//                    List<Policy> policyList = new ArrayList<>();
-//                    policyList.add(policyDB);
-//                    Location temp = locationRepository.findByIdAndPolicyList(location.getId(), policyList);
-//                    if (temp == null) {
-//                        locationRepository.insertLocationAndPolicy(location.getId(), policyDB.getId());
-//                    }
-//                }
-//            }
-//        }
+        Optional<PolicyInstance> policy = policyInstanceRepository.findById(addLocationObject.getPolicyId());
+        List<Location> locationList = addLocationObject.getLocationArr();
+        List<Location> existedLocations = addLocationObject.getCurrentLocationId();
+        if (!locationList.isEmpty() && policy.isPresent()) {
+            PolicyInstance policyDB = policy.get();
+            for (Location location : locationList) {
+                for (Location existedLocation:existedLocations) {
+                    if (existedLocation.getId() != location.getId()) {
+                        if (location.getIsDelete().equalsIgnoreCase("true")) {
+                            policyInstanceRepository.deleteById(policyDB.getId());
+                        } else {
+                            PolicyInstance policyInstance = new PolicyInstance();
+                            policyInstance.setAllowedParkingFrom(policyDB.getAllowedParkingFrom());
+                            policyInstance.setAllowedParkingTo(policyDB.getAllowedParkingTo());
+                            policyInstance.setLocationId(location.getId());
+                            List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes = policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policyDB.getId());
+                            policyInstanceRepository.save(policyInstance);
+                            if (policyInstanceHasTblVehicleTypes != null) {
+                                List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypeList = policyInstanceHasTblVehicleTypes;
+                                for (PolicyInstanceHasTblVehicleType policyInstanceHasTblVehicleType : policyInstanceHasTblVehicleTypes) {
+                                    PolicyInstanceHasTblVehicleType duplicatePolicyVehicle = new PolicyInstanceHasTblVehicleType();
+
+                                    duplicatePolicyVehicle.setPolicyInstanceId(policyInstance.getId());
+
+                                    if (policyInstanceHasTblVehicleType.getMinHour() != null) {
+                                        duplicatePolicyVehicle.setMinHour(policyInstanceHasTblVehicleType.getMinHour());
+                                    }
+                                    if (policyInstanceHasTblVehicleType.getVehicleTypeId() != null) {
+                                        duplicatePolicyVehicle.setVehicleTypeId(policyInstanceHasTblVehicleType.getVehicleTypeId());
+                                    }
+                                    policyInstanceHasVehicleTypeRepository.save(duplicatePolicyVehicle);
+                                    List<Pricing> pricingList = pricingRepository.findByPolicyInstanceHasTblVehicleTypeId(policyInstanceHasTblVehicleType.getId());
+                                    if (pricingList != null) {
+                                        for (Pricing pricing : pricingList) {
+                                            Pricing duplicatePricing = new Pricing();
+                                            duplicatePricing.setPolicyInstanceHasTblVehicleTypeId(duplicatePolicyVehicle.getId());
+                                            duplicatePricing.setPricePerHour(pricing.getPricePerHour());
+                                            duplicatePricing.setLateFeePerHour(pricing.getLateFeePerHour());
+                                            duplicatePricing.setFromHour(pricing.getFromHour());
+                                            pricingRepository.save(duplicatePricing);
+                                        }
+                                        duplicatePolicyVehicle.setPricingList(policyInstanceHasTblVehicleType.getPricingList());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
 
     }
 

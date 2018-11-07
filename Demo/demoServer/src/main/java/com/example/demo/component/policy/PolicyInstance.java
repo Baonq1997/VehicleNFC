@@ -22,7 +22,6 @@ public class PolicyInstance implements Serializable {
     @NotNull
     @Column(name = "allowed_parking_to", nullable = false)
     private long allowedParkingTo;
-
     @Basic(optional = false)
     @NotNull
     @Column(name = "tbl_location_id", nullable = false)
@@ -31,7 +30,10 @@ public class PolicyInstance implements Serializable {
     @ManyToOne
     private Policy policyId;
 
-    @Transient
+    @JoinColumn(name = "tbl_policy_instance_id")
+    @OneToMany
+
+//    @Transient
     private List<PolicyInstanceHasTblVehicleType> policyInstanceHasTblVehicleTypes;
 
     public PolicyInstance() {
