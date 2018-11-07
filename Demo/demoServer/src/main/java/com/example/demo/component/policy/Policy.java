@@ -3,6 +3,7 @@ package com.example.demo.component.policy;
 import com.example.demo.component.vehicleType.VehicleType;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,10 +20,6 @@ public class Policy implements Serializable {
     @ManyToOne(optional = false)
     private VehicleType vehicleTypeId;
 
-    @JoinColumn(name = "tbl_time_id", referencedColumnName = "id", nullable = false)
-    @ManyToOne(optional = false)
-    private Time time;
-
     @Basic(optional = false)
     @Column(name = "tbl_location_id", nullable = false)
     private Integer locationId;
@@ -34,6 +31,15 @@ public class Policy implements Serializable {
     @JoinColumn(name = "tbl_policy_id")
     @OneToMany
     private List<Pricing> pricings;
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "allowed_parking_from")
+    private long allowedParkingFrom;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "allowed_parking_to")
+    private long allowedParkingTo;
 
     public Integer getId() {
         return id;
@@ -49,14 +55,6 @@ public class Policy implements Serializable {
 
     public void setVehicleTypeId(VehicleType vehicleTypeId) {
         this.vehicleTypeId = vehicleTypeId;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
     }
 
     public Integer getLocationId() {
@@ -81,5 +79,21 @@ public class Policy implements Serializable {
 
     public void setPricings(List<Pricing> pricings) {
         this.pricings = pricings;
+    }
+
+    public long getAllowedParkingFrom() {
+        return allowedParkingFrom;
+    }
+
+    public void setAllowedParkingFrom(long allowedParkingFrom) {
+        this.allowedParkingFrom = allowedParkingFrom;
+    }
+
+    public long getAllowedParkingTo() {
+        return allowedParkingTo;
+    }
+
+    public void setAllowedParkingTo(long allowedParkingTo) {
+        this.allowedParkingTo = allowedParkingTo;
     }
 }

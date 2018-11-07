@@ -175,10 +175,10 @@ public class OrderService {
     public List<Pricing> getPricingList(Order order, User user) {
         List<Policy> policies = order.getLocation().getPolicies();
         for (Policy policy : policies) {
-            if (!isOutOfTheLine(order.getCheckInDate(), policy.getTime().getAllowedParkingFrom(), policy.getTime().getAllowedParkingTo())) {
+            if (!isOutOfTheLine(order.getCheckInDate(), policy.getAllowedParkingFrom(), policy.getAllowedParkingTo())) {
                 if (policy.getVehicleTypeId().getId() == user.getVehicle().getVehicleTypeId().getId()) {
-                    order.setAllowedParkingFrom(policy.getTime().getAllowedParkingFrom());
-                    order.setAllowedParkingTo(policy.getTime().getAllowedParkingTo());
+                    order.setAllowedParkingFrom(policy.getAllowedParkingFrom());
+                    order.setAllowedParkingTo(policy.getAllowedParkingTo());
                     order.setMinHour(policy.getMinHour());
                     List<Pricing> pricings = policy.getPricings();
                     return pricings;
