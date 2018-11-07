@@ -146,10 +146,18 @@ DROP TABLE IF EXISTS `tbl_policy`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tbl_policy` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `allowed_parking_from` bigint(20) NOT NULL,
-  `allowed_parking_to` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `tbl_time_id` int(11) NOT NULL,
+  `tbl_vehicle_type_id` int(11) NOT NULL,
+  `min_hour` int(11) DEFAULT NULL,
+  `tbl_location_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_vehicle_typ_idx` (`tbl_vehicle_type_id`),
+  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_policy_inst_idx` (`tbl_time_id`),
+  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_location1_idx` (`tbl_location_id`),
+  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_location1` FOREIGN KEY (`tbl_location_id`) REFERENCES `tbl_location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_policy_instan1` FOREIGN KEY (`tbl_time_id`) REFERENCES `tbl_time` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_vehicle_type1` FOREIGN KEY (`tbl_vehicle_type_id`) REFERENCES `tbl_vehicle_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,41 +166,8 @@ CREATE TABLE `tbl_policy` (
 
 LOCK TABLES `tbl_policy` WRITE;
 /*!40000 ALTER TABLE `tbl_policy` DISABLE KEYS */;
-INSERT INTO `tbl_policy` VALUES (4,1541264400000,1541347200000);
+INSERT INTO `tbl_policy` VALUES (2,4,3,1,1),(3,4,4,2,1);
 /*!40000 ALTER TABLE `tbl_policy` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tbl_policy_has_tbl_vehicle_type`
---
-
-DROP TABLE IF EXISTS `tbl_policy_has_tbl_vehicle_type`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tbl_policy_has_tbl_vehicle_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tbl_policy_id` int(11) NOT NULL,
-  `tbl_vehicle_type_id` int(11) NOT NULL,
-  `min_hour` int(11) DEFAULT NULL,
-  `tbl_location_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_vehicle_typ_idx` (`tbl_vehicle_type_id`),
-  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_policy_inst_idx` (`tbl_policy_id`),
-  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_location1_idx` (`tbl_location_id`),
-  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_location1` FOREIGN KEY (`tbl_location_id`) REFERENCES `tbl_location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_policy_instan1` FOREIGN KEY (`tbl_policy_id`) REFERENCES `tbl_policy` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_vehicle_type1` FOREIGN KEY (`tbl_vehicle_type_id`) REFERENCES `tbl_vehicle_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tbl_policy_has_tbl_vehicle_type`
---
-
-LOCK TABLES `tbl_policy_has_tbl_vehicle_type` WRITE;
-/*!40000 ALTER TABLE `tbl_policy_has_tbl_vehicle_type` DISABLE KEYS */;
-INSERT INTO `tbl_policy_has_tbl_vehicle_type` VALUES (2,4,3,1,1),(3,4,4,2,1);
-/*!40000 ALTER TABLE `tbl_policy_has_tbl_vehicle_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -207,10 +182,10 @@ CREATE TABLE `tbl_pricing` (
   `from_hour` int(11) NOT NULL,
   `price_per_hour` double NOT NULL,
   `late_fee_per_hour` double DEFAULT NULL,
-  `tbl_policy_has_tbl_vehicle_type_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`,`tbl_policy_has_tbl_vehicle_type_id`),
-  KEY `fk_tbl_pricing_tbl_policy_instance_has_tbl_vehicle_type1_idx` (`tbl_policy_has_tbl_vehicle_type_id`),
-  CONSTRAINT `fk_tbl_pricing_tbl_policy_instance_has_tbl_vehicle_type1` FOREIGN KEY (`tbl_policy_has_tbl_vehicle_type_id`) REFERENCES `tbl_policy_has_tbl_vehicle_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `tbl_policy_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`,`tbl_policy_id`),
+  KEY `fk_tbl_pricing_tbl_policy_instance_has_tbl_vehicle_type1_idx` (`tbl_policy_id`),
+  CONSTRAINT `fk_tbl_pricing_tbl_policy_instance_has_tbl_vehicle_type1` FOREIGN KEY (`tbl_policy_id`) REFERENCES `tbl_policy` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -303,6 +278,31 @@ CREATE TABLE `tbl_staft` (
 LOCK TABLES `tbl_staft` WRITE;
 /*!40000 ALTER TABLE `tbl_staft` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tbl_staft` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tbl_time`
+--
+
+DROP TABLE IF EXISTS `tbl_time`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tbl_time` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `allowed_parking_from` bigint(20) NOT NULL,
+  `allowed_parking_to` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tbl_time`
+--
+
+LOCK TABLES `tbl_time` WRITE;
+/*!40000 ALTER TABLE `tbl_time` DISABLE KEYS */;
+INSERT INTO `tbl_time` VALUES (4,1541264400000,1541347200000);
+/*!40000 ALTER TABLE `tbl_time` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -408,4 +408,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-07  9:58:47
+-- Dump completed on 2018-11-07 12:08:25

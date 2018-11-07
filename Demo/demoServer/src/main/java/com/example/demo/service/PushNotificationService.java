@@ -117,7 +117,7 @@ public class PushNotificationService {
 
                 String date = simpleDateFormat.format(new Date(order.getCheckInDate()));
 
-                body += "Quý khách đậu xe tại: " + order.getLocation().getLocation() + "\n";
+                body += "Quý khách đậu xe tại: " + order.getLocation().getPolicies() + "\n";
                 body += "Vào lúc: " + date + "\n";
                 body += "Bảng giá cho loại xe: " + order.getVehicleTypeId().getName() + "\n";
                 for (OrderPricing orderPricing : order.getOrderPricingList()) {

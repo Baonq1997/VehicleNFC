@@ -8,21 +8,21 @@ import java.util.Optional;
 @Service
 public class PricingService {
     private final PricingRepository pricingRepository;
-    private final PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository;
+    private final PolicyRepository policyRepository;
 
-    public PricingService(PricingRepository pricingRepository, PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository) {
+    public PricingService(PricingRepository pricingRepository, PolicyRepository policyRepository) {
         this.pricingRepository = pricingRepository;
-        this.policyHasVehicleTypeRepository = policyHasVehicleTypeRepository;
+        this.policyRepository = policyRepository;
     }
 
     public List<Pricing> findByPolicyHasVehicleTypeId(Integer policyHasVehicleTypeId) {
-        Optional<PolicyHasTblVehicleType> policyHasTblVehicleType =
-                policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId);
-        if (policyHasTblVehicleType.isPresent()) {
-            PolicyHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
+        Optional<Policy> policy =
+                policyRepository.findById(policyHasVehicleTypeId);
+        if (policy.isPresent()) {
+            Policy policyDB = policy.get();
             //TODO
 //            Pricing pricing = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB.getId());
-            List<Pricing> pricing = policyHasTblVehicleTypeDB.getPricings();
+            List<Pricing> pricing = policyDB.getPricings();
             return pricing;
         }
         return null;

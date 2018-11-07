@@ -21,18 +21,16 @@ import java.util.Optional;
 @Service
 public class LocationService {
     private final LocationRepository locationRepository;
-    private final PolicyRepository policyRepository;
     private final PricingRepository pricingRepository;
-    private final PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository;
+    private final PolicyRepository policyRepository;
 
     @Autowired
     private EntityManager entityManager;
 
-    public LocationService(LocationRepository locationRepository, PolicyRepository policyRepository, PricingRepository pricingRepository, PolicyHasVehicleTypeRepository policyHasVehicleTypeRepository) {
+    public LocationService(LocationRepository locationRepository, PolicyRepository policyRepository, PricingRepository pricingRepository, PolicyRepository policyRepository1) {
         this.locationRepository = locationRepository;
-        this.policyRepository = policyRepository;
         this.pricingRepository = pricingRepository;
-        this.policyHasVehicleTypeRepository = policyHasVehicleTypeRepository;
+        this.policyRepository = policyRepository1;
     }
 
     public Optional<Location> getMeterById(Integer id) {
