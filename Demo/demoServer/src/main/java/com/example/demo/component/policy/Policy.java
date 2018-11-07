@@ -31,7 +31,7 @@ public class Policy implements Serializable {
     @Column(name = "min_hour", nullable = false)
     private Integer minHour;
 
-    @JoinColumn(name = "tbl_policy_has_tbl_vehicle_type_id")
+    @JoinColumn(name = "tbl_policy_id")
     @OneToMany
     private List<Pricing> pricings;
 
