@@ -50,6 +50,7 @@ DROP TABLE IF EXISTS `tbl_order`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tbl_order` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vehicleNumber` varchar(12) DEFAULT NULL,
   `total` double DEFAULT NULL,
   `check_in_date` bigint(20) NOT NULL,
   `check_out_date` bigint(20) DEFAULT NULL,
@@ -79,7 +80,6 @@ CREATE TABLE `tbl_order` (
 
 LOCK TABLES `tbl_order` WRITE;
 /*!40000 ALTER TABLE `tbl_order` DISABLE KEYS */;
-INSERT INTO `tbl_order` VALUES (129,10,1540972757601,1540973257109,499508,0,1900000000000000,1,4,36,1,3),(130,10,1540973302722,1540973380301,77579,0,1900000000000000,1,4,36,1,3),(131,10,1540973384331,1540974046586,662255,0,1900000000000000,1,4,36,1,3),(132,10,1540974055480,1540974062115,6635,0,1900000000000000,1,4,36,1,3),(133,10,1540974078667,1540974084264,5597,0,1900000000000000,1,4,36,1,3),(134,10,1540974220472,1540974224894,4422,0,1900000000000000,1,4,36,1,3),(135,10,1541037472580,1541038010961,538381,0,1900000000000000,1,4,36,1,3),(137,10,1541237040025,1541237065368,25343,0,1900000000000000,1,4,36,1,3),(138,109,1541216992170,1541237276305,20284135,0,1900000000000000,1,4,36,1,3),(139,119,1541216992170,1541238526279,21534109,0,1900000000000000,1,4,36,1,3),(140,122,1541216992170,1541238775100,21782930,0,1900000000000000,1,4,36,1,3),(141,246,1541216992170,1541241922094,24929924,1541289600000,1541307600000,1,4,36,1,3),(143,10,1541324705543,1541324721377,15834,1541264400000,1541347200000,1,4,36,1,3),(144,10,1541326633554,1541326963643,330089,1541264400000,1541347200000,1,4,36,1,3),(145,10,1541327097051,1541327107901,10850,1541264400000,1541347200000,1,4,36,1,3),(146,10,1541330237227,1541330383878,146651,1541264400000,1541347200000,1,4,36,1,3),(148,10,1541330615957,1541330743851,127894,1541264400000,1541347200000,1,4,36,1,3),(149,1826,1541331039226,1541472582289,141543063,1541264400000,1541347200000,1,4,36,1,3),(160,10,1541470878604,1541471641312,762708,1541264400000,1541347200000,1,4,36,1,3),(161,10,1541471653015,1541472297641,644626,1541264400000,1541347200000,1,4,36,1,3),(162,10,1541474339781,1541474488237,148456,1541264400000,1541347200000,1,4,36,1,3),(163,10,1541474606430,1541474734909,128479,1541264400000,1541347200000,1,4,36,1,3),(164,10,1541474760727,1541474798226,37499,1541264400000,1541347200000,1,4,36,1,3);
 /*!40000 ALTER TABLE `tbl_order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +94,7 @@ CREATE TABLE `tbl_order_pricing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `from_hour` int(11) NOT NULL,
   `price_per_hour` double NOT NULL,
-  `late_fee_per_hour` double DEFAULT NULL,
+  `late_fee_per_hour` int(11) DEFAULT NULL,
   `tbl_order_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK1t04nclcvnhje9954ib04bnng` (`tbl_order_id`),
@@ -108,7 +108,6 @@ CREATE TABLE `tbl_order_pricing` (
 
 LOCK TABLES `tbl_order_pricing` WRITE;
 /*!40000 ALTER TABLE `tbl_order_pricing` DISABLE KEYS */;
-INSERT INTO `tbl_order_pricing` VALUES (230,0,10,20,129),(231,3,30,50,129),(232,0,10,20,130),(233,3,30,50,130),(234,0,10,20,131),(235,3,30,50,131),(236,0,10,20,132),(237,3,30,50,132),(238,0,10,20,133),(239,3,30,50,133),(240,0,10,20,134),(241,3,30,50,134),(242,0,10,20,135),(243,3,30,50,135),(246,0,10,20,137),(247,3,30,50,137),(248,0,10,20,138),(249,3,30,50,138),(250,0,10,20,139),(251,3,30,50,139),(252,0,10,20,140),(253,3,30,50,140),(254,0,10,20,141),(255,3,30,50,141),(257,0,10,20,143),(258,3,30,50,143),(259,0,10,20,144),(260,3,30,50,144),(261,0,10,20,145),(262,3,30,50,145),(263,0,10,20,146),(264,3,30,50,146),(267,0,10,20,148),(268,3,30,50,148),(269,0,10,20,149),(270,3,30,50,149),(291,0,10,20,160),(292,3,30,50,160),(293,0,10,20,161),(294,3,30,50,161),(295,0,10,20,162),(296,3,30,50,162),(297,0,10,20,163),(298,3,30,50,163),(299,0,10,20,164),(300,3,30,50,164);
 /*!40000 ALTER TABLE `tbl_order_pricing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,8 +147,12 @@ CREATE TABLE `tbl_policy` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `allowed_parking_from` bigint(20) NOT NULL,
   `allowed_parking_to` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `tbl_location_id` int(11) DEFAULT NULL,
+  `tbl_policy_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_idx` (`tbl_location_id`),
+  CONSTRAINT `id` FOREIGN KEY (`tbl_location_id`) REFERENCES `tbl_location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,7 +161,6 @@ CREATE TABLE `tbl_policy` (
 
 LOCK TABLES `tbl_policy` WRITE;
 /*!40000 ALTER TABLE `tbl_policy` DISABLE KEYS */;
-INSERT INTO `tbl_policy` VALUES (4,1541264400000,1541347200000);
 /*!40000 ALTER TABLE `tbl_policy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -174,15 +176,12 @@ CREATE TABLE `tbl_policy_has_tbl_vehicle_type` (
   `tbl_policy_id` int(11) NOT NULL,
   `tbl_vehicle_type_id` int(11) NOT NULL,
   `min_hour` int(11) DEFAULT NULL,
-  `tbl_location_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_vehicle_typ_idx` (`tbl_vehicle_type_id`),
   KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_policy_inst_idx` (`tbl_policy_id`),
-  KEY `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_location1_idx` (`tbl_location_id`),
-  CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_location1` FOREIGN KEY (`tbl_location_id`) REFERENCES `tbl_location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_policy_instan1` FOREIGN KEY (`tbl_policy_id`) REFERENCES `tbl_policy` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_policy_instance_has_tbl_vehicle_type_tbl_vehicle_type1` FOREIGN KEY (`tbl_vehicle_type_id`) REFERENCES `tbl_vehicle_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -191,7 +190,6 @@ CREATE TABLE `tbl_policy_has_tbl_vehicle_type` (
 
 LOCK TABLES `tbl_policy_has_tbl_vehicle_type` WRITE;
 /*!40000 ALTER TABLE `tbl_policy_has_tbl_vehicle_type` DISABLE KEYS */;
-INSERT INTO `tbl_policy_has_tbl_vehicle_type` VALUES (2,4,3,1,1),(3,4,4,2,1);
 /*!40000 ALTER TABLE `tbl_policy_has_tbl_vehicle_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,12 +204,12 @@ CREATE TABLE `tbl_pricing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `from_hour` int(11) NOT NULL,
   `price_per_hour` double NOT NULL,
-  `late_fee_per_hour` double DEFAULT NULL,
-  `tbl_policy_has_tbl_vehicle_type_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`,`tbl_policy_has_tbl_vehicle_type_id`),
-  KEY `fk_tbl_pricing_tbl_policy_instance_has_tbl_vehicle_type1_idx` (`tbl_policy_has_tbl_vehicle_type_id`),
-  CONSTRAINT `fk_tbl_pricing_tbl_policy_instance_has_tbl_vehicle_type1` FOREIGN KEY (`tbl_policy_has_tbl_vehicle_type_id`) REFERENCES `tbl_policy_has_tbl_vehicle_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+  `late_fee_per_hour` int(11) DEFAULT NULL,
+  `tbl_policy_has_tbl_vehicle_type_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tbl_policy_has_tbl_vehicle_type_id_idx` (`tbl_policy_has_tbl_vehicle_type_id`),
+  CONSTRAINT `tbl_policy_has_tbl_vehicle_type_id` FOREIGN KEY (`tbl_policy_has_tbl_vehicle_type_id`) REFERENCES `tbl_policy_has_tbl_vehicle_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,7 +218,6 @@ CREATE TABLE `tbl_pricing` (
 
 LOCK TABLES `tbl_pricing` WRITE;
 /*!40000 ALTER TABLE `tbl_pricing` DISABLE KEYS */;
-INSERT INTO `tbl_pricing` VALUES (5,0,10,30,2),(6,3,20,50,2);
 /*!40000 ALTER TABLE `tbl_pricing` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,19 +229,21 @@ DROP TABLE IF EXISTS `tbl_refund_request`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tbl_refund_request` (
-  `id` int(10) unsigned zerofill NOT NULL AUTO_INCREMENT,
+  `int` int(11) NOT NULL AUTO_INCREMENT,
+  `amount` double DEFAULT NULL,
   `tbl_staft_username` varchar(25) NOT NULL,
   `tbl_manager_username` varchar(25) DEFAULT NULL,
-  `tbl_order_id` int(11) NOT NULL,
   `tbl_refund_status_id` int(11) NOT NULL,
-  `amount` double DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_tbl_refund_tbl_staft_idx` (`tbl_staft_username`),
-  KEY `fk_tbl_refund_tbl_staft1_idx` (`tbl_manager_username`),
-  KEY `fk_tbl_refund_tbl_order1_idx` (`tbl_order_id`),
-  CONSTRAINT `fk_tbl_refund_tbl_order1` FOREIGN KEY (`tbl_order_id`) REFERENCES `tbl_order` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_refund_tbl_staft` FOREIGN KEY (`tbl_staft_username`) REFERENCES `tbl_staft` (`username`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tbl_refund_tbl_staft1` FOREIGN KEY (`tbl_manager_username`) REFERENCES `tbl_staft` (`username`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `tbl_order_id` int(11) NOT NULL,
+  PRIMARY KEY (`int`),
+  KEY `fk_tbl_refund_request_tbl_staft_idx` (`tbl_staft_username`),
+  KEY `fk_tbl_refund_request_tbl_staft1_idx` (`tbl_manager_username`),
+  KEY `fk_tbl_refund_request_tbl_order1_idx` (`tbl_order_id`),
+  KEY `fk_tbl_refund_request_tbl_refund_status_idx` (`tbl_refund_status_id`),
+  CONSTRAINT `fk_tbl_refund_request_tbl_order1` FOREIGN KEY (`tbl_order_id`) REFERENCES `tbl_order` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_refund_request_tbl_refund_status` FOREIGN KEY (`tbl_refund_status_id`) REFERENCES `tbl_refund_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_refund_request_tbl_staft` FOREIGN KEY (`tbl_staft_username`) REFERENCES `tbl_staft` (`username`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_refund_request_tbl_staft1` FOREIGN KEY (`tbl_manager_username`) REFERENCES `tbl_staft` (`username`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -267,6 +266,7 @@ DROP TABLE IF EXISTS `tbl_refund_status`;
 CREATE TABLE `tbl_refund_status` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -290,7 +290,7 @@ DROP TABLE IF EXISTS `tbl_staft`;
 CREATE TABLE `tbl_staft` (
   `username` varchar(25) NOT NULL,
   `password` varchar(45) DEFAULT NULL,
-  `is_activate` bit(1) NOT NULL DEFAULT b'1',
+  `is_active` bit(1) DEFAULT NULL,
   `is_manager` bit(1) DEFAULT NULL,
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -408,4 +408,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-07  9:58:47
+-- Dump completed on 2018-11-08 20:50:14

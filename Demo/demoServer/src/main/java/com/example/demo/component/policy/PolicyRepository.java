@@ -1,8 +1,10 @@
 package com.example.demo.component.policy;
 
-import com.example.demo.component.policy.Policy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PolicyRepository extends JpaRepository<Policy, Integer> {
+import java.util.List;
 
+public interface PolicyRepository extends JpaRepository<Policy, Long> {
+
+    List<Policy> findAllByLocationId(Integer locationId);
 }

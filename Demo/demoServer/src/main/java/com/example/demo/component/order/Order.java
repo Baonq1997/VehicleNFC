@@ -45,6 +45,7 @@ public class Order implements Serializable {
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private VehicleType vehicleTypeId;
+    //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblOrderId")
     @OneToMany(mappedBy = "orderId")
     private List<OrderPricing> orderPricingList;
     @Transient

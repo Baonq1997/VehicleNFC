@@ -37,15 +37,15 @@ public class LocationService {
 
     public Optional<Location> getMeterById(Integer id) {
         Optional<Location> location = locationRepository.findById(id);
-//        if (location.isPresent()) {
-//            List<PolicyHasTblVehicleType> policyInstances = policyHasVehicleTypeRepository.findAllByLocationId(location.get().getId());
-//            for (PolicyHasTblVehicleType policy : policyInstances) {
-//                List<PolicyHasTblVehicleType> policyInstanceHasTblVehicleTypes =
-//                        policyInstanceHasVehicleTypeRepository.findAllByPolicyInstanceId(policy.getId());
-//                policy.setPolicyInstanceHasTblVehicleTypes(policyInstanceHasTblVehicleTypes);
-//            }
-//            location.get().setPolicyInstanceList(policyInstances);
-//        }
+        if (location.isPresent()) {
+            List<Policy> policyList = policyRepository.findAllByLocationId(location.get().getId());
+            for (Policy policy : policyList) {
+                List<PolicyHasTblVehicleType> policyHasTblVehicleTypes =
+                        policyHasVehicleTypeRepository.findAllByPolicyInstanceId(policy.getId());
+                policy.setPolicyHasTblVehicleTypes(policyHasTblVehicleTypes);
+            }
+            location.get().setPolicyList(policyList);
+        }
         return location;
     }
 

@@ -2,7 +2,7 @@ package com.example.demo.component.location;
 
 
 import com.example.demo.component.order.Order;
-import com.example.demo.component.policy.PolicyHasTblVehicleType;
+import com.example.demo.component.policy.Policy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -30,12 +30,10 @@ public class Location implements Serializable {
     @JoinColumn(name = "tbl_location_id")
     @OneToMany
 //    @Transient
-    private List<PolicyHasTblVehicleType> policyHasTblVehicleTypes;
+    private List<Policy> policyList;
     //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblLocationId")
-
     @Transient
     private List<Order> orderList;
-
     @Transient
     private String isDelete;
 
@@ -82,12 +80,12 @@ public class Location implements Serializable {
         this.isDelete = isDelete;
     }
 
-    public List<PolicyHasTblVehicleType> getPolicyHasTblVehicleTypes() {
-        return policyHasTblVehicleTypes;
+    public List<Policy> getPolicyList() {
+        return policyList;
     }
 
-    public void setPolicyHasTblVehicleTypes(List<PolicyHasTblVehicleType> policyHasTblVehicleTypes) {
-        this.policyHasTblVehicleTypes = policyHasTblVehicleTypes;
+    public void setPolicyList(List<Policy> policyList) {
+        this.policyList = policyList;
     }
 
     public List<Order> getOrderList() {

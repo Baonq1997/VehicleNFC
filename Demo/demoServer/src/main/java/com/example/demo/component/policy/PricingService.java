@@ -15,15 +15,26 @@ public class PricingService {
         this.policyHasVehicleTypeRepository = policyHasVehicleTypeRepository;
     }
 
-    public List<Pricing> findByPolicyHasVehicleTypeId(Integer policyHasVehicleTypeId) {
-        Optional<PolicyHasTblVehicleType> policyHasTblVehicleType =
-                policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId);
+    public Pricing findByPolicyHasVehicleTypeId(Integer policyHasVehicleTypeId) {
+        Optional<PolicyHasTblVehicleType> policyHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId);
         if (policyHasTblVehicleType.isPresent()) {
             PolicyHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
             //TODO
 //            Pricing pricing = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB.getId());
-            List<Pricing> pricing = policyHasTblVehicleTypeDB.getPricings();
+            Pricing pricing = null;
             return pricing;
+        }
+        return null;
+    }
+
+    //Todo
+    public List<Pricing> findAllByPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleTypeId) {
+        Optional<PolicyHasTblVehicleType> policyHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasTblVehicleTypeId);
+        if (policyHasTblVehicleType.isPresent()) {
+            PolicyHasTblVehicleType policyHasTblVehicleTypeDB = policyHasTblVehicleType.get();
+//            List<Pricing> pricings = pricingRepository.findAllByPolicyHasTblVehicleTypeId(policyHasTblVehicleTypeDB.getId());
+//            return pricings;
+            return null;
         }
         return null;
     }
