@@ -16,12 +16,15 @@ import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import Util.RmaAPIUtils;
 import adapter.PricingAdapter;
-import adapter.VehicleTypeAdapter;
 import model.Location;
 import model.Order;
+import model.Policy;
+import model.PolicyHasVehicleType;
+import model.Pricing;
 import model.User;
 import remote.RmaAPIService;
 import retrofit2.Call;
@@ -38,7 +41,6 @@ public class CheckInActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_check_in);
         context = this;
         pd = new ProgressDialog(context);
         pd.setTitle("Đang xử lý...");
@@ -103,37 +105,20 @@ public class CheckInActivity extends Activity {
     }
 
     public void setUpLocationInfo(Location location, User user) {
-        txtLocation = findViewById(R.id.txtLocation);
-        txtAllowedFrom = findViewById(R.id.txtAllowedFrom);
-        txtAllowedTo = findViewById(R.id.txtAllowedTo);
-        txtUserVehicleNumber = findViewById(R.id.txtVehicleNumber);
-        txtUserVehicleType = findViewById(R.id.txtVehicleType);
-        txtUserWallet = findViewById(R.id.txtWallet);
+        //Check if user allowed to parking here
+        if (Double.parseDouble(user.getMoney()) <= 0) {
+            Toast.makeText(this, "Số dư tài khoản quý khách không đủ", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-        txtUserVehicleNumber.setText(user.getVehicleNumber());
-        txtUserVehicleType.setText(user.getVehicleType().getName());
-        txtUserWallet.setText(UserService.convertMoney(Double.parseDouble(user.getMoney())));
-
-
-        String pattern = "HH:mm";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
-        txtLocation.setText(location.getLocation());
-        txtAllowedFrom.setText(simpleDateFormat.format(new Date(
-                location.getPolicies().get(0).getAllowedParkingFrom()
-        )));
-
-        txtLocation.setText(location.getLocation());
-        txtAllowedTo.setText(simpleDateFormat.format(new Date(
-                location.getPolicies().get(0).getAllowedParkingTo()
-        )));
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listPricing);
-        PricingAdapter pricingAdapter = new PricingAdapter(location.getPolicies().get(0).getPolicyHasPricings().get(0).getPricings());
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this, 1);
-        recyclerView.setLayoutManager(gLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(pricingAdapter);
+        Policy policy = UserService.findMatchedPolicy(user, location);
+        if (policy != null) {
+            readyToCheckIn(user, location, policy);
+            return;
+        }
+        Toast.makeText(this, "Quý khách không được đậu xe tại đây", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     public void setUpUserInfo(User user, Order order) {
@@ -146,8 +131,8 @@ public class CheckInActivity extends Activity {
 
 
         txtUsername.setText(user.getLastName() + " " + user.getFirstName());
-        txtUserVehicleNumber.setText(user.getVehicleNumber());
-        txtUserVehicleType.setText(user.getVehicleType().getName());
+        txtUserVehicleNumber.setText(user.getVehicle().getVehicleNumber());
+        txtUserVehicleType.setText(order.getVehicleType().getName());
         txtPhoneNumber.setText(user.getPhone());
         String pattern = "HH:mm dd-MM-yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -159,6 +144,47 @@ public class CheckInActivity extends Activity {
 
     public void setUpFinalInfo(Order order) {
         //TODO replace info
+    }
+
+    public void readyToCheckIn(User user, Location location, Policy policy) {
+        PolicyHasVehicleType policyHasVehicleType = UserService.findMatchedPolicyHasVehicleType(user, policy);
+        if (policyHasVehicleType == null) {
+            Toast.makeText(this, "Xe của Quý khách không được đậu tại đây", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        setContentView(R.layout.activity_check_in);
+        txtLocation = findViewById(R.id.txtLocation);
+        txtAllowedFrom = findViewById(R.id.txtAllowedFrom);
+        txtAllowedTo = findViewById(R.id.txtAllowedTo);
+        txtUserVehicleNumber = findViewById(R.id.txtVehicleNumber);
+        txtUserVehicleType = findViewById(R.id.txtVehicleType);
+        txtUserWallet = findViewById(R.id.txtWallet);
+
+        txtUserVehicleNumber.setText(user.getVehicle().getVehicleNumber());
+        txtUserVehicleType.setText(user.getVehicle().getVehicleTypeId().getName());
+        txtUserWallet.setText(UserService.convertMoney(Double.parseDouble(user.getMoney())));
+
+
+        String pattern = "HH:mm";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        txtLocation.setText(location.getLocation());
+        txtAllowedFrom.setText(simpleDateFormat.format(new Date(
+                policy.getAllowedParkingFrom()
+        )));
+
+        txtLocation.setText(location.getLocation());
+        txtAllowedTo.setText(simpleDateFormat.format(new Date(
+                policy.getAllowedParkingTo()
+        )));
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listPricing);
+        PricingAdapter pricingAdapter = new PricingAdapter(policyHasVehicleType.getPricings());
+        GridLayoutManager gLayoutManager = new GridLayoutManager(this, 1);
+        recyclerView.setLayoutManager(gLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(pricingAdapter);
     }
 }
 

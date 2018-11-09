@@ -34,26 +34,30 @@ public class User {
     @Expose
     private String lastName;
 
-    @SerializedName("vehicleNumber")
+    @SerializedName("vehicle")
     @Expose
-    private String vehicleNumber;
+    private Vehicle vehicle;
 
-    @SerializedName("licensePlateId")
+    @SerializedName("smsNoti")
     @Expose
-    private String licensePlateId;
-
-    @SerializedName("vehicleTypeId")
-    @Expose
-    private VehicleType vehicleType;
-
-
+    private boolean smsNoti;
 
     @SerializedName("deviceToken")
     @Expose
     private String deviceToken;
 
-    @SerializedName("smsNoti")
-    private Boolean smsNoti;
+    @SerializedName("confirmCode")
+    @Expose
+    private String confirmCode;
+
+    @SerializedName("vehicleNumber")
+    @Expose
+    private String vehicleNumber;
+
+    @SerializedName("activated")
+    @Expose
+    private boolean activated;
+
 
     public String getId() {
         return id;
@@ -61,22 +65,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getDeviceToken() {
-        return deviceToken;
-    }
-
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
-    }
-
-    public Boolean getSmsNoti() {
-        return smsNoti;
-    }
-
-    public void setSmsNoti(Boolean smsNoti) {
-        this.smsNoti = smsNoti;
     }
 
     public String getPhone() {
@@ -119,27 +107,55 @@ public class User {
         this.lastName = lastName;
     }
 
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public boolean isSmsNoti() {
+        return smsNoti;
+    }
+
+    public void setSmsNoti(boolean smsNoti) {
+        this.smsNoti = smsNoti;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public String getConfirmCode() {
+        return confirmCode;
+    }
+
+    public void setConfirmCode(String confirmCode) {
+        this.confirmCode = confirmCode;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public boolean getSmsNoti() {
+        return smsNoti;
+    }
+
     public String getVehicleNumber() {
         return vehicleNumber;
     }
 
     public void setVehicleNumber(String vehicleNumber) {
         this.vehicleNumber = vehicleNumber;
-    }
-
-    public String getLicensePlateId() {
-        return licensePlateId;
-    }
-
-    public void setLicensePlateId(String licensePlateId) {
-        this.licensePlateId = licensePlateId;
-    }
-
-    public VehicleType getVehicleType() {
-        return vehicleType;
-    }
-
-    public void setVehicleType(VehicleType vehicleType) {
-        this.vehicleType = vehicleType;
     }
 }

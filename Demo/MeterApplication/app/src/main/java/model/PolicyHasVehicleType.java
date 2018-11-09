@@ -5,24 +5,24 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class PolicyHasTblVehicleType {
+public class PolicyHasVehicleType {
 
     @SerializedName("id")
     @Expose
     private int id;
 
-    @SerializedName("policyId")
-    @Expose
-    private int policyId;
-
     @SerializedName("vehicleTypeId")
     @Expose
     private VehicleType vehicleType;
 
-
-    @SerializedName("pricings")
+    @SerializedName("pricingList")
     @Expose
     private List<Pricing> pricings;
+
+    @SerializedName("minHour")
+    @Expose
+    private int minHour;
+
 
     public int getId() {
         return id;
@@ -30,14 +30,6 @@ public class PolicyHasTblVehicleType {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getPolicyId() {
-        return policyId;
-    }
-
-    public void setPolicyId(int policyId) {
-        this.policyId = policyId;
     }
 
     public VehicleType getVehicleType() {
@@ -54,5 +46,13 @@ public class PolicyHasTblVehicleType {
 
     public void setPricings(List<Pricing> pricings) {
         this.pricings = pricings;
+    }
+
+    public int getMinHour() {
+        return minHour;
+    }
+
+    public void setMinHour(int minHour) {
+        this.minHour = minHour;
     }
 }

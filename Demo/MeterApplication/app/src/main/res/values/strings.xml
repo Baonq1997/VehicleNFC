@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Đỗ xe với NFC</string>
+    <string name="app_name">Đỗ xe với NFC (Meter App)</string>
     <string name="title_activity_device_scan">DeviceScanActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

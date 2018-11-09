@@ -1,24 +1,19 @@
 package day01.swomfire.meterapplication;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Parcelable;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
@@ -34,23 +28,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import Util.RmaAPIUtils;
 import adapter.VehicleTypeAdapter;
 import model.Location;
 import model.Order;
+import model.SameVehiclePolicy;
 import model.User;
 import remote.RmaAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import service.CustomFBMService;
-import service.SmsReceiver;
-import service.UserService;
 
 public class DeviceScanActivity extends AppCompatActivity {
     NfcAdapter nfcAdapter;
@@ -61,16 +52,6 @@ public class DeviceScanActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final int REQUEST_CODE_ASK_PERMISSIONS = 123;
-        //For host
-        ActivityCompat.requestPermissions(DeviceScanActivity.this, new String[]{"android.permission.READ_SMS"}, REQUEST_CODE_ASK_PERMISSIONS);
-        CustomFBMService.setActivity(this);
-        SmsReceiver.setActivity(this);
-
-//        String token = FirebaseInstanceId.getInstance().getToken();
-
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-        //
 
         setContentView(R.layout.activity_device_scan);
         context = this;
@@ -92,15 +73,7 @@ public class DeviceScanActivity extends AppCompatActivity {
 
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
                 getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-//       UserService.updateUserSMS("0899168485", true);
         setUpMeterInfo();
-        //TODO please delete this
-//        confirmPayment("1", null);
-//        SmsManager smsManager = SmsManager.getDefault();
-////        String text = "hời gian bắt đầu đậu xe: 13-10-2018 11:00";
-//        String text = "hời gian bắt đầu đậu xe: 13-10-2018 11:00 Từ giờ bắt đầu: 15000đ Từ giờ thứ 3: 20000đ";
-//        ArrayList<String> parts = smsManager.divideMessage(text);
-//        smsManager.sendMultipartTextMessage("0899168485", null, parts, null, null);
     }
 
     private void readFromIntent(Intent intent) {
@@ -152,6 +125,7 @@ public class DeviceScanActivity extends AppCompatActivity {
 
     TextView txtLocation, txtAllowedFrom, txtAllowedTo;
     ProgressDialog pd;
+
     public void setUpMeterInfo() {
 
         pd.show();
@@ -162,6 +136,8 @@ public class DeviceScanActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Location result = response.body();
                     setUpLocationInfo(result);
+                    //TODO
+//                    checkUserInfo("36", null);
                     pd.cancel();
                 }
             }
@@ -176,35 +152,21 @@ public class DeviceScanActivity extends AppCompatActivity {
 
     private Location location;
 
-    public void setUpLocationInfo(Location location){
+    public void setUpLocationInfo(Location location) {
         this.location = location;
         txtLocation = findViewById(R.id.txtLocation);
         txtAllowedFrom = findViewById(R.id.txtAllowedFrom);
         txtAllowedTo = findViewById(R.id.txtAllowedTo);
-
-
-        String pattern = "HH:mm";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
-        txtLocation.setText(location.getLocation());
-        txtAllowedFrom.setText(simpleDateFormat.format(new Date(
-           location.getPolicies().get(0).getAllowedParkingFrom()
-        )));
-
-        txtLocation.setText(location.getLocation());
-        txtAllowedTo.setText(simpleDateFormat.format(new Date(
-           location.getPolicies().get(0).getAllowedParkingTo()
-        )));
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listVehicleType);
-        VehicleTypeAdapter vehicleTypeAdapter = new VehicleTypeAdapter(location.getPolicies().get(0).getPolicyHasPricings(),context);
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this, 1);
-        recyclerView.setLayoutManager(gLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(vehicleTypeAdapter);
+//        List<SameVehiclePolicy> sameVehiclePolicies = SameVehiclePolicy.mergePolicyList(location.getPolicies());
+        PolicyListFragment policyListFragment = new PolicyListFragment();
+        policyListFragment.setPolicyList(location.getPolicies());
+        policyListFragment.setContext(this);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.fragmentContainer, policyListFragment);
+        transaction.commit();
     }
 
-    public void checkUserInfo(final String userId, final String token){
+    public void checkUserInfo(final String userId, final String token) {
         pd.show();
         RmaAPIService mService = RmaAPIUtils.getAPIService();
         mService.getUserById(Integer.parseInt(userId)).enqueue(new Callback<User>() {
@@ -218,9 +180,11 @@ public class DeviceScanActivity extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 pd.cancel();
+                t.printStackTrace();
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -282,6 +246,4 @@ public class DeviceScanActivity extends AppCompatActivity {
             nfcAdapter.disableForegroundDispatch(this);
         }
     }
-
-
 }

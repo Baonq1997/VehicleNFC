@@ -45,11 +45,11 @@ public class User implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "sms_noti")
-    private Boolean smsNoti;
+    private Boolean smsNoti = false;
 
     @Basic(optional = false)
     @Column(name = "is_activated")
-    private Boolean isActivated;
+    private Boolean isActivated = false;
     @Transient
     private String deviceToken;
     @Transient

@@ -27,10 +27,10 @@ public class PricingPopupActivity extends Activity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        int width= displayMetrics.widthPixels;
+        int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-        getWindow().setLayout((int)(width*.9),(int) (height*.8));
+        getWindow().setLayout((int) (width * .9), (int) (height * .8));
 
         List<LinkedTreeMap> values = new Gson().fromJson(getIntent().getStringExtra("Pricing"), List.class);
         List<Pricing> pricings = new ArrayList<>();
@@ -38,12 +38,14 @@ public class PricingPopupActivity extends Activity {
                 ) {
             pricings.add(new Gson().fromJson(s.toString(), Pricing.class));
         }
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listPricing);
-        PricingAdapter pricingAdapter = new PricingAdapter(pricings);
-        GridLayoutManager gLayoutManager = new GridLayoutManager(this, 1);
-        recyclerView.setLayoutManager(gLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(pricingAdapter);
+        if (pricings != null) {
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listPricing);
+            PricingAdapter pricingAdapter = new PricingAdapter(pricings);
+            GridLayoutManager gLayoutManager = new GridLayoutManager(this, 1);
+            recyclerView.setLayoutManager(gLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(pricingAdapter);
+        }
     }
 
     public void cancel(View view) {

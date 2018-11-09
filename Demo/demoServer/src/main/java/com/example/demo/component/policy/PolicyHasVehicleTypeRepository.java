@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface PolicyHasVehicleTypeRepository extends JpaRepository<PolicyHasTblVehicleType, Integer> {
 
-    List<PolicyHasTblVehicleType> findAllByPolicyInstanceId(Integer policyInstanceId);
+    List<PolicyHasTblVehicleType> findAllByPolicyId(Integer policyId);
 
 }

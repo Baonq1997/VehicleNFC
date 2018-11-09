@@ -31,7 +31,7 @@ public class Vehicle {
     @Basic(optional = false)
     @NotNull
     @Column(name = "is_verified")
-    private boolean isVerified;
+    private boolean isVerified = false;
 
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
     @ManyToOne

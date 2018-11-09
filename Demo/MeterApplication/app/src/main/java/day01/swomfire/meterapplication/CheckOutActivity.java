@@ -5,10 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 
 import Util.RmaAPIUtils;
-import adapter.PricingAdapter;
 import model.HourHasPrice;
 import model.Location;
 import model.Order;
@@ -35,13 +32,14 @@ import service.UserService;
 
 public class CheckOutActivity extends Activity {
 
-    TextView txtParkingFrom, txtParkingTo, txtUserVehicleNumber, txtUserVehicleType, txtWallet;
+    TextView txtParkingFrom, txtParkingTo, txtUserVehicleNumber, txtUserVehicleType, txtWallet, txtMinHour;
 
     private User user;
     private Order order;
 
     ProgressDialog pd;
     Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,19 +107,26 @@ public class CheckOutActivity extends Activity {
         txtUserVehicleNumber = findViewById(R.id.txtVehicleNumber);
         txtUserVehicleType = findViewById(R.id.txtVehicleType);
         txtWallet = findViewById(R.id.txtWallet);
+        txtMinHour = findViewById(R.id.txtMinHour);
         TextView txtDuration = findViewById(R.id.txtDuration);
         TextView txtTotal = findViewById(R.id.txtTotal);
         TextView txtLeft = findViewById(R.id.txtLeft);
 
-        txtUserVehicleNumber.setText(user.getVehicleNumber());
-        txtUserVehicleType.setText(user.getVehicleType().getName());
+        txtUserVehicleNumber.setText(user.getVehicle().getVehicleNumber());
+        txtUserVehicleType.setText(user.getVehicle().getVehicleTypeId().getName());
         txtWallet.setText(UserService.convertMoney(Double.parseDouble(user.getMoney())));
 
 
         String pattern = "HH:mm";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
-        TimeDuration duration = TimeDuration.compareTwoDates(order.getCheckInDate(), new Date().getTime());
+        TimeDuration duration;
+        duration = TimeDuration.compareTwoDates(order.getCheckInDate(), new Date().getTime());
+        if (duration.getHour() < order.getMinHour()) {
+            findViewById(R.id.panelMinHour).setVisibility(View.VISIBLE);
+            txtMinHour.setText(order.getMinHour()+" giờ");
+            duration.setHour(order.getMinHour());
+            duration.setMinute(0);
+        }
 
         txtParkingFrom.setText(simpleDateFormat.format(new Date(
                 order.getCheckInDate()
@@ -129,7 +134,7 @@ public class CheckOutActivity extends Activity {
         txtParkingTo.setText(simpleDateFormat.format(new Date()));
         txtDuration.setText(duration.getHour() + " giờ " + duration.getMinute() + " phút");
 
-        double totalPrice = getTotalPrice(duration,order);
+        double totalPrice = getTotalPrice(order);
         double left = Double.parseDouble(user.getMoney()) - totalPrice;
         txtTotal.setText(UserService.convertMoney(totalPrice));
         txtLeft.setText(UserService.convertMoney(left));
@@ -148,8 +153,8 @@ public class CheckOutActivity extends Activity {
         TextView txtUsername = findViewById(R.id.txtUsername);
         TextView txtPhoneNumber = findViewById(R.id.txtPhoneNumber);
 
-        txtUserVehicleNumber.setText(order.getUser().getVehicleNumber());
-        txtUserVehicleType.setText(order.getUser().getVehicleType().getName());
+        txtUserVehicleNumber.setText(user.getVehicle().getVehicleNumber());
+        txtUserVehicleType.setText(order.getVehicleType().getName());
         txtUsername.setText(order.getUser().getLastName() + " " + order.getUser().getFirstName());
         txtPhoneNumber.setText(order.getUser().getPhone());
 
@@ -165,47 +170,25 @@ public class CheckOutActivity extends Activity {
         txtParkingTo.setText(simpleDateFormat.format(new Date(order.getCheckOutDate())));
         txtDuration.setText(duration.getHour() + " giờ " + duration.getMinute() + " phút");
 
-        double totalPrice = getTotalPrice(duration,order);
-        double left = Double.parseDouble(order.getUser().getMoney()) - totalPrice;
+        double totalPrice = getTotalPrice(order);
+        double left = Double.parseDouble(order.getUser().getMoney());
         txtTotal.setText(UserService.convertMoney(totalPrice));
         txtLeft.setText(UserService.convertMoney(left));
     }
 
-    public double getTotalPrice(TimeDuration duration, Order order) {
-        int h = duration.getHour();
+    public double getTotalPrice(Order order) {
+        List<HourHasPrice> hourHasPrices = UserService.composeHourPrice(new Date().getTime() - order.getCheckInDate()
+                , order.getCheckInDate(), order.getAllowedParkingFrom(), order.getAllowedParkingTo(), order.getMinHour(), order.getOrderPricings());
+
         double totalPrice = 0;
-        List<HourHasPrice> hourHasPrices = new ArrayList<>();
-
-        if (h < order.getMinHour()) {
-            h = order.getMinHour();
-            duration.setMinute(0);
-        }
-
-        while (h > 0) {
-            hourHasPrices.add(new HourHasPrice(h, null));
-            h--;
-        }
-
-        double lastPrice = 0;
-        for (OrderPricing orderPricing : order.getOrderPricings()
-                ) {
-            if (orderPricing.getPricePerHour() > lastPrice) {
-                lastPrice = orderPricing.getPricePerHour();
-            }
-            for (HourHasPrice hourHasPrice : hourHasPrices) {
-                if (orderPricing.getFromHour() < hourHasPrice.getHour()) {
-                    hourHasPrice.setPrice(orderPricing.getPricePerHour());
-                }
+        for (HourHasPrice hourHasPrice : hourHasPrices) {
+            double money = (hourHasPrice.isLate()) ? hourHasPrice.getFine() : hourHasPrice.getPrice();
+            if (hourHasPrice.isFullHour()) {
+                totalPrice += money;
+            } else {
+                totalPrice += Math.ceil(money * ((double) hourHasPrice.getMinutes() / 60));
             }
         }
-
-        for (
-                HourHasPrice hourHasPrice : hourHasPrices
-                ) {
-            totalPrice += hourHasPrice.getPrice();
-        }
-
-        totalPrice += lastPrice * ((double) duration.getMinute() / 60);
         return totalPrice;
     }
 

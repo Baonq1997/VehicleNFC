@@ -18,14 +18,15 @@ import java.util.List;
 
 import day01.swomfire.meterapplication.PricingPopupActivity;
 import day01.swomfire.meterapplication.R;
-import model.PolicyHasTblVehicleType;
+import model.Policy;
+import model.PolicyHasVehicleType;
 import model.VehicleType;
 
 public class VehicleTypeAdapter extends RecyclerView.Adapter<VehicleTypeAdapter.MyViewHolder> {
-    private List<PolicyHasTblVehicleType> vehicleTypes;
+    private List<PolicyHasVehicleType> vehicleTypes;
     private Context context;
 
-    public VehicleTypeAdapter(List<PolicyHasTblVehicleType> vehicleTypes, Context context) {
+    public VehicleTypeAdapter(List<PolicyHasVehicleType> vehicleTypes, Context context) {
         this.vehicleTypes = vehicleTypes;
         this.context = context;
     }
@@ -40,7 +41,7 @@ public class VehicleTypeAdapter extends RecyclerView.Adapter<VehicleTypeAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final PolicyHasTblVehicleType policyHasTblVehicleType = vehicleTypes.get(position);
+        final PolicyHasVehicleType policyHasTblVehicleType = vehicleTypes.get(position);
         holder.txtVehicleType.setText(policyHasTblVehicleType.getVehicleType().getName());
         holder.btnPricing.setOnClickListener(new View.OnClickListener() {
             @Override

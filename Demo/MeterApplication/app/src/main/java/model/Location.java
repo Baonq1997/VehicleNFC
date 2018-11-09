@@ -41,8 +41,6 @@ public class Location {
     }
 
     public String getLocation() {
-//        String[] properties = location.split("_");
-//        return properties[0]+", "+properties[1];
         return this.location;
     }
 

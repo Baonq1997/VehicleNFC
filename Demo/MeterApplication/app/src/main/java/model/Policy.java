@@ -11,6 +11,10 @@ public class Policy {
     @Expose
     private int id;
 
+    @SerializedName("policyHasTblVehicleTypes")
+    @Expose
+    private List<PolicyHasVehicleType> policyHasVehicleTypes;
+
     @SerializedName("allowedParkingFrom")
     @Expose
     private long allowedParkingFrom;
@@ -19,10 +23,6 @@ public class Policy {
     @Expose
     private long allowedParkingTo;
 
-    @SerializedName("policyHasTblVehicleTypeList")
-    @Expose
-    private List<PolicyHasTblVehicleType> policyHasPricings;
-
 
     public int getId() {
         return id;
@@ -30,6 +30,14 @@ public class Policy {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<PolicyHasVehicleType> getPolicyHasVehicleTypes() {
+        return policyHasVehicleTypes;
+    }
+
+    public void setPolicyHasVehicleTypes(List<PolicyHasVehicleType> policyHasVehicleTypes) {
+        this.policyHasVehicleTypes = policyHasVehicleTypes;
     }
 
     public long getAllowedParkingFrom() {
@@ -46,13 +54,5 @@ public class Policy {
 
     public void setAllowedParkingTo(long allowedParkingTo) {
         this.allowedParkingTo = allowedParkingTo;
-    }
-
-    public List<PolicyHasTblVehicleType> getPolicyHasPricings() {
-        return policyHasPricings;
-    }
-
-    public void setPolicyHasPricings(List<PolicyHasTblVehicleType> policyHasPricings) {
-        this.policyHasPricings = policyHasPricings;
     }
 }

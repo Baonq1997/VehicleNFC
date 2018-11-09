@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_policy_instance_has_tbl_vehicle_type")
+@Table(name = "tbl_policy_has_tbl_vehicle_type")
 public class PolicyHasTblVehicleType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,8 @@ public class PolicyHasTblVehicleType implements Serializable {
     private List<Pricing> pricingList;
 
     @Basic
-    @Column(name = "tbl_policy_instance_id", insertable = false, updatable = false)
-    private Integer policyInstanceId;
+    @Column(name = "tbl_policy_id", insertable = false, updatable = false)
+    private Integer policyId;
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
     private VehicleType vehicleTypeId;
@@ -55,12 +55,12 @@ public class PolicyHasTblVehicleType implements Serializable {
         this.pricingList = pricingList;
     }
 
-    public Integer getPolicyInstanceId() {
-        return policyInstanceId;
+    public Integer getPolicyId() {
+        return policyId;
     }
 
-    public void setPolicyInstanceId(Integer policyInstanceId) {
-        this.policyInstanceId = policyInstanceId;
+    public void setPolicyId(Integer policyId) {
+        this.policyId = policyId;
     }
 
     public VehicleType getVehicleTypeId() {

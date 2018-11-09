@@ -19,11 +19,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             android:text="Thanh toán đỗ xe"
             android:textColor="#000"
             android:textSize="24dp"
-            android:layout_marginBottom="10dp"
             android:textStyle="italic|bold" />
 
         <LinearLayout
@@ -139,6 +139,36 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/panelMinHour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:gravity="right"
+                android:text="Tối thiểu:"
+                android:textColor="#000"
+                android:textSize="20dp"
+                android:textStyle="italic|bold" />
+
+            <TextView
+                android:id="@+id/txtMinHour"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".7"
+                android:gravity="center"
+                android:text="16 giờ 14 phút"
+                android:textColor="#000"
+                android:textSize="24dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -193,6 +223,7 @@
                 android:textColor="#000"
                 android:textSize="24dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

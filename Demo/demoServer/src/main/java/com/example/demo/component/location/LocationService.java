@@ -41,7 +41,7 @@ public class LocationService {
             List<Policy> policyList = policyRepository.findAllByLocationId(location.get().getId());
             for (Policy policy : policyList) {
                 List<PolicyHasTblVehicleType> policyHasTblVehicleTypes =
-                        policyHasVehicleTypeRepository.findAllByPolicyInstanceId(policy.getId());
+                        policyHasVehicleTypeRepository.findAllByPolicyId(policy.getId());
                 policy.setPolicyHasTblVehicleTypes(policyHasTblVehicleTypes);
             }
             location.get().setPolicyList(policyList);
