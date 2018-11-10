@@ -41,7 +41,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".HistoryActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HistoryDetailActivity"
             android:screenOrientation="portrait" />
@@ -70,7 +70,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ChangePasswordActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ForgetPasswordActivity"
             android:screenOrientation="portrait" />
@@ -83,8 +83,7 @@
         <activity
             android:name=".TransparentActivity"
             android:theme="@style/AppTheme.TransparentActivity" />
-        <activity android:name=".CreateSuccessActivity">
-        </activity>
+        <activity android:name=".CreateSuccessActivity"></activity>
     </application>
 
 </manifest>

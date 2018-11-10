@@ -44,6 +44,8 @@ public class HistoryDetailActivity extends Activity {
         txtTotal = findViewById(R.id.txtTotal);
         Date date = new Date(item.getCheck_in_date());
 
+        txtName.setText(item.getUsername());
+
         txtVehicalName.setText(item.getVehical_name());
         txtVehicalID.setText(item.getVehical_id());
         txtLocation.setText(item.getTbl_location_id());

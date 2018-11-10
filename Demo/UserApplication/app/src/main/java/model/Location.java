@@ -28,7 +28,7 @@ public class Location {
     private boolean isActivated;
 
 
-    @SerializedName("policyList")
+    @SerializedName("policies")
     @Expose
     private List<Policy> policies;
 

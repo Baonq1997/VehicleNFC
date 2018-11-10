@@ -373,6 +373,7 @@ public class OrderService {
 //            order.getUserId().setVehicle(
 //                    vehicleRepository.findByVehicleNumber(order.getUserId().getVehicle()).get()
 //            );
+            order.setLocation(locationRepository.findById(order.getLocationId()).get());
             order.setOrderPricingList(orderPricingRepository.findByOrderId(order.getId()));
         }
         return orders;

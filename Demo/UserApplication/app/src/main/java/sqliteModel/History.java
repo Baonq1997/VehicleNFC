@@ -2,6 +2,8 @@ package sqliteModel;
 
 import java.io.Serializable;
 
+import model.Order;
+
 public class History implements Serializable {
 
     private int id;
@@ -131,4 +133,15 @@ public class History implements Serializable {
         this.tbl_location_id = tbl_location_id;
     }
 
+
+    public static History orderToHistory(Order order) {
+        History history = new History(
+                order.getId(),order.getTotal(),order.getCheckInDate(),order.getCheckOutDate()
+                ,order.getDuration(),order.getAllowedParkingFrom(),order.getAllowedParkingTo()
+                ,order.getOrderStatus().getName(),order.getUser().getLastName() +" " +order.getUser().getFirstName()
+                ,order.getUser().getVehicle().getVehicleNumber(), order.getUser().getVehicle().getLicensePlateId()
+                ,order.getLocation().getLocation()
+        );
+        return history;
+    }
 }

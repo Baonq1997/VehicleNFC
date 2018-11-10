@@ -48,6 +48,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import service.UserService;
+import sqliteModel.History;
 
 
 public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessageCallback {
@@ -55,6 +56,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
     String token = null;
 
     Chronometer parkingChorno;
+    boolean isFromNoti = false;
     boolean blink = false;
 
     @Override
@@ -69,9 +71,9 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
 
         NotificationSerial notificationSerial = (NotificationSerial) getIntent().getSerializableExtra("Notification");
         if (notificationSerial != null) {
-            setContentView(R.layout.activity_checkout);
-            parkingChorno = findViewById(R.id.chroParking);
-            getOrderInfo(notificationSerial.getOrderId());
+            isFromNoti = true;
+            currentOrderId = Integer.parseInt(notificationSerial.getOrderId());
+            getOrderInfo();
         }
 
         context = this;
@@ -179,62 +181,62 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         parkingChorno.start();
     }
 
-    private boolean hasCurrentOrder = false;
+    private Integer currentOrderId = null;
     private boolean pause = false;
 
-    public void getOrderInfo(String orderId) {
-        if (orderId == null) {
-            //TODO get user info
-            User user = null;
-//            if (user == null) {
-//                return;
-//            }
-            SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
-            String userId = prefs.getString("userId", "1");
+    public void getOrderInfo() {
+        //TODO get user info
+        SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
+        String userId = prefs.getString("userId", "1");
 
-            RmaAPIService mService = RmaAPIUtils.getAPIService();
-            mService.getOpenOrderByUserId(Integer.parseInt(userId)).enqueue(new Callback<Order>() {
-                @Override
-                public void onResponse(Call<Order> call, Response<Order> response) {
-                    if (response.isSuccessful()) {
-                        Order result = response.body();
-                        if (result != null) {
-                            if (!hasCurrentOrder) {
-                                setContentView(R.layout.activity_checkout);
-                                parkingChorno = findViewById(R.id.chroParking);
-                                setUpChrono(result);
-                                setUpOrderInfo(result);
-                                hasCurrentOrder = true;
-                            }
-                        } else if (result == null && hasCurrentOrder) {
-                            Intent intent = getIntent();
-                            finish();
-                            startActivity(intent);
-                        }
-                        if (!pause) {
-                            getOrderInfo(null);
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Order> call, Throwable t) {
-                    Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
-                    System.out.println(t.getMessage());
-                    toast.show();
-                }
-            });
-            return;
-        }
         RmaAPIService mService = RmaAPIUtils.getAPIService();
-        mService.getOrderById(Integer.parseInt(orderId)).enqueue(new Callback<Order>() {
+        mService.getOpenOrderByUserId(Integer.parseInt(userId)).enqueue(new Callback<Order>() {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
                 if (response.isSuccessful()) {
                     Order result = response.body();
                     if (result != null) {
-                        setUpChrono(result);
-                        setUpOrderInfo(result);
+                        if (currentOrderId == null || isFromNoti) {
+                            isFromNoti = false;
+                            setContentView(R.layout.activity_checkout);
+                            parkingChorno = findViewById(R.id.chroParking);
+                            setUpChrono(result);
+                            setUpOrderInfo(result);
+                            currentOrderId = result.getId();
+                        }
+                    } else if (result == null && currentOrderId != null) {
+                        setUpCheckOut(currentOrderId);
+                        currentOrderId = null;
+                    }
+                    if (!pause) {
+                        getOrderInfo();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Order> call, Throwable t) {
+                Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
+                System.out.println(t.getMessage());
+                toast.show();
+            }
+        });
+    }
+
+    public void setUpCheckOut(Integer orderId) {
+        RmaAPIService mService = RmaAPIUtils.getAPIService();
+        mService.getOrderById(orderId).enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(Call<Order> call, Response<Order> response) {
+                if (response.isSuccessful()) {
+                    Order result = response.body();
+                    if (result != null) {
+                        setContentView(R.layout.activity_index);
+                        ImageView gifImageView = (ImageView) findViewById(R.id.gifHahah);
+                        Glide.with(context).load(R.raw.holding).into(gifImageView);
+                        Intent intent = new Intent(context, HistoryDetailActivity.class);
+                        intent.putExtra("hisItem", History.orderToHistory(result));
+                        startActivity(intent);
                     }
                 }
             }
@@ -280,7 +282,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         //checking internet connectivity
         for (i = 0; i < networkInfo.length; ++i) {
             if (networkInfo[i].getState() == NetworkInfo.State.CONNECTED) {
-                getOrderInfo(null);
+                getOrderInfo();
                 return;
             }
         }
@@ -301,13 +303,6 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         mService.sendDeviceTokenToServer(token, phoneNumber).enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                if (response.isSuccessful()) {
-//                    Order result = response.body();
-//                    if (result != null) {
-//                        setUpChrono(result);
-//                        setUpOrderInfo(result);
-//                    }
-                }
             }
 
             @Override

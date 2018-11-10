@@ -82,9 +82,6 @@ public interface RmaAPIService {
     Call<Boolean> changePassword(@Field("phoneNumber") String phone,
                                  @Field("oldPassword") String currentPass, @Field("newPassword") String newPass);
 
-//    @GET("/bulk/3d78ccdddf5bd1c43a6587ff/USD")
-//    Call<JsonObject> getUSD();
-
     @GET
     Call<JsonObject> getUSD(@Url String url);
 
