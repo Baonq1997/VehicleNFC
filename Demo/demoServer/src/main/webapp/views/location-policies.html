@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/assets/css/jquery-clockpicker.min.css">
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/css/location-policies.css">
@@ -38,7 +39,33 @@
                     <label for="status" class="col-form-label">Status:</label>
                     <p class="form-control" id="status"></p>
                 </div>
-                <div class="row">
+
+                <div class="form-group" style="overflow: auto; height: 100px;width: 100%; float: left">
+                    <div class="from-group clockpickerFrom" style="width:20%; float: left; margin-right: 2%;">
+                        <label class="col-form-label">Allowed Parking From:</label>
+                        <input type="text" class="form-control" id="ParkingFrom">
+                        <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-time"></span>
+                                </span>
+                    </div>
+                    <input type="hidden" id="allowedParkingFrom">
+                    <div class="from-group clockpickerTo" style="width:20%; float: left; margin-right: 2%;">
+                        <label  class="col-form-label">Allowed Parking From:</label>
+                        <input type="text" class="form-control" id="ParkingTo">
+                        <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-time"></span>
+                                </span>
+                    </div>
+                    <input type="hidden" id="allowedParkingTo">
+                    <div class="form-group" style="width: 50%; float: left;">
+                        <label class="col-form-label">Vehicle Allowed:</label>
+                        <div id="filter">
+
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btnBG" id="filter-btn" value="Go" style="float: left;">Go</button>
+                </div>
+                <div id="policies">
                     <table class="table table" id="location-policies">
                         <thead>
                             <tr>
@@ -71,7 +98,7 @@
                 <div class="modal-body">
                     <div class="location-container">
                         <h3>Locations</h3>
-                        <div class="control-group-location">
+                        <div class="control-group location" id="locations">
 
 
                         </div>
@@ -88,5 +115,6 @@
 <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/location-policies.js"></script>
 <script src="/assets/scripts/klorofil-common.js"></script>
+<script src="/assets/scripts/jquery-clockpicker.min.js"></script>
 </body>
 </html>

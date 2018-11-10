@@ -1,8 +1,9 @@
 package com.example.demo.component.location;
 
-import com.example.demo.component.location.Location;
-
+import com.example.demo.component.policy.Policy;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Integer> {
 //    void deleteByPolicyList(List<Policy> policyList);
@@ -12,7 +13,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 //    @Modifying
 //    void deleteLocationPolicyByPolicyId(@Param("policyId") Integer policyId);
 //
-//    List<Location> findByPolicyList(List<Policy> policyList);
+    List<Location> findByPolicyList(List<Policy> policyList);
 //
 //    @Query(value = "INSERT INTO tbl_location_has_tbl_policy(tbl_location_id, tbl_policy_id) VALUES(:locationId,:policyId)",
 //    nativeQuery = true)

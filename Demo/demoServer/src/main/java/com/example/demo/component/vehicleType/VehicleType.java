@@ -17,6 +17,8 @@ public class VehicleType implements Serializable {
     @Size(max = 45)
     @Column(name = "name")
     private String name;
+    @Transient
+    private String isDelete;
     public VehicleType() {
     }
 
@@ -36,4 +38,11 @@ public class VehicleType implements Serializable {
         this.name = name;
     }
 
+    public String getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(String isDelete) {
+        this.isDelete = isDelete;
+    }
 }

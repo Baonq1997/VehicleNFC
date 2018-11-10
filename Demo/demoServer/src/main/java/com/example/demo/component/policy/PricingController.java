@@ -33,17 +33,18 @@ public class PricingController {
     }
 
     @PostMapping(value = "/save-pricing-json")
-    public ResponseEntity savePricing(@RequestBody  Pricing pricing) {
-        return ResponseEntity.status(HttpStatus.OK).body(pricingService.save(pricing));
+    public ResponseEntity savePricing(@RequestBody  Pricing pricing,
+                                      @RequestParam("policyInstanceVehicleId") Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(pricingService.save(pricing, id));
     }
 
     @PostMapping(value = "/save-pricing")
-    public ResponseEntity savePricingByForm(Pricing pricing) {
-        return ResponseEntity.status(HttpStatus.OK).body(pricingService.save(pricing));
+    public ResponseEntity savePricingByForm(Pricing pricing, @RequestParam("policyInstanceVehicleId") Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(pricingService.save(pricing, id));
     }
 
-    @PostMapping(value = "/delete-pricing/{id}")
-    public String deletePricing(@PathVariable("id") Integer id) {
+    @PostMapping(value = "/delete-pricing")
+    public String deletePricing(@RequestParam("id") Integer id) {
         pricingService.deletePricing(id);
         return "Success";
     }

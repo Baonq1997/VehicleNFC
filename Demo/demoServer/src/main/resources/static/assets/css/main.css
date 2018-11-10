@@ -2752,3 +2752,7 @@ ul.activity-timeline > li:last-child:after {
     color: white;
     font-size: 16px;
 }
+#btn-add-pricing {
+    margin-left: 0;
+    margin-bottom: 5px;
+}

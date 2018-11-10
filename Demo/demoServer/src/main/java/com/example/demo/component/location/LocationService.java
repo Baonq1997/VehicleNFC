@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,23 +74,57 @@ public class LocationService {
     @Transactional
     public void addPolicy(AddLocationObject addLocationObject) {
 
-//        Optional<Policy> policy = policyRepository.findById(addLocationObject.getPolicyId());
-//        List<Location> locationList = addLocationObject.getLocationArr();
-//        if (!locationList.isEmpty() && policy.isPresent()) {
-//            Policy policyDB = policy.get();
-//            for (Location location : locationList) {
-//                if (location.getIsDelete().equalsIgnoreCase("true")) {
-//                    locationRepository.deleteLocationPolicyByPolicyIdAndLocationId(policyDB.getId(), location.getId());
-//                } else {
-//                    List<Policy> policyList = new ArrayList<>();
-//                    policyList.add(policyDB);
-//                    Location temp = locationRepository.findByIdAndPolicyList(location.getId(), policyList);
-//                    if (temp == null) {
-//                        locationRepository.insertLocationAndPolicy(location.getId(), policyDB.getId());
-//                    }
-//                }
-//            }
-//        }
+        Optional<Policy> policy = policyRepository.findById(addLocationObject.getPolicyId());
+        List<Location> locationList = addLocationObject.getLocationArr();
+        List<Location> existedLocations = addLocationObject.getCurrentLocationId();
+        if (!locationList.isEmpty() && policy.isPresent()) {
+            Policy policyDB = policy.get();
+            for (Location location : locationList) {
+                for (Location existedLocation:existedLocations) {
+                    if (existedLocation.getId() != location.getId()) {
+                        if (location.getIsDelete().equalsIgnoreCase("true")) {
+                            policyRepository.deleteById(policyDB.getId());
+                        } else {
+                            Policy policyInstance = new Policy();
+                            policyInstance.setAllowedParkingFrom(policyDB.getAllowedParkingFrom());
+                            policyInstance.setAllowedParkingTo(policyDB.getAllowedParkingTo());
+                            policyInstance.setLocationId(location.getId());
+                            List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findAllByPolicyId(policyDB.getId());
+                            policyRepository.save(policyInstance);
+                            if (policyHasTblVehicleTypes != null) {
+                                List<PolicyHasTblVehicleType> policyHasTblVehicleTypeList = policyHasTblVehicleTypes;
+                                for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
+                                    PolicyHasTblVehicleType duplicatePolicyVehicle = new PolicyHasTblVehicleType();
+
+                                    duplicatePolicyVehicle.setPolicyId(policyInstance.getId());
+
+                                    if (policyHasTblVehicleType.getMinHour() != null) {
+                                        duplicatePolicyVehicle.setMinHour(policyHasTblVehicleType.getMinHour());
+                                    }
+                                    if (policyHasTblVehicleType.getVehicleTypeId() != null) {
+                                        duplicatePolicyVehicle.setVehicleTypeId(policyHasTblVehicleType.getVehicleTypeId());
+                                    }
+                                    policyHasVehicleTypeRepository.save(duplicatePolicyVehicle);
+                                    List<Pricing> pricingList = pricingRepository.findByPolicyHasVehicleTypeId(policyHasTblVehicleType.getId());
+                                    if (pricingList != null) {
+                                        for (Pricing pricing : pricingList) {
+                                            Pricing duplicatePricing = new Pricing();
+                                            duplicatePricing.setPolicyHasVehicleTypeId(duplicatePolicyVehicle.getId());
+                                            duplicatePricing.setPricePerHour(pricing.getPricePerHour());
+                                            duplicatePricing.setLateFeePerHour(pricing.getLateFeePerHour());
+                                            duplicatePricing.setFromHour(pricing.getFromHour());
+                                            pricingRepository.save(duplicatePricing);
+                                        }
+                                        duplicatePolicyVehicle.setPricingList(policyHasTblVehicleType.getPricingList());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
 
     }
 
@@ -121,13 +153,14 @@ public class LocationService {
         return vehicleTypeList;
     }
 
-    public List<Location> getLocationsByPolicyId(Integer policyId) {
+    public List<Location> getLocationsByPolicyId(Integer policyInstanceId) {
 //        Optional<Policy> policyOpt = policyRepository.findById(policyId);
-//        if (policyOpt.isPresent()) {
-//            List<Policy> policyList = new ArrayList<>();
-//            policyList.add(policyOpt.get());
-//            return locationRepository.findByPolicyList(policyList);
-//        }
+        Optional<Policy> policyInstanceOptional = policyRepository.findById(policyInstanceId);
+        if (policyInstanceOptional.isPresent()) {
+            List<Policy> policyList = new ArrayList<>();
+            policyList.add(policyInstanceOptional.get());
+            return locationRepository.findByPolicyList(policyList);
+        }
         return null;
     }
 }

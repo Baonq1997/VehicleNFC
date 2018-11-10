@@ -2,6 +2,8 @@ package com.example.demo.component.policy;
 
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +41,39 @@ public class PricingService {
         return null;
     }
 
-    public Pricing save(Pricing pricing) {
-        return pricingRepository.save(pricing);
+    public Pricing  save(Pricing pricing, Integer policyInstanceHasTblVehicleType) {
+//        PolicyInstanceHasTblVehicleType instance = policyInstanceHasVehicleTypeRepository.findById(policyInstanceHasTblVehicleType).get();
+//        boolean existed = false;
+//        if (instance != null) {
+//            List<Pricing> pricingList = pricingRepository.findPricingByPolicyInstanceVehicle(instance.getId());
+//            for (Pricing item : pricingList) {
+//                if (item.getId() == pricing.getId()) {
+//                    existed = true;
+//                    item.setFromHour(pricing.getFromHour());
+//                    item.setLateFeePerHour(pricing.getLateFeePerHour());
+//                    item.setPricePerHour(pricing.getPricePerHour());
+//                }
+//            }
+//            if (!existed) {
+//                pricingList.add(pricing);
+//                instance.setPricingList(pricingList);
+//            }
+//            policyInstanceHasVehicleTypeRepository.save(instance);
+              pricing.setId(policyInstanceHasTblVehicleType);
+            return pricingRepository.save(pricing);
+        }
+//        return pricingRepository.save(pricing);
+
+
+    @Transactional
+    public void deletePricing(Integer id) {
+        Optional<Pricing> pricing = pricingRepository.findById(id);
+        if (pricing.isPresent()) {
+            pricingRepository.deletePricingById(pricing.get().getId());
+        }
+
     }
 
-    public void deletePricing(Integer id) {
-        pricingRepository.deleteById(id);
-    }
 
     public void deleteByPolicyHasTblVehicleTypeId(Integer policyHasVehicleTypeId) {
 //        pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasVehicleTypeId);

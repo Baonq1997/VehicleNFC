@@ -26,7 +26,6 @@ public class Location implements Serializable {
     @Column(name = "is_activated")
     private Boolean isActivated;
 
-
     @JoinColumn(name = "tbl_location_id")
     @OneToMany
 //    @Transient

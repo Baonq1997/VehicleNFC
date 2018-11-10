@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_policy_has_tbl_vehicle_type")
+@Table(name = "tbl_policy_instance_has_tbl_vehicle_type")
 public class PolicyHasTblVehicleType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,13 +16,12 @@ public class PolicyHasTblVehicleType implements Serializable {
     private Integer id;
     @Column(name = "min_hour")
     private Integer minHour;
-
-    @JoinColumn(name = "tbl_policy_has_tbl_vehicle_type_id")
-    @OneToMany
+    @Transient
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "policyInstanceHasTblVehicleTypeId")
     private List<Pricing> pricingList;
 
-    @Basic
-    @Column(name = "tbl_policy_id", insertable = false, updatable = false)
+//    @Basic(optional = false)
+    @Column(name = "tbl_policy_id", nullable = false)
     private Integer policyId;
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
