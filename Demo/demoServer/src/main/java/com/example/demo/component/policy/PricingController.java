@@ -34,12 +34,12 @@ public class PricingController {
 
     @PostMapping(value = "/save-pricing-json")
     public ResponseEntity savePricing(@RequestBody  Pricing pricing,
-                                      @RequestParam("policyInstanceVehicleId") Integer id) {
+                                      @RequestParam("policyVehicleId") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(pricingService.save(pricing, id));
     }
 
     @PostMapping(value = "/save-pricing")
-    public ResponseEntity savePricingByForm(Pricing pricing, @RequestParam("policyInstanceVehicleId") Integer id) {
+    public ResponseEntity savePricingByForm(Pricing pricing, @RequestParam("policyVehicleId") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(pricingService.save(pricing, id));
     }
 

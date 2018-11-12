@@ -8,7 +8,7 @@ function initPolicies() {
     var policies = [];
     $.ajax({
         type: "GET",
-        url: "http://localhost:8080/policy-instance/policies-instances",
+        url: "http://localhost:8080/policy/policies",
         dataType: "json",
         success: function (data) {
             if (data != null) {
@@ -28,10 +28,30 @@ function initPolicies() {
 function emptyLocationCheckboxes() {
     $('.control-group location').empty();
 }
+
+jQuery.extend({
+    getValues: function(id) {
+        var result = null;
+        var url = 'http://localhost:8080/location/get/'+id;
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: 'json',
+            async: false,
+            success: function(data) {
+                result = data.location;
+            }, error: function (res) {
+                console.log(res);
+            }
+        });
+        return result;
+    }
+});
+
 function loadTable(data) {
     if (data != null) {
         for (var i = 0; i < data.length; i++) {
-            var vehicleList = data[i].policyInstanceHasTblVehicleTypes;
+            var vehicleList = data[i].policyHasTblVehicleTypes;
             row = '<tr>';
             row += '<td>' + data[i].id + '</td>';
             row += '<td>' + msToTime(data[i].allowedParkingFrom) + ' - ' + msToTime(data[i].allowedParkingTo) + '</td>';
@@ -40,11 +60,14 @@ function loadTable(data) {
                 for (let j = 0; j < vehicleList.length; j++) {
                     row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
                 }
-
             } else {
                 row += '<td> N/A </td>'
             }
-            row += '</td>'+ data[i].locationId + '</td>';
+            if (data[i].locationId === null) {
+                row += '<td> N/A </td>'
+            } else {
+                row += '<td>'+ $.getValues(data[i].locationId) + '</td>';
+            }
             row += '<td> <button class="btn btn-success" onclick="getExistedLocations(' + data[i].id + ')">Add To Location</button>';
             row += '<td> <button class="btn btn-primary" onclick="editPolicy(' + data[i].id + ')">Edit</button>';
             row += '<td> <button class="btn btn-danger" onclick="deletePolicy(' + data[i].id + ')">Delete</button>';
@@ -179,7 +202,7 @@ function addPolicyToLocation(policyId) {
 
 function editPolicy(policyInstanceId) {
     let locationId = $('#locationId').val();
-    let url = "http://localhost:8080/policy-instance/edit?policyInstanceId=" + policyInstanceId;
+    let url = "http://localhost:8080/policy/edit?policyId=" + policyInstanceId;
     window.location.href = url;
 }
 
@@ -188,7 +211,7 @@ function deletePolicy(policyInstanceId) {
     $.ajax({
         type: "POST",
         // url: 'http://localhost:8080/policy/delete-by-location-policy?locationId=' + locationId + '&policyId=' + policyId,
-        url: 'http://localhost:8080/policy-instance/delete-policy-instance?policyInstanceId=' + policyInstanceId,
+        url: 'http://localhost:8080/policy/delete-policy?policyId=' + policyInstanceId,
         success: function (data) {
             console.log("Delete Successfully");
             location.reload(true);

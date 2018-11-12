@@ -27,10 +27,8 @@ public class Policy implements Serializable {
     @Column(name = "tbl_location_id", nullable = false)
     private Integer locationId;
 
-    @JoinColumn(name = "tbl_policy_id")
+    @JoinColumn(name = "tbl_policy_id", updatable = true, insertable = false)
     @OneToMany
-
-//    @Transient
     private List<PolicyHasTblVehicleType> policyHasTblVehicleTypes;
 
     public Policy() {

@@ -1,9 +1,72 @@
-#location-table  td, th{
-    line-height: 100%;
-    vertical-align: middle;
-    text-align: center;
-}
+/*#location-table  td, th{*/
+    /*line-height: 100%;*/
+    /*vertical-align: middle;*/
+    /*text-align: center;*/
+/*}*/
+
 
 body {
     font-size: 20px;
+}
+
+#search-box-location {
+    height: 100%;
+    display: flex;
+    float: right;
+    margin-left: 10px;
+    align-items: center;
+    width: 50%;
+    margin-bottom: 10px;
+}
+
+#search-box-location .btnAction {
+    float: right;
+    display: block;
+    width: 40px;
+    margin: 0;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 0 5px 5px 0;
+    font-size: 16px;
+}
+
+#searchValue {
+    border-radius: 0;
+}
+
+.panel-tool {
+    margin: 0;
+    float: left;
+}
+
+.panel {
+    padding: 30px;
+}
+
+#location-table tr {
+    box-sizing: border-box;
+    vertical-align: center;
+}
+
+#location-table td {
+    vertical-align: middle;
+    padding-left: 15px;
+    border-right: 2px solid;
+}
+
+#location-table td:last-of-type {
+    border-right: 0;
+}
+
+#location-table thead th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
 }

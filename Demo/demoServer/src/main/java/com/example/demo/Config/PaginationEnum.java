@@ -1,7 +1,7 @@
 package com.example.demo.config;
 
 public enum PaginationEnum {
-    userPageSize(1,5);
+    userPageSize(1,5), locationPageSize(2,5);
     private int id;
     private int numberOfRows;
 

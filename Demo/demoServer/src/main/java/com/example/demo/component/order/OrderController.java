@@ -36,9 +36,8 @@ public class OrderController {
     }
 
     @GetMapping(value = {"/open-order/{userId}"})
-    public ResponseEntity<Optional<Order>> getOpenOrderByUserId(@PathVariable("userId") Integer id) {
-        Optional<Order> order = orderService.getOpenOrderByUserId(id);
-
+    public ResponseEntity<Optional<Order>> getOpenOrderByUserId(@PathVariable("userId") String id) {
+        Optional<Order> order = orderService.getOpenOrderByUserId(UserService.decodeId(id));
         return ResponseEntity.status(HttpStatus.OK).body(order);
     }
 

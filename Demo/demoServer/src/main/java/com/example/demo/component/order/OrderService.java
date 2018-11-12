@@ -111,15 +111,17 @@ public class OrderService {
     }
 
     public Optional<Order> getOpenOrderByUserId(Integer id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            Optional<Order> order = orderRepository.findFirstByUserIdAndOrderStatusId(user.get()
-                    , orderStatusRepository.findByName(OrderStatusEnum.Open.getName()).get());
-            if (order.isPresent()) {
-                order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
-                order.get().setOrderPricingList(orderPricingRepository.findByOrderId(order.get().getId()));
+        if (id != null) {
+            Optional<User> user = userRepository.findById(id);
+            if (user.isPresent()) {
+                Optional<Order> order = orderRepository.findFirstByUserIdAndOrderStatusId(user.get()
+                        , orderStatusRepository.findByName(OrderStatusEnum.Open.getName()).get());
+                if (order.isPresent()) {
+                    order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
+                    order.get().setOrderPricingList(orderPricingRepository.findByOrderId(order.get().getId()));
+                }
+                return order;
             }
-            return order;
         }
         return null;
     }
@@ -183,7 +185,7 @@ public class OrderService {
             }
         }
         Policy choosedPolicy = null;
-        PolicyHasTblVehicleType policyHasTblVehicleType = null;
+//        PolicyHasTblVehicleType policyHasTblVehicleType = null;
         for (Policy policy : matchPolicies) {
             while (choosedPolicy == null) {
                 Vehicle vehicle = user.getVehicle();
@@ -192,12 +194,12 @@ public class OrderService {
                 if (vehicle == null) {
                     break;
                 }
-                for (PolicyHasTblVehicleType policyInstanceHasTblVehicleType : policyHasTblVehicleTypes) {
-                    if (policyInstanceHasTblVehicleType.getVehicleTypeId().getId() == user.getVehicle().getVehicleTypeId().getId()) {
+                for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
+                    if (policyHasTblVehicleType.getVehicleTypeId().getId() == user.getVehicle().getVehicleTypeId().getId()) {
                         order.setAllowedParkingFrom(policy.getAllowedParkingFrom());
                         order.setAllowedParkingTo(policy.getAllowedParkingTo());
-                        order.setMinHour(policyInstanceHasTblVehicleType.getMinHour());
-                        List<Pricing> pricings = policyInstanceHasTblVehicleType.getPricingList();
+                        order.setMinHour(policyHasTblVehicleType.getMinHour());
+                        List<Pricing> pricings = policyHasTblVehicleType.getPricingList();
                         return pricings;
                     }
                 }
@@ -457,6 +459,7 @@ public class OrderService {
 
         return hourHasPrices;
     }
+
     public static boolean isOutOfTheLine(long current, long limitFrom, long limitTo) {
         Calendar cur = Calendar.getInstance(), from = Calendar.getInstance(), to = Calendar.getInstance();
         cur.setTimeInMillis(current);

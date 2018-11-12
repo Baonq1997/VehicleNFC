@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 public class User {
 
 
-    @SerializedName("id")
+    @SerializedName("decodedId")
     @Expose
     private String id;
 

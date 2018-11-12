@@ -190,7 +190,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         String userId = prefs.getString("userId", "1");
 
         RmaAPIService mService = RmaAPIUtils.getAPIService();
-        mService.getOpenOrderByUserId(Integer.parseInt(userId)).enqueue(new Callback<Order>() {
+        mService.getOpenOrderByUserId(userId).enqueue(new Callback<Order>() {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
                 if (response.isSuccessful()) {
@@ -272,6 +272,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
         super.onResume();
         checkInternetConnection();
         pause = false;
+        minutes = -1;
     }
 
     public void checkInternetConnection() {

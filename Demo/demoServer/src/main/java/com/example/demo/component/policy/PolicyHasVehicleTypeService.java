@@ -13,12 +13,12 @@ public class PolicyHasVehicleTypeService {
         this.policyHasVehicleTypeRepository = policyHasVehicleTypeRepository;
         this.pricingRepository = pricingRepository;
     }
-    public List<PolicyHasTblVehicleType> getByPolicyInstanceId(Integer policyInstanceId) {
+    public List<PolicyHasTblVehicleType> getByPolicyId(Integer policyInstanceId) {
         List<PolicyHasTblVehicleType> policyHasTblVehicleTypes
                 = policyHasVehicleTypeRepository.findAllByPolicyId(policyInstanceId);
 
         for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
-            List<Pricing> pricings = pricingRepository.findPricingByPolicyInstanceVehicle(policyHasTblVehicleType.getId());
+            List<Pricing> pricings = pricingRepository.findPricingByPolicyVehicle(policyHasTblVehicleType.getId());
             if (pricings != null) {
                 policyHasTblVehicleType.setPricingList(pricings);
             }

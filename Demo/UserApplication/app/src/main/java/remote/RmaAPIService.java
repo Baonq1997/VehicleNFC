@@ -40,7 +40,7 @@ public interface RmaAPIService {
     Call<Order> getOrderById(@Path("id") Integer orderId);
 
     @GET("/order/open-order/{userId}")
-    Call<Order> getOpenOrderByUserId(@Path("userId") Integer userId);
+    Call<Order> getOpenOrderByUserId(@Path("userId") String userId);
 
 
     @POST("/user/top-up")
@@ -48,7 +48,7 @@ public interface RmaAPIService {
     Call<User> topUp(@Field("userId") String userId, @Field("amount") double amount);
 
     @GET("/order/orders")
-    Call<List<Order>> getOrderByUserId(@Query("userId") Integer userId);
+    Call<List<Order>> getOrderByUserId(@Query("userId") String userId);
 
     @POST("/user/create-user")
     @Headers({"Content-Type: application/json"})

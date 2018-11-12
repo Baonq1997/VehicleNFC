@@ -66,10 +66,11 @@ public class HistoryActivity extends Activity {
 
     public void loadOrderByUserId() {
         SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
-        String restoredText = prefs.getString("userId", "1");
+        String userId = prefs.getString("userId", "1");
+
 
         RmaAPIService mService = RmaAPIUtils.getAPIService();
-        mService.getOrderByUserId(Integer.parseInt(restoredText)).enqueue(new Callback<List<Order>>() {
+        mService.getOrderByUserId(userId).enqueue(new Callback<List<Order>>() {
             @Override
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                 if (response.isSuccessful()) {

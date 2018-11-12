@@ -59,7 +59,7 @@ public class PricingService {
 //                instance.setPricingList(pricingList);
 //            }
 //            policyInstanceHasVehicleTypeRepository.save(instance);
-              pricing.setId(policyInstanceHasTblVehicleType);
+//              pricing.setId(policyInstanceHasTblVehicleType);
             return pricingRepository.save(pricing);
         }
 //        return pricingRepository.save(pricing);
