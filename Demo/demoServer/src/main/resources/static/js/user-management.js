@@ -41,7 +41,7 @@ function loadData(res) {
         row += '<td class="text-right">' + (content[i].money * 1000).toLocaleString() + " vnđ" + '</td>';
         row += '<td class="text-right">' + content[i].vehicle.vehicleNumber + '</td>';
         var vehicleType = (content[i].vehicle.vehicleTypeId != null)
-            ? content[i].vehicle.vehicleTypeId.name : "Empty";
+            ? content[i].vehicle.vehicleTypeId.name : "N/A";
         row += '<td class="text-center">' + vehicleType + '</td>';
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
         var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].decodedId + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
@@ -54,23 +54,32 @@ function loadData(res) {
     var pageNumber = res.pageNumber;
     console.log("page: " + pageNumber);
     console.log("Total Page: " + res.totalPages);
-    var currentPage;
-    var li = "";
-    for (currentPage = 0; currentPage < res.totalPages; currentPage++) {
-        if (currentPage === pageNumber) {
-            li = '<li class="nav-item active">\n' +
-                '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">' + (currentPage + 1) + '</a>\n' +
-                '</li>';
-            $('#pagination').append(li);
-        } else {
-
-            li = '<li class="nav-item">\n' +
-                '<a href="#" class="nav-link" onclick="searchUser(' + currentPage + ')">\n' +
-                +(currentPage + 1) + '</a>\n' +
-                '</li>';
-            $('#pagination').append(li);
+    $('#pagination').append(createPageButton(0, 'First', false, false));
+    $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+    if (pageNumber > 2) {
+        $('#pagination').append(createEtcButton());
+    }
+    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+            $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
         }
     }
+    if (res.totalPages - pageNumber > 3) {
+        $('#pagination').append(createEtcButton());
+    }
+    $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+    $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
+}
+
+function createPageButton(pageNumber, label, isDisable, isActive) {
+    var className = (isActive) ? 'nav-item active' : 'nav-item';
+    className += (isDisable) ? ' disabled-href' : '';
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="searchUser(' + pageNumber + ')">' + label + '</a>\n' +
+        '</li>';
+}
+
+function createEtcButton() {
+    return '<li class="etc ">...</li>';
 }
 
 $(document).ready(function (e) {
@@ -147,7 +156,7 @@ function createSearchObject(key, operation, value) {
 }
 
 function cellBuilder(text, className) {
-    text = (text != null) ? text : "Empty";
+    text = (text != null) ? text : "N/A";
     return "<td class='" + className + "'>" + text + "</td>";
 }
 
@@ -237,13 +246,10 @@ function openSaveForm() {
 }
 
 $('#save-user-form').on('submit', function (e) {
-    if ($('#id').val() === '') {
-        $('#id').removeAttr('value');
-    }
     e.preventDefault();
     $.ajax({
         type: 'post',
-        url: 'create-user',
+        url: 'update-user',
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: buildUserJSON(),
@@ -257,15 +263,18 @@ $('#save-user-form').on('submit', function (e) {
 
 function buildUserJSON() {
     var string = {
-        id: $('#id').val(),
+        decodedId: $('#decodedId').val(),
         phoneNumber: $('#phoneNumber').val(),
         firstName: $('#firstName').val(),
         lastName: $('#lastName').val(),
+        money: $('#money').val(),
         password: $('#password').val(),
-        vehicle: {
-            "vehicleNumber": $('#vehicleNumber').val(),
-            "licensePlateId": $('#licensePlateId').val()
-        }
+        smsNoti: $('#smsNoti').prop('checked'),
+        activated: $('#activated').prop('checked')
+        // vehicle: {
+        //     "vehicleNumber": $('#vehicleNumber').val(),
+        //     "licensePlateId": $('#licensePlateId').val()
+        // }
     };
     return JSON.stringify(string);
 }
@@ -285,14 +294,14 @@ function loadUserInfo(id) {
 }
 
 function setUpUserInfo(data) {
-    // alert(data.phoneNumber);
-    $('#id').val(data.id);
+    $('#decodedId').val(data.decodedId);
     $('#phoneNumber').val(data.phoneNumber);
     $('#firstName').val(data.firstName);
     $('#lastName').val(data.lastName);
     $('#password').val(data.password);
-    $('#vehicleNumber').val(data.vehicle.vehicleNumber);
-    $('#licensePlateId').val(data.vehicle.licensePlateId);
+    $('#money').val(data.money);
+    $('#smsNoti').prop('checked', data.smsNoti);
+    $('#activated').prop('checked', data.activated);
 }
 
 

@@ -45,19 +45,8 @@ public class UserController {
 
     @PostMapping(value = "/create-user")
     public ResponseEntity<String> createUser(@RequestBody User user) {
-        // Cần đoạn lấy thông tin xe
-//        }
-        Optional<User> userOptional = userService.getUserById(UserService.decodeId(user.getDecodedId()));
-        if (userOptional.isPresent()) {
-            User userDB = userOptional.get();
-            int userId = userDB.getId();
-            user.setId(userId);
-//            hashedID = userService.hashID(userId);
-            userService.saveUser(user);
-        }else {
-            userService.createUser(user);
-        }
-        return status(OK).body(UserService.encodeId(user.getId()));
+        String encodedId = UserService.encodeId(userService.createUser(user));
+        return status(OK).body(encodedId);
     }
 
 
@@ -106,11 +95,10 @@ public class UserController {
         return status(OK).body(false);
     }
 
-    @PostMapping("/save-user")
-    public String updateUser(User user) {
+    @PostMapping("/update-user")
+    public ResponseEntity<Boolean> updateUser(@RequestBody User user) {
         user.setId(UserService.decodeId(user.getDecodedId()));
-        userService.updateUser(user);
-        return "Success";
+        return status(OK).body(userService.updateUser(user));
     }
 
     @PostMapping("/update-user-sms")
@@ -122,7 +110,8 @@ public class UserController {
     public String deleteUser(@Param(value = "id") String id) {
         try {
             userService.deleteUser(UserService.decodeId(id));
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         return "Success";
     }
 
@@ -184,7 +173,7 @@ public class UserController {
 
     @PostMapping(value = "/top-up")
     public ResponseEntity<Optional<User>> topUp(@Param("userId") String userId, @Param("amount") double amount) {
-        return ResponseEntity.status(OK).body(userService.topUp(userId, amount));
+        return ResponseEntity.status(OK).body(userService.topUp(UserService.decodeId(userId), amount));
     }
 
     @GetMapping(value = {"/get-user-by-phone"})
@@ -238,7 +227,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/unbind-vehicle")
-    public ResponseEntity<Boolean> unbindVehicle(@Param("userId") String userId){
+    public ResponseEntity<Boolean> unbindVehicle(@Param("userId") String userId) {
         return ResponseEntity.status(OK).body(userService.unbindVehicle(UserService.decodeId(userId)));
     }
 

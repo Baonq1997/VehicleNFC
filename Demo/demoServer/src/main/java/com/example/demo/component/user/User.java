@@ -151,10 +151,13 @@ public class User implements Serializable {
     }
 
     public String getDecodedId() {
-        return UserService.encodeId(id);
+        if (id!=null) {
+            return UserService.encodeId(id);
+        }
+        return this.decodedId;
     }
 
     public void setDecodedId(String decodedId) {
-        this.decodedId = UserService.encodeId(id);
+        this.decodedId = decodedId;
     }
 }

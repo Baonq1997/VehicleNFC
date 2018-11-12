@@ -1,8 +1,12 @@
 function switchContentFragment(url, button) {
     if (button != null) {
         deActiveAllMenuButton();
-        // button.className = "active pointer menu";
-        button.attr('class', "active pointer menu");
+        if (button.attr('class').includes("holder")) {
+            button.attr('class', "active pointer menu holder-active");
+        } else {
+            button.attr('class', "active pointer menu");
+        }
+
     }
     $('#main-content').removeAttr("phone");
     $('#main-content').attr('src', url);
@@ -11,7 +15,11 @@ function switchContentFragment(url, button) {
 function deActiveAllMenuButton() {
     var buttons = document.getElementsByClassName("menu");
     for (var i = 0; i < buttons.length; i++) {
-        buttons[i].className = "pointer menu";
+        if (buttons[i].className.includes("holder")) {
+            buttons[i].className = "pointer menu holder";
+        } else {
+            buttons[i].className = "pointer menu";
+        }
     }
 }
 

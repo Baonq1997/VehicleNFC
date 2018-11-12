@@ -23,8 +23,8 @@ function loadData(res) {
     var row = "";
     for (i = 0; i < content.length; i++) {
         row = '<tr>';
-        var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "Empty";
-        var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "Empty";
+        var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "N/A";
+        var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "N/A";
         row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
         row += cellBuilder(content[i].vehicleNumber, "text-right");
         row += cellBuilder(content[i].licensePlateId, "text-right");
@@ -134,7 +134,7 @@ function createSearchObject(key, operation, value) {
 
 function convertDate(dateTypeLong) {
     if (dateTypeLong === null) {
-        return "Empty";
+        return "N/A";
     }
     var dateStr = new Date(dateTypeLong),
         dformat = [dateStr.getDate(), dateStr.getMonth() + 1,
@@ -144,7 +144,7 @@ function convertDate(dateTypeLong) {
 }
 
 function cellBuilder(text, className) {
-    text = (text != null) ? text : "Empty";
+    text = (text != null) ? text : "N/A";
     return "<td class='" + className + "'>" + text + "</td>";
 }
 

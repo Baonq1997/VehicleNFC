@@ -41,39 +41,56 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Integer userId) {
+        if (userId == null) {
+            userId = -1;
+        }
         Optional<User> user = userRepository.findById(userId);
         return user;
     }
 
-    public void updateUser(User user) {
+    public boolean updateUser(User user) {
         Optional<User> userDB = userRepository.findById(user.getId());
         if (userDB.isPresent()) {
-            User existedUser = userDB.get();
-            user.setPassword(existedUser.getPassword());
-            userRepository.save(user);
+            if (userDB.get().getPhoneNumber().equals(user.getPhoneNumber()) || !userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+                User existedUser = userDB.get();
+                existedUser.setPassword(user.getPassword());
+                existedUser.setFirstName(user.getFirstName());
+                existedUser.setLastName(user.getLastName());
+                existedUser.setPhoneNumber(user.getPhoneNumber());
+                existedUser.setMoney(user.getMoney());
+                existedUser.setSmsNoti(user.getSmsNoti());
+                existedUser.setActivated(user.getActivated());
+                userRepository.save(existedUser);
+                return true;
+            }
         }
+        return false;
     }
 
     @Transactional
-    public void createUser(User user) {
+    public Integer createUser(User user) {
         if (user.getVehicle() != null) {
-            boolean needVerify = false;
+            boolean needVerify = true;
             //TODO check if phoneNumber exist
-            Vehicle vehicle = null;
-            if (user.getId() != null) {
-//                vehicle = vehicleRepository.findByVehicleNumber(userRepository.findById(user.getId()).get().getVehicleNumber()).get();
-                vehicle = user.getVehicle();
+            if (userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+                return null;
             }
-            if (user.getId() == null || !userRepository.findById(user.getId()).isPresent()
-                    || !vehicle.getVehicleNumber().equals(user.getVehicle().getVehicleNumber())
-                    || !vehicle.getLicensePlateId().equals(user.getVehicle().getLicensePlateId())) {
-                needVerify = true;
-                user.getVehicle().setVerified(false);
-                user.setActivated(false);
-                vehicleRepository.save(user.getVehicle());
-//                user.setVehicleNumber(user.getVehicle().getVehicleNumber());
+            //TODO check if any vehicle avaiable
+            Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.getVehicle().getVehicleNumber());
+            if (vehicle.isPresent()) {
+                if (vehicle.get().isActive()) {
+                    return null;
+                } else {
+                    vehicle.get().setLicensePlateId(user.getVehicle().getLicensePlateId());
+                    vehicle.get().setActive(true);
+                    needVerify = vehicle.get().isVerified();
+                    user.setVehicle(vehicle.get());
+                }
             }
-//            user.setVehicleNumber(user.getVehicle().getVehicleNumber());
+
+            user.getVehicle().setVerified(!needVerify);
+            user.setActivated(false);
+            vehicleRepository.save(user.getVehicle());
             userRepository.save(user);
             if (needVerify) {
                 try {
@@ -85,7 +102,9 @@ public class UserService {
                     System.err.println("Cannot connect to firebase");
                 }
             }
+            return user.getId();
         }
+        return null;
     }
 
     public void requestNewConfirmCode(String phoneNumber, String confirmCode) {
@@ -110,19 +129,22 @@ public class UserService {
     }
 
     public static String encodeId(Integer id) {
-        try {
-            byte[] plaintTextByteArray = id.toString().getBytes("UTF8");
-            return Base64.getEncoder().encodeToString(plaintTextByteArray);
-        }catch (Exception e){
-            e.printStackTrace();
+        if (id != null) {
+            try {
+                byte[] plaintTextByteArray = id.toString().getBytes("UTF8");
+                return Base64.getEncoder().encodeToString(plaintTextByteArray);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
+
     public static Integer decodeId(String encodedKey) {
         try {
             byte[] plaintTextByteArray = Base64.getDecoder().decode(encodedKey);
             return Integer.parseInt(new String(plaintTextByteArray));
-        }catch (Exception e){
+        } catch (Exception e) {
 //            e.printStackTrace();
         }
         return null;
@@ -248,8 +270,8 @@ public class UserService {
         }
     }
 
-    public Optional<User> topUp(String userId, double amount) {
-        Optional<User> userDB = userRepository.findById(Integer.parseInt(userId));
+    public Optional<User> topUp(Integer userId, double amount) {
+        Optional<User> userDB = userRepository.findById(userId);
         if (userDB.isPresent()) {
             userDB.get().setMoney(userDB.get().getMoney() + amount);
             userRepository.save(userDB.get());
@@ -283,13 +305,13 @@ public class UserService {
         return null;
     }
 
-    public Optional<User> saveUser(User user){
+    public Optional<User> saveUser(User user) {
         return Optional.of(userRepository.save(user));
     }
 
-    public boolean unbindVehicle(Integer userId){
+    public boolean unbindVehicle(Integer userId) {
         Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.get().getVehicle().getVehicleNumber());
             if (vehicle.isPresent()) {
                 vehicle.get().setActive(false);

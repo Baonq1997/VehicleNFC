@@ -30,7 +30,7 @@ function loadData(res) {
         row += '<td class="text-right">' + (content[i].money * 1000).toLocaleString() + " vnđ" + '</td>';
         row += '<td class="text-right">' + content[i].vehicle.vehicleNumber + '</td>';
         var vehicleType = (content[i].vehicle.vehicleTypeId != null)
-            ? content[i].vehicle.vehicleTypeId.name : "Empty";
+            ? content[i].vehicle.vehicleTypeId.name : "N/A";
         row += '<td class="text-center">' + vehicleType + '</td>';
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
         var verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicle.vehicleNumber + "')\" class=\"btn btn-primary btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
@@ -136,7 +136,7 @@ function createSearchObject(key, operation, value, type) {
 }
 
 function cellBuilder(text, className) {
-    text = (text != null) ? text : "Empty";
+    text = (text != null) ? text : "N/A";
     return "<td class='" + className + "'>" + text + "</td>";
 }
 

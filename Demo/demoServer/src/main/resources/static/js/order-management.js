@@ -195,12 +195,12 @@ function viewPricingDetail(orderId) {
             var checkOutDate = order.checkOutDate;
             for ( i = 0; i < hourHasPrices.length; i++) {
                 // table as receipt
-                let hourHasPrice = hourHasPrices[i];
+                var hourHasPrice = hourHasPrices[i];
                 var milliseconds = convertToMilliseconds(hourHasPrice.hour - passHour, "hour");
                 if (i === hourHasPrices.length - 1) {
                     milliseconds += convertToMilliseconds(minutes, "minute");
                 }
-                let toHour = "";
+                var toHour = "";
                 if (!compare2Dates(checkInDate, checkOutDate + milliseconds)) {
                     toHour = convertDateAsTimeDate(checkInDate + milliseconds);
                 } else {
@@ -250,7 +250,7 @@ function viewPricingDetail(orderId) {
             } else {
                 total = order.total;
             }
-            let rowTotal = '<tr><td></td><td><label>Total: </label></td><td><label>' + total + ' .000VNĐ</label></td></tr>';
+            var rowTotal = '<tr><td></td><td><label>Total: </label></td><td><label>' + total + ' .000VNĐ</label></td></tr>';
             $('#order-detail #orderPricings tbody').append(rowTotal);
             $('#order-detail #total').text(total);
             // $('.myForm #vehicleTypeId').text(order.userId.vehicleTypeId.name);
@@ -423,7 +423,7 @@ function compare2Dates(date1, date2) {
     // let checkOutDate = convertDate(date2);
     var checkInDate = new Date(date1);
     var checkOutDate = new Date(date2);
-    let isTheSameDate =  (checkInDate.getDate() == checkOutDate.getDate()
+    var isTheSameDate =  (checkInDate.getDate() == checkOutDate.getDate()
         && checkInDate.getMonth() == checkOutDate.getMonth()
         && checkInDate.getFullYear() == checkOutDate.getFullYear());
     return isTheSameDate;

@@ -1,6 +1,7 @@
 package com.example.demo.component.order;
 
 import com.example.demo.component.location.Location;
+import com.example.demo.component.user.UserService;
 import com.example.demo.config.AppConstant;
 import com.example.demo.config.SearchCriteria;
 import com.example.demo.component.user.User;
@@ -45,6 +46,7 @@ public class OrderController {
     public ResponseEntity<Optional<Order>> create(@RequestBody Order order) {
         Map<String, String> registerTokenList = (Map<String, String>) servletContext.getAttribute("registerTokenList");
         User user = order.getUserId();
+        user.setId(UserService.decodeId(user.getDecodedId()));
         Location location = order.getLocation();
         Optional<Order> transaction1 = orderService.createOrder(user, location, registerTokenList);
         return ResponseEntity.status(HttpStatus.CREATED).body(transaction1);
@@ -85,9 +87,9 @@ public class OrderController {
     }
 
     @GetMapping(value = "/orders")
-    public ResponseEntity getOrdersByUserId(@RequestParam(value = "userId") Integer userId) {
+    public ResponseEntity getOrdersByUserId(@RequestParam(value = "userId") String userId) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(orderService.findOrdersByUserId(userId));
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.findOrdersByUserId(UserService.decodeId(userId)));
         } catch (NullPointerException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

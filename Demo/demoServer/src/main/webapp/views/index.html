@@ -16,9 +16,9 @@
     <div class="panel-body">
         <div class="row">
             <span class="content-name">
-                View Users
+                Manage Users
             </span>
-            <form action="search-user" id="search-box-user" method="post">
+            <form action="search-user" id="search-box-user" method="post" class="search-box">
                 <select id="search-filter" class="form-control">
                     <option value="phoneNumber" selected="selected">Search By phone number</option>
                     <option value="lastName">Search By LastName</option>
@@ -75,8 +75,13 @@
 
 <div class="panel" id="main-content-save-form" style="display: none">
     <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+               Update a user's information
+            </span>
+        </div>
         <form id="save-user-form" autocomplete="off">
-            <input type="hidden" class="form-control" id="id" name="decodedId" value=""/>
+            <input type="hidden" class="form-control" id="decodedId" name="decodedId" value=""/>
             <div class="form-group">
                 <label for="phoneNumber" class="col-form-label">PhoneNumber:</label>
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value=""/>
@@ -94,14 +99,16 @@
                 <input type="password" class="form-control" id="password" name="password" value=""/>
             </div>
             <div class="form-group">
-                <label for="vehicleNumber" class="col-form-label">VehicleNumber:</label>
-                <input type="text" class="form-control" id="vehicleNumber" name="vehicleNumber"
-                       value=""/>
+                <label for="lastName" class="col-form-label">Money: (1,000 VNĐ)</label>
+                <input type="number" class="form-control" id="money" name="money" value=""/>
             </div>
-            <div class="form-group">
-                <label for="licensePlateId" class="col-form-label">LicensePlateId:</label>
-                <input type="text" class="form-control" id="licensePlateId" name="licensePlateId"
-                       value=""/>
+            <div class="form-group half">
+                <label for="lastName" class="col-form-label">Sms notification:</label>
+                <input type="checkbox" class="form-control no-border" id="smsNoti" name="smsNoti" value=""/>
+            </div>
+            <div class="form-group half">
+                <label for="lastName" class="col-form-label">Active:</label>
+                <input type="checkbox" class="form-control no-border" id="activated" name="activated" value=""/>
             </div>
             <div class="form-group">
                 <button type="button" class="btn btn-secondary" onclick="closeForm()">Close

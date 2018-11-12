@@ -8,9 +8,10 @@ $('#save-user-form').on('submit', function (e) {
         type: 'post',
         url: 'create-user',
         contentType: "application/json; charset=utf-8",
-        dataType: "json",
+        // dataType: "json",
         data: buildUserJSON(),
         success: function (data) {
+            alert("User code: "+data);
             $('#save-user-form').trigger("reset");
         }, error: function (data) {
             alert("Cannot create User")

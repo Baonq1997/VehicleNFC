@@ -14,32 +14,36 @@
 <body>
 <div class="panel" id="main-content-save-form">
     <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+               Create a user
+            </span>
+        </div>
         <form id="save-user-form" autocomplete="off">
-            <input type="hidden" class="form-control" id="id" name="id" value=""/>
             <div class="form-group">
                 <label for="phoneNumber" class="col-form-label">PhoneNumber:</label>
-                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value=""/>
+                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="" required/>
             </div>
             <div class="form-group">
                 <label for="firstName" class="col-form-label">First name:</label>
-                <input type="text" class="form-control" id="firstName" name="firstName" value=""/>
+                <input type="text" class="form-control" id="firstName" name="firstName" value="" required/>
             </div>
             <div class="form-group">
                 <label for="lastName" class="col-form-label">Last name:</label>
-                <input type="text" class="form-control" id="lastName" name="lastName" value=""/>
+                <input type="text" class="form-control" id="lastName" name="lastName" value="" required/>
             </div>
             <div class="form-group">
                 <label for="lastName" class="col-form-label">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" value=""/>
+                <input type="password" class="form-control" id="password" name="password" value="" required/>
             </div>
             <div class="form-group">
                 <label for="vehicleNumber" class="col-form-label">VehicleNumber:</label>
-                <input type="text" class="form-control" id="vehicleNumber" name="vehicleNumber"
+                <input type="text" class="form-control" id="vehicleNumber" name="vehicleNumber" maxlength="10" required
                        value=""/>
             </div>
             <div class="form-group">
                 <label for="licensePlateId" class="col-form-label">LicensePlateId:</label>
-                <input type="text" class="form-control" id="licensePlateId" name="licensePlateId"
+                <input type="text" class="form-control" id="licensePlateId" name="licensePlateId" maxlength="10" required
                        value=""/>
             </div>
             <div class="form-group">
