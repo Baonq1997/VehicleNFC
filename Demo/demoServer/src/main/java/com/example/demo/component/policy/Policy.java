@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_policy_instance")
+@Table(name = "tbl_policy")
 public class Policy implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -26,11 +26,11 @@ public class Policy implements Serializable {
     @NotNull
     @Column(name = "tbl_location_id", nullable = false)
     private Integer locationId;
-    @JoinColumn(name = "tbl_policy_id", referencedColumnName = "id")
-    @ManyToOne
-    private Policy policyId;
+//    @JoinColumn(name = "tbl_policy_id", referencedColumnName = "id")
+//    @ManyToOne
+//    private Policy policyId;
 
-    @JoinColumn(name = "tbl_policy_instance_id")
+    @JoinColumn(name = "tbl_policy_id")
     @OneToMany
 
 //    @Transient
@@ -75,13 +75,13 @@ public class Policy implements Serializable {
         this.locationId = locationId;
     }
 
-    public Policy getPolicyId() {
-        return policyId;
-    }
-
-    public void setPolicyId(Policy policyId) {
-        this.policyId = policyId;
-    }
+//    public Policy getPolicyId() {
+//        return policyId;
+//    }
+//
+//    public void setPolicyId(Policy policyId) {
+//        this.policyId = policyId;
+//    }
 
     public List<PolicyHasTblVehicleType> getPolicyHasTblVehicleTypes() {
         return policyHasTblVehicleTypes;

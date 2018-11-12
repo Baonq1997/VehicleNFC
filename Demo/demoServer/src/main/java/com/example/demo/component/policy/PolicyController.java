@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/policy-instance")
+@RequestMapping(value = "/policy")
 public class PolicyController {
     private PolicyService policyService;
 
@@ -21,26 +21,26 @@ public class PolicyController {
         this.policyService = policyService;
     }
 
-    @GetMapping("/policies-instances")
+    @GetMapping("/policies")
     public ResponseEntity getPolicies() {
         return ResponseEntity.status(HttpStatus.OK).body(policyService.getAll());
     }
 
-    @GetMapping("/policies")
-    public ResponseEntity getPolicyInstances(@RequestParam("locationId") Integer locationId) {
+    @GetMapping("/locations-policies")
+    public ResponseEntity getPolicy(@RequestParam("locationId") Integer locationId) {
         return ResponseEntity.status(HttpStatus.OK).body(policyService.getByLocationId(locationId));
     }
 
     @PostMapping("/filter-policies")
     public ResponseEntity filterPoliciesByLocation(@RequestBody List<SearchCriteria> params
-                                                    ,@RequestParam("locationId") Integer locationId
-                                                    ,@RequestParam(value = "page", defaultValue = "0") Integer page) {
+            ,@RequestParam(value = "locationId", defaultValue = "0") Integer locationId
+            ,@RequestParam(value = "page", defaultValue = "0") Integer page) {
         return ResponseEntity.status(HttpStatus.OK).body(policyService.filterPoliciesByLocation(locationId, params, page, PaginationEnum.userPageSize.getNumberOfRows()));
     }
 
     @GetMapping("/edit")
     public ModelAndView index(ModelAndView mav
-            , @RequestParam("policyInstanceId") Integer policyId) {
+            , @RequestParam("policyId") Integer policyId) {
         mav.setViewName("policy-edit");
         return mav;
     }
@@ -71,25 +71,25 @@ public class PolicyController {
     }
 
     @PostMapping(value = "/delete-by-location-policy")
-    public ResponseEntity deleteByLocationIdAndId( @RequestParam("policyInstanceId") Integer policyInstanceId) {
-        policyService.deleteBylocationIdAndPolicyInstanceId(policyInstanceId);
+    public ResponseEntity deleteByLocationIdAndId( @RequestParam("policyId") Integer policyId) {
+        policyService.deleteBylocationIdAndPolicyId(policyId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping(value = "/delete-policy-instance")
-    public ResponseEntity deleteById(@RequestParam("policyInstanceId") Integer policyInstanceId) {
-        policyService.deleteBylocationIdAndPolicyInstanceId(policyInstanceId);
+    @PostMapping(value = "/delete-policy")
+    public ResponseEntity deleteById(@RequestParam("policyId") Integer policyId) {
+        policyService.deleteBylocationIdAndPolicyId(policyId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping(value = "/delete")
-    public ResponseEntity deletePolicyInstance(@RequestBody DeletePolicyObject deletePolicyObject) {
+    public ResponseEntity deletePolicy(@RequestBody DeletePolicyObject deletePolicyObject) {
         try{
             Integer locationId = deletePolicyObject.getLocationId();
             Policy policy = deletePolicyObject.getPolicy();
             List<Integer> policyHasVehicleTypeIdList = deletePolicyObject.getPolicyHasVehicleTypeId();
             List<VehicleType> vehicleTypeList  = deletePolicyObject.getVehicleTypes();
-            policyService.deletePolicyInstance(locationId, policy, policyHasVehicleTypeIdList);
+            policyService.deletePolicy(locationId, policy, policyHasVehicleTypeIdList);
             return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (Exception e) {
             e.printStackTrace();

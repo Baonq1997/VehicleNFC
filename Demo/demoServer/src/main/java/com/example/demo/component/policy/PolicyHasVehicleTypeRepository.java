@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface PolicyHasVehicleTypeRepository extends JpaRepository<PolicyHasTblVehicleType, Integer> {
 
-    List<PolicyHasTblVehicleType> findAllByPolicyId(Integer policyInstanceId);
+    List<PolicyHasTblVehicleType> findAllByPolicyId(Integer policyId);
 
     Optional<PolicyHasTblVehicleType> findByPolicyIdAndVehicleTypeId(Integer policyId, VehicleType vehicleType);
 

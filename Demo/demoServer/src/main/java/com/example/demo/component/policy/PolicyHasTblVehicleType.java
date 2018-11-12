@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_policy_instance_has_tbl_vehicle_type")
+@Table(name = "tbl_policy_has_tbl_vehicle_type")
 public class PolicyHasTblVehicleType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

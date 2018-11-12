@@ -4,6 +4,7 @@ import com.example.demo.component.policy.*;
 import com.example.demo.component.vehicleType.VehicleType;
 import com.example.demo.config.ResponseObject;
 
+import com.example.demo.config.SearchCriteria;
 import com.example.demo.view.AddLocationObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,30 @@ public class LocationService {
         return location;
     }
 
+    public Location saveLocation(Location location) {
+        if (location.getId() == null || location.getId() == 0) {
+            // create
+            locationRepository.save(location);
+            return location;
+        } else {
+            Optional<Location> locationOpt = locationRepository.findById(location.getId());
+            if (locationOpt.isPresent()) {
+                Location locationDB = locationOpt.get();
+                locationDB.setLocation(location.getLocation());
+                locationDB.setActivated(location.getActivated());
+                locationDB.setDescription(location.getDescription());
+                locationRepository.save(locationDB);
+                return locationDB;
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    public void deleteLocation(Integer locationId) {
+        locationRepository.deleteById(locationId);
+    }
+
     public ResponseObject getAllLocations() {
         ResponseObject responseObject = new ResponseObject();
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -54,21 +79,53 @@ public class LocationService {
         Root<Location> from = criteriaQuery.from(Location.class);
         CriteriaQuery<Location> select = criteriaQuery.select(from);
         TypedQuery<Location> typedQuery = entityManager.createQuery(select);
-//        typedQuery.setFirstResult(pagNumber * pageSize);
-//        typedQuery.setMaxResults(pageSize);
         List<Location> locationList = typedQuery.getResultList();
-//        for (int i = 0; i <locationList.size()-1; i++) {
-//            Location location = locationList.get(i);
-//            List<Policy> policyList = location.getPolicyList();
-//            for (Policy policy : policyList) {
-//                List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeService.findByPolicyId(policy);
-//                policy.setPolicyHasTblVehicleTypeList(policyHasTblVehicleTypes);
-//            }
-//            location.setPolicyList(policyList);
-//            locationList.set(i, location);
-//        }
+
         responseObject.setData(locationList);
         return responseObject;
+    }
+
+    public ResponseObject filterLocation(List<SearchCriteria> params
+            , int pageNumber, int pageSize) {
+        ResponseObject responseObject = new ResponseObject();
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Location> query = builder.createQuery(Location.class);
+        Root r = query.from(Location.class);
+
+        Predicate predicate = builder.conjunction();
+        for (SearchCriteria param : params) {
+            if (param.getOperation().equalsIgnoreCase(">")) {
+                predicate = builder.and(predicate,
+                        builder.lessThanOrEqualTo(r.get(param.getKey()),
+                               param.getValue().toString()));
+            } else if (param.getOperation().equalsIgnoreCase("<")) {
+                predicate = builder.and(predicate,
+                        builder.greaterThanOrEqualTo(r.get(param.getKey()),
+                                param.getValue().toString()));
+            } else if (param.getOperation().equalsIgnoreCase(":")) {
+                Object type = r.get(param.getKey()).getJavaType();
+                if (type == String.class) {
+                    predicate = builder.and(predicate,
+                            builder.like(r.get(param.getKey()),
+                                    "%" + param.getValue() + "%"));
+                } else {
+                    predicate = builder.and(predicate,
+                            builder.equal(r.get(param.getKey()), param.getValue()));
+                }
+            }
+        }
+        query.where(predicate);
+        TypedQuery<Location> typedQuery = entityManager.createQuery(query);
+        List<Location> locations = typedQuery.getResultList();
+        int totalPages = locations.size() / pageSize;
+        typedQuery.setFirstResult(pageNumber * pageSize);
+        typedQuery.setMaxResults(pageSize);
+        List<Location> resultList = typedQuery.getResultList();
+        responseObject.setData(resultList);
+        responseObject.setTotalPages(totalPages + 1);
+        responseObject.setPageNumber(pageNumber);
+        return responseObject;
+
     }
 
     @Transactional
@@ -80,7 +137,7 @@ public class LocationService {
         if (!locationList.isEmpty() && policy.isPresent()) {
             Policy policyDB = policy.get();
             for (Location location : locationList) {
-                for (Location existedLocation:existedLocations) {
+                for (Location existedLocation : existedLocations) {
                     if (existedLocation.getId() != location.getId()) {
                         if (location.getIsDelete().equalsIgnoreCase("true")) {
                             policyRepository.deleteById(policyDB.getId());
@@ -105,11 +162,11 @@ public class LocationService {
                                         duplicatePolicyVehicle.setVehicleTypeId(policyHasTblVehicleType.getVehicleTypeId());
                                     }
                                     policyHasVehicleTypeRepository.save(duplicatePolicyVehicle);
-                                    List<Pricing> pricingList = pricingRepository.findByPolicyHasVehicleTypeId(policyHasTblVehicleType.getId());
+                                    List<Pricing> pricingList = pricingRepository.findByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId());
                                     if (pricingList != null) {
                                         for (Pricing pricing : pricingList) {
                                             Pricing duplicatePricing = new Pricing();
-                                            duplicatePricing.setPolicyHasVehicleTypeId(duplicatePolicyVehicle.getId());
+                                            duplicatePricing.setPolicyHasTblVehicleTypeId(duplicatePolicyVehicle.getId());
                                             duplicatePricing.setPricePerHour(pricing.getPricePerHour());
                                             duplicatePricing.setLateFeePerHour(pricing.getLateFeePerHour());
                                             duplicatePricing.setFromHour(pricing.getFromHour());
@@ -122,7 +179,6 @@ public class LocationService {
                         }
                     }
                 }
-
             }
         }
 

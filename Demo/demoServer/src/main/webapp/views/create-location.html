@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Location</title>
+    <title>Create Policy</title>
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/assets/vendor/chartist/css/chartist-custom.css">
+    <link rel="stylesheet" href="/assets/css/jquery-clockpicker.min.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <!--<link rel="stylesheet" href="/css/create-policy.css">-->
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
+</head>
+<body>
+<div id="wrapper">
+    <div class="main">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container-fluid">
+                <div class="panel panel-headline">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="location" class="col-form-label">Location:</label>
+                            <input type="text" class="form-control" id="location" name="location" value=""/>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="col-form-label">Description:</label>
+                            <textarea id="description" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" name="status" value="Available">Available<br>
+                            <input type="radio" name="status" value="Unavailable">Unavailable<br>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-primary" id="btn-save-location">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="/js/location-create.js"></script>
+<script src="/assets/scripts/klorofil-common.js"></script>
+</body>
+</html>

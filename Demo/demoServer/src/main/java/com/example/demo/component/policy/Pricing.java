@@ -21,13 +21,14 @@ public class Pricing implements Serializable {
     @NotNull
     @Column(name = "price_per_hour")
     private double pricePerHour;
-
     @Column(name = "late_fee_per_hour")
     private double lateFeePerHour;
+//    @ManyToMany(mappedBy = "pricingList")
 
+//    @JoinColumn(name = "tbl_policy_has_tbl_vehicle_type_id", referencedColumnName = "id")
+//    @ManyToOne(optional = false)
     @Column(name = "tbl_policy_has_tbl_vehicle_type_id")
-    private int policyHasVehicleTypeId;
-
+    private Integer policyHasTblVehicleTypeId;
     public Pricing() {
     }
 
@@ -63,15 +64,11 @@ public class Pricing implements Serializable {
         this.lateFeePerHour = lateFeePerHour;
     }
 
-    public void setLateFeePerHour(Integer lateFeePerHour) {
-        this.lateFeePerHour = lateFeePerHour;
+    public Integer getPolicyHasTblVehicleTypeId() {
+        return policyHasTblVehicleTypeId;
     }
 
-    public int getPolicyHasVehicleTypeId() {
-        return policyHasVehicleTypeId;
-    }
-
-    public void setPolicyHasVehicleTypeId(int policyHasVehicleTypeId) {
-        this.policyHasVehicleTypeId = policyHasVehicleTypeId;
+    public void setPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleTypeId) {
+        this.policyHasTblVehicleTypeId = policyHasTblVehicleTypeId;
     }
 }

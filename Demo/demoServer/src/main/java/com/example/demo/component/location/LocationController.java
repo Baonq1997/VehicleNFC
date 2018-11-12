@@ -1,5 +1,6 @@
 package com.example.demo.component.location;
 
+import com.example.demo.config.PaginationEnum;
 import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
 import com.example.demo.view.AddLocationObject;
@@ -64,4 +65,33 @@ public class LocationController {
         return ResponseEntity.status(HttpStatus.OK).body(locationService.getLocationsByPolicyId(policyId));
     }
 
+    @GetMapping("/create-policy")
+    public ModelAndView createPolicy(@RequestParam(value = "locationId") Integer id,
+                                     ModelAndView mav) {
+        mav.setViewName("policy-create");
+        return mav;
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity saveLocation(@RequestBody Location location) {
+        return ResponseEntity.status(HttpStatus.OK).body(locationService.saveLocation(location));
+    }
+
+    @GetMapping("/create")
+    public ModelAndView createLocation(ModelAndView mav){
+        mav.setViewName("create-location");
+        return mav;
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity filterLocation(@RequestBody List<SearchCriteria> searchCriteria
+                                        ,@RequestParam("page") Integer pageNumber) {
+        return ResponseEntity.status(HttpStatus.OK).body(locationService.filterLocation(searchCriteria,pageNumber, PaginationEnum.locationPageSize.getNumberOfRows()));
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity deleteLocation(@RequestParam("id") Integer locationId) {
+        locationService.deleteLocation(locationId);
+        return ResponseEntity.status(HttpStatus.OK).body("Delete Successfully");
+    }
 }

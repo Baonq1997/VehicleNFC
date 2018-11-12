@@ -9,20 +9,29 @@
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/assets/css/main.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-    <!--<link rel="stylesheet" href="/assets/vendor/chartist/css/chartist-custom.css">-->
     <link rel="stylesheet" href="/css/location.css">
-    <!-- ICONS -->
+    <link rel="stylesheet" href="/css/user.css">
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
-    <!--<link rel="stylesheet" href="/assets/css/jquery-clockpicker.min.css">-->
 </head>
 <body>
-<div class="main">
-<!-- MAIN CONTENT -->
-<div class="main-content">
-    <div class="container-fluid">
-        <div class="panel panel-headline">
-            <div class="panel-body" id="location-container">
+<div class="panel" id="main-content-user-list">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Location Management
+            </span>
+            <form action="search-location" id="search-box-user" method="post">
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 50%; float: right;"/>
+                <button class="btn btn-primary btnAction" type="button" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+
+            </form>
+        </div>
+        <div class="content-list-table" id="location-container">
+            <div class="row">
                 <table class="table table-hover" id="location-table">
                     <thead>
                     <tr>
@@ -30,80 +39,140 @@
                         <th>Location</th>
                         <th>Description</th>
                         <th>Status</th>
-                        <th colspan="2">Action</th>
+                        <th colspan="4">Action</th>
                     </tr>
                     </thead>
                     <tbody>
 
                     </tbody>
                 </table>
-                <div class="row">
-                    <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+
+            <div class="row">
+                <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="alert alert-danger">
+                    Are you sure you want to delete this location ?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="btn-delete-location" value="Delete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="update-location-modal">
+    <div class="modal fade" id="updatePricingModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="savePricingModal"><strong>Update Location</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="location" class="col-form-label">Location:</label>
+                        <input type="text" class="form-control" id="location" name="location" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <input type="text" class="form-control" id="description" name="description" value=""/>
+                    </div>
+                    <div class="form-group" id="change-status-container">
+                        <input type="hidden" id="status" value="">
+                        <button type="button" class="btn btn-primary" id="btn-change-status" value=""></button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                    </button>
+                    <button type="button" id="btn-save-location" class="btn btn-primary" value="Save">Save</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-    <div class="myForm">
-        <form action="" id="create-policy" method="POST">
-            <div class="modal fade" id="createPolicy" tabindex="-1" role="dialog"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="savePricingModal"><strong>Save Pricing</strong></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+
+<div class="myForm">
+    <form action="" id="create-policy" method="POST">
+        <div class="modal fade" id="createPolicy" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="savePricingModal"><strong>Save Pricing</strong></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="left-form-group">
+                                <label class="col-form-label">Location:</label>
+                                <input type="text" class="form-control" id="location">
+                            </div>
+                            <div class="right-form-group">
+                                <label class="col-form-label">Status</label>
+                                <input type="text" class="form-control" id="location">
+                            </div>
+
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <div class="left-form-group">
-                                    <label class="col-form-label">Location:</label>
-                                    <input type="text" class="form-control" id="location">
-                                </div>
-                                <div class="right-form-group">
-                                    <label class="col-form-label">Status</label>
-                                    <input type="text" class="form-control" id="location">
-                                </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Vehicle Type:</label>
+                            <fieldset id="vehicleTypeArr">
 
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Vehicle Type:</label>
-                                <fieldset id="vehicleTypeArr">
+                            </fieldset>
+                            <!--<input type="text" class="form-group" id="vehicleType">-->
+                        </div>
 
-                                </fieldset>
-                                <!--<input type="text" class="form-group" id="vehicleType">-->
-                            </div>
-
-                            <div class="from-group clockpickerFrom" style="width:48%; float: left; margin-right: 2%;">
-                                <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
-                                <input type="text" class="form-control" id="ParkingFrom">
-                                <span class="input-group-addon">
+                        <div class="from-group clockpickerFrom" style="width:48%; float: left; margin-right: 2%;">
+                            <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
+                            <input type="text" class="form-control" id="ParkingFrom">
+                            <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
-                            </div>
-                            <input type="hidden" id="allowedParkingFrom">
-                            <div class="from-group clockpickerTo" style="width:48%; float: left; margin-left: 2%;">
-                                <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
-                                <input type="text" class="form-control" id="ParkingTo">
-                                <span class="input-group-addon">
+                        </div>
+                        <input type="hidden" id="allowedParkingFrom">
+                        <div class="from-group clockpickerTo" style="width:48%; float: left; margin-left: 2%;">
+                            <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
+                            <input type="text" class="form-control" id="ParkingTo">
+                            <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
-                            </div>
-                            <input type="hidden" id="allowedParkingTo">
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
-                            </button>
-                            <input type="submit" class="btn btn-primary" value="Save"/>
-                        </div>
+                        <input type="hidden" id="allowedParkingTo">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                        </button>
+                        <input type="submit" class="btn btn-primary" value="Save"/>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="policyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -142,9 +211,9 @@
 </div>
 <script src="/assets/vendor/jquery/jquery.min.js"></script>
 <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <script src="/js/location-management.js"></script>
-    <script src="/assets/scripts/klorofil-common.js"></script>
+<script src="/assets/scripts/klorofil-common.js"></script>
 <!--<script src="/assets/scripts/jquery-clockpicker.min.js"></script>-->
 </body>
 </html>

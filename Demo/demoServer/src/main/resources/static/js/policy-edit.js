@@ -12,8 +12,8 @@ $(document).ready(function () {
 
     var policyIdStr = paramArr[0];
     console.log("POlicyStr: " + policyIdStr);
-    var policyInstanceId = policyIdStr.slice(policyIdStr.indexOf("=") + 1, policyIdStr.length);
-    console.log("POlicyId: " + policyInstanceId);
+    var policyId = policyIdStr.slice(policyIdStr.indexOf("=") + 1, policyIdStr.length);
+    console.log("POlicyId: " + policyId);
     //
     // var vehicleTypeIdStr = paramArr[1];
     // var vehicleTypeId = vehicleTypeIdStr.slice(vehicleTypeIdStr.indexOf("=") + 1, vehicleTypeIdStr.indexOf("=") + 2);
@@ -22,9 +22,9 @@ $(document).ready(function () {
     // var locationIdStr = paramArr[1];
     // var locationId = locationIdStr.slice(locationIdStr.indexOf("=") + 1, locationIdStr.indexOf("=") + 2);
 
-    loadPolicy(policyInstanceId);
-    savePolicyHasVehicleType(policyInstanceId);
-    deletePolicy(policyInstanceId);
+    loadPolicy(policyId);
+    savePolicyHasVehicleType();
+    deletePolicy();
     submitPricing();
     $('.clockpickerFrom').clockpicker({
         placement: 'bottom',
@@ -45,17 +45,18 @@ $(document).ready(function () {
         }
     });
 });
-
-function loadPolicy(policyInstanceId) {
+var locationId ;
+function loadPolicy(policyId) {
     $.ajax({
         type: "GET",
         dataType: "json",
         // url: 'http://localhost:8080/policy-vehicleType/get-by-policy?policyId=' + policyId,
-        url: 'http://localhost:8080/policy-instance-vehicle/policy-instance-vehicles?policyInstanceId='+policyInstanceId,
+        url: 'http://localhost:8080/policy-vehicle/policy-vehicles?policyId='+policyId,
         success: function (res) {
             console.log(res);
+            locationId = res.locationId;
             loadData(res);
-            getPolicy(policyInstanceId);
+            getPolicy(policyId);
             loadVehicleTypes(res);
         }, error: function (res) {
             console.log(res);
@@ -63,13 +64,37 @@ function loadPolicy(policyInstanceId) {
     });
 }
 
-function getPolicy(policyInstanceId) {
+function getLocation(locationId) {
     $.ajax({
         type: "GET",
         dataType: "json",
         // url: "http://localhost:8080/policy/get/" + policyInstanceId,
-        url: 'http://localhost:8080/policy-instance/get/'+policyInstanceId,
+        url: 'http://localhost:8080/location/get/'+locationId,
         success: function (data) {
+            $('#location').text(data.location);
+            $('#status').text(convertStatus(data.isActivate));
+            convertStatus()
+        }, error: function (data) {
+            console.log("Could not load Policy");
+            console.log(data);
+        }
+    });
+}
+function convertStatus(status) {
+    if (status === true) {
+        return "Available";
+    } else {
+        return "Unavailable";
+    }
+}
+function getPolicy(policyId) {
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        // url: "http://localhost:8080/policy/get/" + policyInstanceId,
+        url: 'http://localhost:8080/policy/get/'+policyId,
+        success: function (data) {
+            getLocation(data.locationId);
             $('#ParkingFrom').val(convertDate(data.allowedParkingFrom));
             $('#ParkingTo').val(convertDate(data.allowedParkingTo));
             $('#policyId').val(data.id);
@@ -161,12 +186,12 @@ function submitPricing() {
     frm.submit(function (e) {
         var vehicleTypeId = $('#save-pricing #vehicleTypeId').val();
         console.log("SubmitPricing - VehicleTypeId: " + vehicleTypeId);
-        var policyInstanceVehicleId = $('#save-pricing #policyHasTblVehicleTypeId').val();
+        var policyVehicleId = $('#save-pricing #policyHasTblVehicleTypeId').val();
         console.log("VehicleTypeId: " + vehicleTypeId);
         e.preventDefault();
         $.ajax({
             type: frm.attr('method'),
-            url: frm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicleId,
+            url: frm.attr('action')+'?policyVehicleId='+policyVehicleId,
             data: frm.serialize(),
             success: function (data) {
                 console.log("Add Successfully");
@@ -215,17 +240,17 @@ function addPricing(policyHasVehicleTypeId, vehicleTypeId) {
 
 }
 
-function savePricing(policyInstanceVehicleId, pricingId) {
+function savePricing(policyVehicleId, pricingId) {
 
     $('#updatePricingModal').modal();
     var updateFrm = $('#update-pricing');
     $('#pricingId').val(pricingId);
-    $('.update-pricing-form #policyHasTblVehicleTypeId').val(policyHasVehicleTypeId);
+    $('.update-pricing-form #policyHasTblVehicleTypeId').val(policyVehicleId);
     updateFrm.submit(function (e) {
         e.preventDefault();
         $.ajax({
             type: updateFrm.attr('method'),
-            url: updateFrm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicleId,
+            url: updateFrm.attr('action')+'?policyVehicleId='+policyVehicleId,
             data: updateFrm.serialize(),
             success: (res) => {
                 location.reload(true);
@@ -265,7 +290,7 @@ function savePricing(policyInstanceVehicleId, pricingId) {
 //     });
 // }
 
-function deleteModal(pricingId, policyInstanceVehicleId) {
+function deleteModal(pricingId, policyVehicleId) {
     $('#deleteModal').modal();
     var frm = $('#delete-form');
     frm.submit(function (e) {
@@ -284,15 +309,15 @@ function deleteModal(pricingId, policyInstanceVehicleId) {
     });
 }
 
-function savePolicyHasVehicleType(locationId) {
+function savePolicyHasVehicleType() {
     $('#save-policy').on('click', function (e) {
-        var json = createPolicyHasVehicleTypeJson(locationId);
+        var json = createPolicyHasVehicleTypeJson();
         console.log("JSON: " + json);
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            url: 'http://localhost:8080/policy-instance/create',
+            url: 'http://localhost:8080/policy/create',
             data: JSON.stringify(json),
             success: function (res) {
                 console.log(res);
@@ -316,9 +341,9 @@ function containsObject(obj, list) {
     return false;
 }
 
-function deletePolicy(locationId) {
+function deletePolicy() {
     $('#delete-policy').on('click', function (e) {
-        var json = createPolicyHasVehicleTypeJson(locationId);
+        var json = createPolicyHasVehicleTypeJson();
         console.log("JSON: " + json);
         $.ajax({
             type: "POST",
@@ -412,7 +437,7 @@ function loadVehiclesCheckedBoxes(locationHasVehiclesArr) {
     });
 }
 
-function createPolicyHasVehicleTypeJson(locationId) {
+function createPolicyHasVehicleTypeJson() {
     var vehicleTypes = $('input[name=chk]:checked').map(function (i) {
         var vehicleType = {
             id: this.value,
@@ -470,7 +495,7 @@ function createPolicyHasVehicleTypeJson(locationId) {
     }
     var json = {
         locationId: locationId,
-        policyInstance: policyJson,
+        policy: policyJson,
         policyHasVehicleTypeId: policyHasVehicleTypeId,
         vehicleTypes: vehicleArr
     }
@@ -497,9 +522,6 @@ function parseTimeToLong(clockPicker, type) {
     var ms = (parseInt(hour * 3600000) + parseInt(minute * 60000));
     // var seconds = (parseInt(hour * 3600) + parseInt(minute * 60));
     var seconds = ms / 1000;
-    alert(convertDate(ms));
-    alert(ms);
-    console.log(ms);
     $('#allowed' + type).val(ms);
 }
 

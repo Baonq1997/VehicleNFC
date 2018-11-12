@@ -64,7 +64,7 @@ function loadVehicles() {
 }
 
 function loadTable(data) {
-    var policyList = data.policyInstanceList;
+    var policyList = data.policyList;
     
     $('#location').text(data.location);
     $('#locationId').val(data.id);
@@ -77,7 +77,7 @@ function loadTable(data) {
         // $('#policies').append();
     }
     for (let i = 0; i < policyList.length; i++) {
-        var vehicleList = policyList[i].policyInstanceHasTblVehicleTypes;
+        var vehicleList = policyList[i].policyHasTblVehicleTypes;
         row = '<tr>';
         row += '<td>' + policyList[i].id + '</td>';
         row += '<td>' + msToTime(policyList[i].allowedParkingFrom) + ' - ' + msToTime(policyList[i].allowedParkingTo) + '</td>';
@@ -110,9 +110,9 @@ function loadTable(data) {
     }
 }
 
-function editPolicy(policyInstanceId) {
+function editPolicy(policyId) {
     let locationId = $('#locationId').val();
-    let url = "http://localhost:8080/policy-instance/edit?policyInstanceId=" + policyInstanceId;
+    let url = "http://localhost:8080/policy/edit?policyId=" + policyId;
     window.location.href = url;
 }
 
@@ -121,7 +121,7 @@ function deletePolicy(policyInstanceId) {
     $.ajax({
         type: "POST",
         // url: 'http://localhost:8080/policy/delete-by-location-policy?locationId=' + locationId + '&policyId=' + policyId,
-        url: 'http://localhost:8080/policy-instance/delete-by-location-policy?locationId=' + locationId + '&policyInstanceId=' + policyInstanceId,
+        url: 'http://localhost:8080/policy/delete-by-location-policy?locationId=' + locationId + '&policyId=' + policyInstanceId,
         success: function (data) {
             console.log("Delete Successfully");
             location.reload(true);
@@ -194,14 +194,14 @@ function loadLocations(policyId) {
                             '<label>' + locations[i].location + '</label>\n' +
                             '                                <div class="control__indicator"></div>\n' +
                             '                            </label>';
-                        $('.control-group location').append(item);
+                        $('#locations').append(item);
                     } else {
                         item = ' <label class="control control--checkbox">\n' +
                             '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
                             '<label>' + locations[i].location + '</label>\n' +
                             '                                <div class="control__indicator"></div>\n' +
                             '                            </label>';
-                        $('.control-group location').append(item);
+                        $('#locations').append(item);
                     }
                 }
             }
@@ -267,7 +267,7 @@ function addPolicyToLocation(policyId) {
         $.ajax({
            type: "POST",
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(jsonObject),
+            data: JSON.stringify(jsonObjec t),
             url: 'http://localhost:8080/location/add-policy',
             success: function (data) {
                 $('#addLocationModal').modal('hide');
@@ -284,7 +284,7 @@ function filterPolicies(pageNumber) {
     $('#filter-btn').on('click', function (e) {
         var vehicleTypeArr = [];
         var locationId = $('#locationId').val();
-        var url = "http://localhost:8080/policy-instance/filter-policies?locationId="+locationId;
+        var url = "http://localhost:8080/policy/filter-policies?locationId="+locationId;
         if (pageNumber != null) {
             url = url+"&page="+pageNumber;
         }
@@ -339,7 +339,7 @@ function loadTableAfterFilter(response) {
     var data = response.data;
     if (data.length != 0) {
         for (var i = 0; i < data.length; i++) {
-            var vehicleList = data[i].policyInstanceHasTblVehicleTypes;
+            var vehicleList = data[i].policyHasTblVehicleTypes;
             row = '<tr>';
             row += '<td>' + data[i].id + '</td>';
             row += '<td>' + msToTime(data[i].allowedParkingFrom) + ' - ' + msToTime(data[i].allowedParkingTo) + '</td>';
@@ -365,7 +365,7 @@ function loadTableAfterFilter(response) {
 }
 
 function emptyLocationCheckboxes() {
-    $('.control-group location').empty();
+    $('#locations').empty();
 }
 
 function createSearchObject(key, operation, value) {

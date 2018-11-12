@@ -130,7 +130,7 @@ function savePolicyVehicle(locationId) {
         }
         var json = {
             locationId: locationId,
-            policyInstance: policyJson,
+            policy: policyJson,
             vehicleTypes: vehicleArr
         }
         $.ajax({
@@ -138,7 +138,7 @@ function savePolicyVehicle(locationId) {
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(json),
-            url: 'http://localhost:8080/policy-instance/create',
+            url: 'http://localhost:8080/policy/create',
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);
@@ -158,11 +158,11 @@ function savePolicyVehicle(locationId) {
     });
 }
 
-function createPricingTabs(policyInstanceId) {
+function createPricingTabs(policyId) {
     $.ajax({
         type: "GET",
         dataType: "json",
-        url: 'http://localhost:8080/policy-instance-vehicle/policy-instance-vehicles?policyInstanceId='+policyInstanceId,
+        url: 'http://localhost:8080/policy-vehicle/policy-vehicles?policyId='+policyId,
         success: function (data) {
             let navTabs = '<ul class="nav nav-tabs">';
             let tabPanes = '<div class="tab-content">'
@@ -242,9 +242,6 @@ function loadVehicleTypes() {
     });
 }
 
-// function f() {
-//    
-// }
 
 function loadVehiclesCheckedBoxes() {
     // $('#vehicleTypeArr input').remove();
@@ -314,18 +311,12 @@ function savePricing(policyHasVehicleTypeId, vehicleTypeId, pricingId) {
     // $('#updatePricingModal').modal();
     loadPricingModal(policyHasVehicleTypeId, pricingId);
     $('#btn-save-pricing').off().click(function () {
-        let pricingObject ;
-        // console.log("PricingInfo: "+ pricingId+
-        //     " | FromHour: "+$('#updatePricingModal #fromHour').val()+
-        //     " | PricePerHour: "+$('#updatePricingModal #pricePerHour').val()+
-        //     " | LateFeePerHour: "+ $('#updatePricingModal #lateFeePerHour').val()+
-        //     " | PolicyHasVehicleType: "+policyHasVehicleTypeId);
-         pricingObject =  {
+        let pricingObject =  {
             id: pricingId,
             fromHour: $('#updatePricingModal #fromHour').val(),
             pricePerHour: $('#updatePricingModal #pricePerHour').val(),
             lateFeePerHour: $('#updatePricingModal #lateFeePerHour').val(),
-             policyInstanceHasTblVehicleTypeId: policyHasVehicleTypeId
+             policyHasTblVehicleTypeId: policyHasVehicleTypeId
         }
 
         var pricingJson = JSON.parse(localStorage.getItem('pricingList-'+vehicleTypeId));
@@ -333,7 +324,7 @@ function savePricing(policyHasVehicleTypeId, vehicleTypeId, pricingId) {
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             type: 'POST',
-            url: 'http://localhost:8080/pricing/save-pricing-json?policyInstanceVehicleId='+policyHasVehicleTypeId,
+            url: 'http://localhost:8080/pricing/save-pricing-json?policyVehicleId='+policyHasVehicleTypeId,
             data: JSON.stringify(pricingObject),
             success: function (res) {
                 console.log(res);
@@ -358,7 +349,7 @@ function submitPricing() {
     var frm = $('#save-pricing');
     frm.submit(function (e) {
         var vehicleTypeId  = $('#save-pricing #vehicleTypeId').val();
-        var policyInstanceVehicle = $('#save-pricing #policyHasTblVehicleTypeId').val();
+        var policyVehicle = $('#save-pricing #policyHasTblVehicleTypeId').val();
         console.log("SubmitPricing - VehicleTypeId: "+vehicleTypeId);
         var pricings = [];
         if (localStorage.getItem('pricingList-'+vehicleTypeId) != null){
@@ -368,7 +359,7 @@ function submitPricing() {
         e.preventDefault();
         $.ajax({
             type: "POST",
-            url: frm.attr('action')+'?policyInstanceVehicleId='+policyInstanceVehicle,
+            url: frm.attr('action')+'?policyVehicleId='+policyVehicle,
             data: frm.serialize(),
             success: function (data) {
 
@@ -401,11 +392,7 @@ function emptyTable(vehicleTypeId) {
 }
 function loadPricingTable(vehicleTypeId) {
     let pricings = JSON.parse(localStorage.getItem('pricingList-'+vehicleTypeId));
-    // console.log("Pricings: "+localStorage.getItem('pricingList-'+vehicleTypeId));
     let policyHasVehicleType =  $('#save-pricing #policyHasTblVehicleTypeId').val();
-    // console.log("loadingTable - policyHasVehicleType: "+policyHasVehicleType);
-    // console.log("loadingTable - vehicleTypeId: "+vehicleTypeId);
-    // console.log("loadingTable - vehicleTypeId: "+vehicleTypeId);
     if (pricings != null) {
         for (let i = 0; i < pricings.length; i++) {
             let row = '<tr>';
@@ -465,7 +452,7 @@ function deletePolicy(locationId) {
         }
         var json = {
             locationId: locationId,
-            policyInstance: policyJson,
+            policy: policyJson,
             policyHasVehicleTypeId: policyHasVehicleTypeId,
             vehicleTypes: vehicleTypeArr
         }
@@ -474,12 +461,10 @@ function deletePolicy(locationId) {
             // dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(json),
-            url: 'http://localhost:8080/policy-instance/delete',
+            url: 'http://localhost:8080/policy/delete',
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);
-                // $('#policyId').val(data.id);
-                // createPricingTabs(data.id);
                 window.location.href  = 'http://localhost:8080/user/admin';
             }, error: function (data) {
                 console.log(data);
@@ -489,17 +474,10 @@ function deletePolicy(locationId) {
 }
 
 function parseTimeToLong(clockPicker, type) {
-    // console.log(type);
-    // console.log("log: " + $('.clockpickerFrom #ParkingFrom').val());
     var time = $('.' + clockPicker + ' #' + type).val();
-    // console.log("Time: " + time);
     var temp = time.split(":")
     var hour = temp[0];
-    // console.log("hour: " + hour);
     var minute = temp[1];
-    // console.log("Minute: " + minute);
-    // console.log("hour ms: " + parseInt(hour * 3600000));
-    // console.log("minute ms: " + parseInt(minute * 60000));
     var ms = parseInt(hour * 3600000) + parseInt(minute * 60000);
     // console.log(ms);
     $('#allowed' + type).val(ms);

@@ -125,9 +125,11 @@ function filterOrder(pageNumber) {
     console.log("Search By: "+searchType);
     console.log("SearchValue: "+searchValue);
     var listFilterObject = [];
-    var searchValue = createSearchObject(searchType, ":", searchValue);
+    if (searchValue !== "") {
+        var searchValue = createSearchObject(searchType, ":", searchValue);
+        listFilterObject.push(searchValue);
+    }
     var searchTime = createSearchObject(timeType,":", checkInDate);
-    listFilterObject.push(searchValue);
     listFilterObject.push(searchTime);
     $.ajax({
         type:'POST',
@@ -206,22 +208,6 @@ function viewPricingDetail(orderId) {
                 } else {
                     toHour = msToTime(checkInDate + milliseconds);
                 }
-
-                //
-                // let fromHour ="";
-                // if (i === 0) {
-                //     passHour = hourHasPrice.hour;
-                //     fromHour =  "First " +hourHasPrice.hour + " Hour";
-                // } else if (i === hourHasPrices.length - 1) {
-                //     hourHasPrice.hour = hourHasPrice.hour - passHour;
-                //     let minutePass = hourHasPrice.minutes + " Minute";
-                //     fromHour = " After "+ hourHasPrice.hour + " Hour " + minutePass;
-                //     hourHasPrice.total = (hourHasPrice.total + ((parseFloat(minutes / 60)) * (hourHasPrice.price)))
-                // } else {
-                //     fromHour = " From " + passHour + " Hour To " + hourHasPrice.hour + " Hour";
-                //     passHour = hourHasPrice.hour;
-                // }
-
                 console.log("checkIndate: "+checkInDate);
                 console.log("toHour: "+toHour);
                 row = '<tr>';

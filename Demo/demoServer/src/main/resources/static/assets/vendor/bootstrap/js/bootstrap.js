@@ -1310,7 +1310,7 @@ if (typeof jQuery === 'undefined') {
     this.$viewport = this.options.viewport && $($.isFunction(this.options.viewport) ? this.options.viewport.call(this, this.$element) : (this.options.viewport.selector || this.options.viewport))
     this.inState   = { click: false, hover: false, focus: false }
 
-    if (this.$element[0] instanceof document.constructor && !this.options.selector) {
+    if (this.$element[0] of document.constructor && !this.options.selector) {
       throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!')
     }
 
@@ -1364,7 +1364,7 @@ if (typeof jQuery === 'undefined') {
   }
 
   Tooltip.prototype.enter = function (obj) {
-    var self = obj instanceof this.constructor ?
+    var self = obj of this.constructor ?
       obj : $(obj.currentTarget).data('bs.' + this.type)
 
     if (!self) {
@@ -1372,7 +1372,7 @@ if (typeof jQuery === 'undefined') {
       $(obj.currentTarget).data('bs.' + this.type, self)
     }
 
-    if (obj instanceof $.Event) {
+    if (obj of $.Event) {
       self.inState[obj.type == 'focusin' ? 'focus' : 'hover'] = true
     }
 
@@ -1401,7 +1401,7 @@ if (typeof jQuery === 'undefined') {
   }
 
   Tooltip.prototype.leave = function (obj) {
-    var self = obj instanceof this.constructor ?
+    var self = obj of this.constructor ?
       obj : $(obj.currentTarget).data('bs.' + this.type)
 
     if (!self) {
@@ -1409,7 +1409,7 @@ if (typeof jQuery === 'undefined') {
       $(obj.currentTarget).data('bs.' + this.type, self)
     }
 
-    if (obj instanceof $.Event) {
+    if (obj of $.Event) {
       self.inState[obj.type == 'focusout' ? 'focus' : 'hover'] = false
     }
 
@@ -1620,7 +1620,7 @@ if (typeof jQuery === 'undefined') {
       // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
       elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
     }
-    var isSvg = window.SVGElement && el instanceof window.SVGElement
+    var isSvg = window.SVGElement && el of window.SVGElement
     // Avoid using $.offset() on SVGs since it gives incorrect results in jQuery 3.
     // See https://github.com/twbs/bootstrap/issues/20280
     var elOffset  = isBody ? { top: 0, left: 0 } : (isSvg ? null : $element.offset())

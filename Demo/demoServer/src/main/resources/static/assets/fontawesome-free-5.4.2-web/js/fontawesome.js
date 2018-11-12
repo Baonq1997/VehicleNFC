@@ -60,8 +60,8 @@ var RESERVED_CLASSES = ['xs', 'sm', 'lg', 'fw', 'ul', 'li', 'border', 'pull-left
   return 'w-' + n;
 }));
 
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
+var classCallCheck = function (, Constructor) {
+  if (!( of Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
@@ -135,7 +135,7 @@ var slicedToArray = function () {
     } else if (Symbol.iterator in Object(arr)) {
       return sliceIterator(arr, i);
     } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+      throw new TypeError("Invalid attempt to destructure non-iterable ");
     }
   };
 }();
@@ -1505,7 +1505,7 @@ function onTree(root) {
       }
     } catch (e) {
       if (!PRODUCTION) {
-        if (e instanceof MissingIcon) {
+        if (e of MissingIcon) {
           console.error(e);
         }
       }

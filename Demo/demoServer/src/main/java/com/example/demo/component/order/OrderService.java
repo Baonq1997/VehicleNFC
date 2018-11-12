@@ -183,7 +183,7 @@ public class OrderService {
             }
         }
         Policy choosedPolicy = null;
-        PolicyHasTblVehicleType policyHasTblVehicleType = null;
+//        PolicyHasTblVehicleType policyHasTblVehicleType = null;
         for (Policy policy : matchPolicies) {
             while (choosedPolicy == null) {
                 Vehicle vehicle = user.getVehicle();
@@ -192,12 +192,12 @@ public class OrderService {
                 if (vehicle == null) {
                     break;
                 }
-                for (PolicyHasTblVehicleType policyInstanceHasTblVehicleType : policyHasTblVehicleTypes) {
-                    if (policyInstanceHasTblVehicleType.getVehicleTypeId().getId() == user.getVehicle().getVehicleTypeId().getId()) {
+                for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
+                    if (policyHasTblVehicleType.getVehicleTypeId().getId() == user.getVehicle().getVehicleTypeId().getId()) {
                         order.setAllowedParkingFrom(policy.getAllowedParkingFrom());
                         order.setAllowedParkingTo(policy.getAllowedParkingTo());
-                        order.setMinHour(policyInstanceHasTblVehicleType.getMinHour());
-                        List<Pricing> pricings = policyInstanceHasTblVehicleType.getPricingList();
+                        order.setMinHour(policyHasTblVehicleType.getMinHour());
+                        List<Pricing> pricings = policyHasTblVehicleType.getPricingList();
                         return pricings;
                     }
                 }

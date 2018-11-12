@@ -9,11 +9,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PricingRepository extends JpaRepository<Pricing, Integer> {
-    List<Pricing> findByPolicyHasVehicleTypeId(Integer policyHasTblVehicleType);
+    List<Pricing> findByPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleType);
 
-    @Query(value = "SELECT * FROM tbl_pricing WHERE tbl_policy_has_tbl_vehicle_type_id = :policyInstanceHasTblVehicleType"
+    @Query(value = "SELECT * FROM tbl_pricing WHERE tbl_policy_has_tbl_vehicle_type_id = :policyHasTblVehicleType"
     ,nativeQuery = true)
-    List<Pricing> findPricingByPolicyInstanceVehicle(@Param("policyInstanceHasTblVehicleType") Integer policyInstanceHasTblVehicleType);
+    List<Pricing> findPricingByPolicyVehicle(@Param("policyHasTblVehicleType") Integer policyHasTblVehicleType);
 
     @Modifying
     @Query(value = "DELETE FROM tbl_pricing WHERE id = :id",
@@ -27,7 +27,7 @@ public interface PricingRepository extends JpaRepository<Pricing, Integer> {
 
 //    List<Pricing> findAllByPolicyHasTblVehicleTypeId(Integer policyHasTblVehicleTypeId);\
 
-    void deleteByPolicyHasVehicleTypeId(Integer policyHasVehicleId);
+    void deleteByPolicyHasTblVehicleTypeId(Integer policyHasVehicleId);
 //
 //    void deleteByPolicyHasTblVehicleTypeIdIn(List<Integer> listPolicyHasTblVehicleTypeId);
 }

@@ -81,7 +81,7 @@ public class PolicyService {
             } else {
                 if (vehicleTypeList.get(i).getIsDelete().equalsIgnoreCase("true")) {
                     PolicyHasTblVehicleType instance = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i)).get();
-                    pricingRepository.deleteByPolicyHasVehicleTypeId(instance.getId());
+                    pricingRepository.deleteByPolicyHasTblVehicleTypeId(instance.getId());
 //                    if (null != pricings || !pricings.isEmpty()) {
 //                        for (Pricing pricing : pricings) {
 //                            pricingRepository.delete(pricing);
@@ -105,35 +105,35 @@ public class PolicyService {
     }
 
     @Transactional
-    public void deleteBylocationIdAndPolicyInstanceId(Integer policyInstanceId) {
+    public void deleteBylocationIdAndPolicyId(Integer policyId) {
 //        Optional<Location> locationOpt = locationRepository.findById(locationId);
-        Optional<Policy> policyInstanceOptional = policyRepository.findById(policyInstanceId);
-        if ( policyInstanceOptional.isPresent()) {
+        Optional<Policy> policyOptional = policyRepository.findById(policyId);
+        if ( policyOptional.isPresent()) {
 //            Location location = locationOpt.get();
-            Policy policy = policyInstanceOptional.get();
+            Policy policy = policyOptional.get();
             List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findAllByPolicyId(policy.getId());
             for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
-                pricingRepository.deleteByPolicyHasVehicleTypeId(policyHasTblVehicleType.getId());
+                pricingRepository.deleteByPolicyHasTblVehicleTypeId(policyHasTblVehicleType.getId());
                 policyHasVehicleTypeRepository.deletePolicyHasVehicleTypeById(policyHasTblVehicleType.getId());
             }
-//            policyInstance.setPolicyInstanceHasTblVehicleTypes(policyInstanceHasTblVehicleTypes);
+//            policy.setPolicyHasTblVehicleTypes(policyHasTblVehicleTypes);
             policyRepository.delete(policy);
         }
 
     }
 
     @Transactional
-    public void deletePolicyInstance(Integer locationId, Policy policy, List<Integer> policyHasVehicleTypeId) {
+    public void deletePolicy(Integer locationId, Policy policy, List<Integer> policyHasVehicleTypeId) {
         if (!policyHasVehicleTypeId.isEmpty()) {
             for (Integer id : policyHasVehicleTypeId) {
-                pricingRepository.deleteByPolicyHasVehicleTypeId(id);
+                pricingRepository.deleteByPolicyHasTblVehicleTypeId(id);
             }
         }
 //
         for (int i = 0; i < policyHasVehicleTypeId.size(); i++) {
-            Optional<PolicyHasTblVehicleType> policyInstanceHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId.get(i));
-            if (policyInstanceHasTblVehicleType.isPresent()) {
-                policyHasVehicleTypeRepository.deletePolicyHasVehicleTypeById(policyInstanceHasTblVehicleType.get().getId());
+            Optional<PolicyHasTblVehicleType> policyHasTblVehicleType = policyHasVehicleTypeRepository.findById(policyHasVehicleTypeId.get(i));
+            if (policyHasTblVehicleType.isPresent()) {
+                policyHasVehicleTypeRepository.deletePolicyHasVehicleTypeById(policyHasTblVehicleType.get().getId());
             }
 
         }
@@ -174,8 +174,8 @@ public class PolicyService {
                 } else if(type == VehicleType.class){
                     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
                     CriteriaQuery<PolicyHasTblVehicleType> vehicleQuery = builder.createQuery(PolicyHasTblVehicleType.class);
-                    Root<PolicyHasTblVehicleType> policyInstanceVehicleRoot = vehicleQuery.from(PolicyHasTblVehicleType.class);
-                    Join<PolicyHasTblVehicleType, VehicleType> vehicleTypeJoin = policyInstanceVehicleRoot.join("vehicleTypeId");
+                    Root<PolicyHasTblVehicleType> policyVehicleRoot = vehicleQuery.from(PolicyHasTblVehicleType.class);
+                    Join<PolicyHasTblVehicleType, VehicleType> vehicleTypeJoin = policyVehicleRoot.join("vehicleTypeId");
                     ArrayList<String> vehicleTypes = (ArrayList<String>) param.getValue();
                     Expression<String> vehicleExpression = vehicleTypeJoin.get("name");
                     Predicate vehiclePredicate = vehicleExpression.in(vehicleTypes);
@@ -184,12 +184,12 @@ public class PolicyService {
                     TypedQuery<PolicyHasTblVehicleType> vehicleTypeTypedQuery = entityManager.createQuery(vehicleQuery);
                     List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = vehicleTypeTypedQuery.getResultList();
 
-                    Join<Policy, PolicyHasTblVehicleType> policyJoin = r.join("policyInstanceHasTblVehicleTypes");
+                    Join<Policy, PolicyHasTblVehicleType> policyJoin = r.join("policyHasTblVehicleTypes");
                     List<Integer> ids = new ArrayList<>();
                     for (PolicyHasTblVehicleType instance : policyHasTblVehicleTypes) {
                         ids.add(instance.getPolicyId());
                     }
-                    Expression<String> policyExpression = policyJoin.get("policyInstanceId");
+                    Expression<String> policyExpression = policyJoin.get("policyId");
                     Predicate policyPredicate = policyExpression.in(ids);
                     predicate = builder.and(predicate,policyPredicate);
                 } else {
@@ -198,7 +198,9 @@ public class PolicyService {
                 }
             }
         }
-        predicate = builder.and(predicate, builder.equal(r.get("locationId"), locationId));
+        if (locationId != 0) {
+            predicate = builder.and(predicate, builder.equal(r.get("locationId"), locationId));
+        }
         query.where(predicate);
         query.groupBy(r.get("id"));
         TypedQuery<Policy> typedQuery = entityManager.createQuery(query);
