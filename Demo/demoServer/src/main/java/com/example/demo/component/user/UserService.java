@@ -14,10 +14,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -101,12 +109,23 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public String hashID(Integer id) {
-        ByteBuffer b = ByteBuffer.allocate(4);
-        //b.order(ByteOrder.BIG_ENDIAN); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
-        b.putInt(id);
-        byte[] result = b.array();
-        return Base64.getEncoder().withoutPadding().encodeToString(result);
+    public static String encodeId(Integer id) {
+        try {
+            byte[] plaintTextByteArray = id.toString().getBytes("UTF8");
+            return Base64.getEncoder().encodeToString(plaintTextByteArray);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static Integer decodeId(String encodedKey) {
+        try {
+            byte[] plaintTextByteArray = Base64.getDecoder().decode(encodedKey);
+            return Integer.parseInt(new String(plaintTextByteArray));
+        }catch (Exception e){
+//            e.printStackTrace();
+        }
+        return null;
     }
 
     @Autowired
@@ -266,5 +285,20 @@ public class UserService {
 
     public Optional<User> saveUser(User user){
         return Optional.of(userRepository.save(user));
+    }
+
+    public boolean unbindVehicle(Integer userId){
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()){
+            Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.get().getVehicle().getVehicleNumber());
+            if (vehicle.isPresent()) {
+                vehicle.get().setActive(false);
+                vehicleRepository.save(vehicle.get());
+                user.get().setVehicle(null);
+                userRepository.save(user.get());
+                return true;
+            }
+        }
+        return false;
     }
 }

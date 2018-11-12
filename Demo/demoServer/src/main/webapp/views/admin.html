@@ -65,7 +65,7 @@
     <div id="sidebar-nav" class="sidebar">
         <div class="sidebar-scroll">
             <nav>
-                <ul class="nav">
+                <ul class="nav" style="box-shadow: 5px 0 10px">
                     <li>
                         <div class="brand">
                             <img src="/assets/img/logo2.png" alt="Logo"
@@ -74,32 +74,29 @@
                         </div>
                     </li>
                     <li>
-                    <li><a onclick="openHideList($(this),true)" id="vehicleHolder" isOpen="false"
+                    <li><a onclick="openHideList($(this),true)" id="vehicleHolder" isOpen="false" style="border-bottom: 2px solid"
                            class="active pointer menu"><i
                             class="lnr lnr-car"></i> <span class="title">Vehicles</span><i
                             class="lnr lnr-chevron-left float-right menu-icon" id="vehicleHolderIcon"></i></a>
                     </li>
                     <li><a onclick="switchContentFragment('/vehicle/get-verify',$('#vehicleHolder'))"
                            class="pointer sub-menu vehicleHolder"><i class="far fa-check-square"></i><span
-                            class="title">Verify Vehicles</span></a></li>
+                            class="title">Verify</span></a></li>
                     <li><a onclick="switchContentFragment('/vehicle/index',$('#vehicleHolder'))"
                            class="pointer sub-menu vehicleHolder"><i
-                            class="lnr lnr-eye"></i> <span class="title">View Vehicles</span></a></li>
+                            class="lnr lnr-list"></i> <span class="title">Manage</span></a></li>
                     <li>
-                    <li><a onclick="switchContentFragment('/vehicle/lookup-vehicle',$('#vehicleHolder'))"
-                           class="pointer sub-menu vehicleHolder"><i
-                            class="lnr lnr-magnifier"></i> <span class="title">Look up Vehicles</span></a></li>
-                    <li><a onclick="openHideList($(this),true)" id="userHolder" isOpen="false"
+                    <li><a onclick="openHideList($(this),true)" id="userHolder" isOpen="false" style="border-bottom: 2px solid"
                            class="pointer menu"><i
                             class="lnr lnr-user"></i> <span class="title">Users</span><i
                             class="lnr lnr-chevron-left float-right menu-icon" id="userHolderIcon"></i></a>
                     </li>
                     <li><a onclick="switchContentFragment('/user/get-verify',$('#userHolder'))"
-                           class="pointer sub-menu userHolder"><i class="far fa-check-square"></i><span class="title">Verify Users</span></a>
+                           class="pointer sub-menu userHolder"><i class="far fa-check-square"></i><span class="title">Verify</span></a>
                     </li>
                     <li><a onclick="switchContentFragment('/user/get-user',$('#userHolder'))"
                            class="pointer sub-menu userHolder"><i
-                            class="lnr lnr-eye"></i> <span class="title">View Users</span></a></li>
+                            class="lnr lnr-list"></i> <span class="title">Manage</span></a></li>
                     <li><a onclick="switchContentFragment('/user/get-create',$('#userHolder'))"
                            class="pointer sub-menu userHolder"><i class="fas fa-plus-square"></i><span class="title">Create a new User</span></a>
                     </li>
@@ -116,8 +113,9 @@
                             class="lnr lnr-file-empty"></i> <span class="title">Orders</span></a>
                     </li>
                     <li id="shortenNavBar" onclick="shortenNavBar()" class="pointer">
-                        <a class="menu"><i
+                        <a class="menu" style="border-bottom: 0;color: white"><i
                                 id="shortenNavBarIcon" class="lnr lnr-chevron-left"></i> <span class="title">Hide</span></a>
+                        <span id="footer">- Vehicle NFC 2018 -</span>
                     </li>
                 </ul>
             </nav>

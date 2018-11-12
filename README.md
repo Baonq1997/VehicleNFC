@@ -71,6 +71,20 @@ Sample JSON:
   "licensePlateId": 4381249327
 }
 ```
+- Unbind vehicle
+
+`localhost:8080/user/unbind-vehicle`
+
+Method used: `POST`
+
+Params: "userId"
+
+Return: true (Success), false (not found), null (Failed)
+
+Sample URL:
+```
+localhost:8080/user/nnbind-vehicle?userId=XSAa
+```
 ### Vehicle
 
 - Replace

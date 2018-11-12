@@ -33,6 +33,10 @@ public class Vehicle {
     @Column(name = "is_verified")
     private boolean isVerified = false;
 
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive = true;
+
     @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
     @ManyToOne
     private VehicleType vehicleTypeId;
@@ -105,5 +109,13 @@ public class Vehicle {
 
     public void setOwner(Owner owner) {
         this.owner = owner;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

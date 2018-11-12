@@ -44,8 +44,8 @@ function loadData(res) {
             ? content[i].vehicle.vehicleTypeId.name : "Empty";
         row += '<td class="text-center">' + vehicleType + '</td>';
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
-        var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].id + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
-        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].id + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
+        var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].decodedId + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
+        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].decodedId + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
         row += cellBuilder(deleteStr + edit);
         row += '</tr>';
         $('#user-table tbody').append(row);

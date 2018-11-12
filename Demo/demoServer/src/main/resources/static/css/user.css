@@ -92,6 +92,8 @@
 #user-table thead th {
     text-align: center;
     vertical-align: middle;
+    color: var(--main-text-active-color);
+    font-size: 18px;
 }
 
 .text-center {

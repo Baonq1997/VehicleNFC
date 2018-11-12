@@ -38,25 +38,26 @@ public class UserController {
     }
 
     @GetMapping(value = {"/get-user/{id}"})
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable("id") Integer id) {
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable("id") String id) {
         System.out.println("getting user info...");
-        return status(OK).body(userService.getUserById(id));
+        return status(OK).body(userService.getUserById(UserService.decodeId(id)));
     }
 
     @PostMapping(value = "/create-user")
     public ResponseEntity<String> createUser(@RequestBody User user) {
-        String hashedID = "";
         // Cần đoạn lấy thông tin xe
-        userService.createUser(user);
 //        }
-        Optional<User> userOptional = userService.getUserByPhone(user.getPhoneNumber());
+        Optional<User> userOptional = userService.getUserById(UserService.decodeId(user.getDecodedId()));
         if (userOptional.isPresent()) {
             User userDB = userOptional.get();
             int userId = userDB.getId();
-            hashedID = userId + "";
+            user.setId(userId);
 //            hashedID = userService.hashID(userId);
+            userService.saveUser(user);
+        }else {
+            userService.createUser(user);
         }
-        return status(OK).body(hashedID);
+        return status(OK).body(UserService.encodeId(user.getId()));
     }
 
 
@@ -107,6 +108,7 @@ public class UserController {
 
     @PostMapping("/save-user")
     public String updateUser(User user) {
+        user.setId(UserService.decodeId(user.getDecodedId()));
         userService.updateUser(user);
         return "Success";
     }
@@ -117,8 +119,10 @@ public class UserController {
     }
 
     @PostMapping("/delete-user")
-    public String deleteUser(@Param(value = "id") Integer id) {
-        userService.deleteUser(id);
+    public String deleteUser(@Param(value = "id") String id) {
+        try {
+            userService.deleteUser(UserService.decodeId(id));
+        }catch (Exception e){}
         return "Success";
     }
 
@@ -153,7 +157,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Optional<User>> create(@Param("phone") String phone, @Param("password") String password) {
+    public ResponseEntity<Optional<User>> login(@Param("phone") String phone, @Param("password") String password) {
         Optional<User> result = userService.login(phone, password);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -231,6 +235,11 @@ public class UserController {
         System.err.println("Token: " + phoneNumber + ", " + token);
         servletContext.setAttribute("registerTokenList", registerTokenList);
         return ResponseEntity.status(OK).body(true);
+    }
+
+    @PostMapping(value = "/unbind-vehicle")
+    public ResponseEntity<Boolean> unbindVehicle(@Param("userId") String userId){
+        return ResponseEntity.status(OK).body(userService.unbindVehicle(UserService.decodeId(userId)));
     }
 
 }

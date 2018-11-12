@@ -1,6 +1,7 @@
 package com.example.demo.component.user;
 
 import com.example.demo.component.vehicle.Vehicle;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,11 +11,16 @@ import java.io.Serializable;
 @Entity
 @Table(name = "tbl_user")
 public class User implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+
+    @Transient
+    private String decodedId;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
@@ -55,9 +61,7 @@ public class User implements Serializable {
     @Transient
     private String confirmCode;
 
-    public User() {
-    }
-
+    @JsonIgnore
     public Integer getId() {
         return id;
     }
@@ -106,14 +110,6 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-//    public String getVehicleNumber() {
-//        return vehicleNumber;
-//    }
-//
-//    public void setVehicleNumber(String vehicleNumber) {
-//        this.vehicleNumber = vehicleNumber;
-//    }
-
     public Vehicle getVehicle() {
         return vehicle;
     }
@@ -152,5 +148,13 @@ public class User implements Serializable {
 
     public void setConfirmCode(String confirmCode) {
         this.confirmCode = confirmCode;
+    }
+
+    public String getDecodedId() {
+        return UserService.encodeId(id);
+    }
+
+    public void setDecodedId(String decodedId) {
+        this.decodedId = UserService.encodeId(id);
     }
 }

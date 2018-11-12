@@ -144,7 +144,8 @@ public class VehicleService {
     public boolean deleteVehicle(String vehicleNumber) {
         Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(vehicleNumber);
         if (vehicle.isPresent()) {
-            vehicleRepository.delete(vehicle.get());
+            vehicle.get().setActive(false);
+            vehicleRepository.save(vehicle.get());
             return true;
         }
         return false;
