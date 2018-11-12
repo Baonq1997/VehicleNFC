@@ -51,10 +51,10 @@
                     <input type="hidden" id="allowedParkingFrom">
                     <div class="from-group clockpickerTo" style="width:20%; float: left; margin-right: 2%;">
                         <label  class="col-form-label">Allowed Parking From:</label>
-                        <input type="text" class="form-control" id="ParkingTo">
-                        <span class="input-group-addon">
+                        <input type="text" class="form-control" id="ParkingTo"> <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
+
                     </div>
                     <input type="hidden" id="allowedParkingTo">
                     <div class="form-group" style="width: 50%; float: left;">
@@ -63,7 +63,9 @@
 
                         </div>
                     </div>
-                    <button class="btn btn-primary btnBG" id="filter-btn" value="Go" style="float: left;">Go</button>
+                    <button class="btn btn-primary btnAction" type="button" id="filter-btn" value="Go" style="float: left;">
+                        <i class="lnr lnr-magnifier"></i>
+                    </button>
                 </div>
                 <div id="policies">
                     <table class="table table" id="location-policies">

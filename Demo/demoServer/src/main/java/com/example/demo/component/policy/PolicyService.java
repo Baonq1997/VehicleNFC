@@ -52,7 +52,7 @@ public class PolicyService {
     public Policy savePolicy(Policy policy, List<VehicleType> vehicleTypeList, Integer locationId) {
 
         Policy policyDB;
-        if (policy.getId() == 0) {
+        if (policy.getId() == null) {
 //            // create
 
             Location location = locationRepository.findById(locationId).get();
@@ -164,7 +164,9 @@ public class PolicyService {
                 Object type = new Object();
                 if (param.getKey().equalsIgnoreCase("vehicleTypes")) {
                     type = VehicleType.class;
-                } else {
+                } else if (param.getKey().equalsIgnoreCase("locationId")) {
+                    type = Location.class;
+                }else {
                     type = r.get(param.getKey()).getJavaType();
                 }
                 if (type == String.class) {
@@ -192,7 +194,25 @@ public class PolicyService {
                     Expression<String> policyExpression = policyJoin.get("policyId");
                     Predicate policyPredicate = policyExpression.in(ids);
                     predicate = builder.and(predicate,policyPredicate);
-                } else {
+                } else if (type == Location.class) {
+                    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+                    CriteriaQuery<Location> locationQuery = builder.createQuery(Location.class);
+                    Root<Location> locationRoot = locationQuery.from(Location.class);
+                    Predicate locationPredicate1 = cb.like(locationRoot.get("location"),
+                            "%" + param.getValue() + "%");
+                    locationQuery.where(locationPredicate1);
+                    TypedQuery<Location> locationTypedQuery = entityManager.createQuery(locationQuery);
+                    List<Location> locations = locationTypedQuery.getResultList();
+                    List<Integer> locationIds = new ArrayList<>();
+                    if (locations != null) {
+                        for (Location location : locations) {
+                            locationIds.add(location.getId());
+                        }
+                        Expression<String> policyExpression = r.get("locationId");
+                        Predicate policyPredicate = policyExpression.in(locationIds);
+                        predicate = builder.and(predicate,policyPredicate);
+                    }
+                }else {
                     predicate = builder.and(predicate,
                             builder.equal(r.get(param.getKey()), param.getValue()));
                 }

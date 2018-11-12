@@ -306,7 +306,7 @@ function depositModal() {
 }
 
 function emptyTable() {
-    $('#order-table td').remove();
+    $('#order-table tbody').remove();
 }
 
 function emptyPricingTable() {

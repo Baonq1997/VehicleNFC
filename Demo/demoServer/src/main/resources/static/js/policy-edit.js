@@ -349,7 +349,7 @@ function deletePolicy() {
             type: "POST",
             contentType: "application/json; charset=utf-8",
             // dataType: "json",
-            url: 'http://localhost:8080/policy-instance/delete',
+            url: 'http://localhost:8080/policy/delete',
             data: JSON.stringify(json),
             success: function (res) {
                 console.log(res);

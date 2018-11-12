@@ -267,7 +267,7 @@ function addPolicyToLocation(policyId) {
         $.ajax({
            type: "POST",
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(jsonObjec t),
+            data: JSON.stringify(jsonObject),
             url: 'http://localhost:8080/location/add-policy',
             success: function (data) {
                 $('#addLocationModal').modal('hide');

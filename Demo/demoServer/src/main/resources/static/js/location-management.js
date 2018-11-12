@@ -22,7 +22,7 @@ $(document).ready(function (e) {
 });
 
 function emptyTable() {
-    $('#location-table td').remove();
+    $('#location-table tr').remove();
 }
 
 function emptyPaginationLi() {
