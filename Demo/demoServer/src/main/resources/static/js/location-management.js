@@ -49,10 +49,10 @@ function loadData(res) {
         row += '<td>' + content[i].location + '</td>';
         row += '<td>' + content[i].description + '</td>';
         row += '<td>' + convertStatus(content[i].activated) + '</td>';
-        row += '<td><a href="#" onclick="viewPolicy(' + content[i].id + ')" class="btn btn-primary viewBtn">View Policies</a></td>';
-        row += '<td><a href="#" onclick="createPolicy(' + content[i].id + ')" class="btn btn-primary viewBtn">Create Policy</a></td>';
-        row += '<td><a href="#" onclick="getLocationModal(' + content[i].id + ')" class="btn btn-primary viewBtn">Update Location</a></td>';
-        row += '<td><a href="#" onclick="deleteLocation(' + content[i].id + ')" class="btn btn-danger viewBtn">Delete Location</a></td>';
+        row += '<td><a href="#" onclick="viewPolicy(' + content[i].id + ')" class="btn btn-primary viewBtn">View Policies</a>';
+        row += '<a href="#" onclick="deleteLocation(' + content[i].id + ')" class="btn btn-danger btnAction"><i class="lnr lnr-trash"></i></a>';
+        row += '<a href="#" onclick="getLocationModal(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="lnr lnr-pencil"></i></a>';
+        row += '<a href="#" onclick="createPolicy(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="fas fa-plus-square"></i></a></td>';
         row += '</tr>';
         $('#location-table tbody').append(row);
     }

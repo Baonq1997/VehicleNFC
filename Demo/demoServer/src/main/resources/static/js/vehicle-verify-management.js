@@ -46,24 +46,34 @@ function loadData(res) {
     var pageNumber = res.pageNumber;
     console.log("page: " + pageNumber);
     console.log("Total Page: " + res.totalPages);
-    var currentPage;
-    var li = "";
-    for (currentPage = 0; currentPage < res.totalPages; currentPage++) {
-        if (currentPage === pageNumber) {
-            li = '<li class="nav-item active">\n' +
-                '<a href="#" class="nav-link" onclick="searchVehicle(' + currentPage + ')">' + (currentPage + 1) + '</a>\n' +
-                '</li>';
-            $('#pagination').append(li);
-        } else {
-
-            li = '<li class="nav-item">\n' +
-                '<a href="#" class="nav-link" onclick="searchVehicle(' + currentPage + ')">\n' +
-                +(currentPage + 1) + '</a>\n' +
-                '</li>';
-            $('#pagination').append(li);
+    $('#pagination').append(createPageButton(0, 'First', false, false));
+    $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+    if (pageNumber > 2) {
+        $('#pagination').append(createEtcButton());
+    }
+    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+            $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
         }
     }
+    if (res.totalPages - pageNumber > 3) {
+        $('#pagination').append(createEtcButton());
+    }
+    $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+    $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
 }
+
+function createPageButton(pageNumber, label, isDisable, isActive) {
+    var className = (isActive) ? 'nav-item active' : 'nav-item';
+    className += (isDisable) ? ' disabled-href' : '';
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="searchVehicle(' + pageNumber + ')">' + label + '</a>\n' +
+        '</li>';
+}
+
+function createEtcButton() {
+    return '<li class="etc ">...</li>';
+}
+
 
 $(document).ready(function (e) {
     // Sort table headers

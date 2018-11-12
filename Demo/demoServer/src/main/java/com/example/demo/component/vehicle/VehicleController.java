@@ -126,7 +126,7 @@ public class VehicleController {
     }
 
     @PostMapping(value = "/replace-vehicle")
-    public ResponseEntity<Boolean> replaceVehicle(@Param(value = "phoneNumber") String phoneNumber
+    public ResponseEntity<Vehicle> replaceVehicle(@Param(value = "phoneNumber") String phoneNumber
             , @Param(value = "vehicleNumber") String vehicleNumber
             , @Param(value = "licenseId") String licenseId) {
         Optional<User> user = userService.getUserByPhone(phoneNumber);
@@ -140,11 +140,11 @@ public class VehicleController {
                 if (savedVehicle.isPresent()) {
                     user.get().setVehicle(savedVehicle.get());
                     userService.saveUser(user.get());
-                    return ResponseEntity.status(OK).body(true);
+                    return ResponseEntity.status(OK).body(vehicle);
                 }
             }
         }
-        return ResponseEntity.status(OK).body(false);
+        return ResponseEntity.status(OK).body(null);
     }
 
 

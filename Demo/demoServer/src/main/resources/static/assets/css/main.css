@@ -94,7 +94,7 @@ footer {
     right: 0;
     position: absolute;
     float: right;
-    background-color: #e7e7ec;
+    background-color: #c1d6ff;
 }
 
 #wrapper #sidebar-nav,
@@ -848,7 +848,8 @@ fieldset[disabled] .btn {
     -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     background-color: #fff;
-    margin-bottom: 30px;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 
 .panel .panel-heading,
@@ -2530,9 +2531,9 @@ ul.activity-timeline > li:last-child:after {
 .brand {
     display: flex;
     align-items: center;
-    height: 65px;
+    height: 66px;
     padding: 10px 0 10px 20px !important;
-    border-bottom: 2px solid var(--main-text-active-color);
+    border-bottom: 5px solid var(--main-text-active-color);
     box-sizing: border-box;
     margin-bottom: 8px;
 }
@@ -2615,6 +2616,7 @@ ul.activity-timeline > li:last-child:after {
     color: var(--main-bg-color);
     font-size: 30px;
     font-weight: 600;
+    margin-bottom: 3px;
 }
 
 .header-bar {
@@ -2745,7 +2747,7 @@ ul.activity-timeline > li:last-child:after {
     margin-right: 17px !important;
 }
 
-.btnAction .far {
+.btnAction .far,.btnAction .fas {
     margin-right: 0 !important;
 }
 
@@ -2851,4 +2853,8 @@ ul.activity-timeline > li:last-child:after {
 .etc{
     padding: 10px;
     font-size: 21px;
+}
+
+.col-form-label{
+    font-size: 18px;
 }
