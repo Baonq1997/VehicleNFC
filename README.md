@@ -71,9 +71,9 @@ Sample JSON:
   "licensePlateId": 4381249327
 }
 ```
-- Unbind vehicle
+- Request Unbind vehicle
 
-`localhost:8080/user/unbind-vehicle`
+`localhost:8080/user/request-unbind-vehicle`
 
 Method used: `POST`
 
@@ -83,7 +83,22 @@ Return: true (Success), false (not found), null (Failed)
 
 Sample URL:
 ```
-localhost:8080/user/nnbind-vehicle?userId=XSAa
+localhost:8080/user/request-unbind-vehicle?userId=XSAa
+```
+```
+- Confirm Unbind vehicle
+
+`localhost:8080/user/confirm-unbind-vehicle`
+
+Method used: `POST`
+
+Params: "userId","confirmCode"
+
+Return: true (Success), false (not found), null (Failed)
+
+Sample URL:
+```
+localhost:8080/user/request-unbind-vehicle?userId=XSAa&confirmCode=123456
 ```
 ### Vehicle
 

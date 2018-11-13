@@ -226,9 +226,38 @@ public class UserController {
         return ResponseEntity.status(OK).body(true);
     }
 
-    @PostMapping(value = "/unbind-vehicle")
-    public ResponseEntity<Boolean> unbindVehicle(@Param("userId") String userId) {
-        return ResponseEntity.status(OK).body(userService.unbindVehicle(UserService.decodeId(userId)));
+    @PostMapping(value = "/request-unbind-vehicle")
+    public ResponseEntity<Boolean> requestUnbindVehicle(@Param("userId") String userId) {
+        Map<String, String> requestUnbindList = (Map<String, String>) servletContext.getAttribute("requestUnbindList");
+        Optional<User> user = userService.getUserById(UserService.decodeId(userId));
+        if (user.isPresent()) {
+            if (requestUnbindList == null) {
+                requestUnbindList = new HashMap<>();
+            }
+            String code = UtilityService.encodeGenerator();
+            String phoneNumber = user.get().getPhoneNumber();
+            userService.requestNewConfirmCode(phoneNumber, code);
+            requestUnbindList.put(phoneNumber, code);
+            System.err.println("Code: " + phoneNumber + ", " + code);
+            servletContext.setAttribute("requestUnbindList", requestUnbindList);
+            return ResponseEntity.status(OK).body(true);
+        }
+        return ResponseEntity.status(OK).body(false);
     }
 
+    @PostMapping(value = "/confirm-unbind-vehicle")
+    public ResponseEntity<Boolean> unbindVehicle(@Param("userId") String userId, @Param("ConfirmCoode") String confirmCode) {
+        Map<String, String> requestUnbindList = (Map<String, String>) servletContext.getAttribute("requestUnbindList");
+        if (requestUnbindList != null) {
+            Optional<User> user = userService.getUserById(UserService.decodeId(userId));
+            if (user.isPresent()) {
+                String confirmCodeInSession = requestUnbindList.get(user.get().getPhoneNumber());
+                if (confirmCodeInSession != null && confirmCodeInSession.equals(confirmCode)) {
+                    return ResponseEntity.status(OK).body(userService.unbindVehicle(UserService.decodeId(userId)));
+                }
+            }
+        }
+        return status(OK).body(false);
+
+    }
 }
