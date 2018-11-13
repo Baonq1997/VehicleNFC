@@ -40,17 +40,17 @@
     margin: 0 auto;
 }
 
-#search-box-user {
+.search-box {
     height: 100%;
     display: flex;
     float: right;
     margin-left: 10px;
     align-items: center;
-    width: 50%;
+    width: 70%;
     margin-bottom: 10px;
 }
 
-#search-box-user .btnAction {
+.search-box .btnAction {
     float: right;
     display: block;
     width: 40px;

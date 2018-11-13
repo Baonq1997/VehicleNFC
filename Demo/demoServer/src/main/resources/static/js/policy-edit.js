@@ -141,8 +141,8 @@ function loadData(data) {
                     row += '<td>' + pricings[i].fromHour + '</td>';
                     row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
                     row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
-                    row += '<td><a href="#" onclick="savePricing(' + data[j].id + ' , ' + pricings[i].id + ')" class="btn btn-primary saveBtn btnBG"><i class="lnr lnr-pencil"></i></a></td>'
-                    row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + data[j].id + ')" class="btn btn-danger delBtn"><i class="lnr lnr-trash"></i></a></td>'
+                    row += '<td><a href="#" onclick="savePricing(' + data[j].id + ' , ' + pricings[i].id + ')" class="btn btn-primary saveBtn btnAction"><i class="lnr lnr-pencil"></i></a></td>'
+                    row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + data[j].id + ')" class="btn btn-danger btnAction-remove"><i class="lnr lnr-trash"></i></a></td>'
                     row += '</tr>';
                     $('#pricing-vehicle-' + vehicleId + ' tbody').append(row);
                 }
@@ -209,7 +209,7 @@ function submitPricing() {
 }
 
 function createTable(vehicleTypeId, policyHasVehicleTypeId) {
-    var btnAddPricing = '<button class="btn btn-primary btnBG" type="button" value="Add Pricing" onclick="addPricing(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')" id="btn-add-pricing">Add Pricing\n' +
+    var btnAddPricing = '<button class="btn btn-primary btnAction" type="button" value="Add Pricing" onclick="addPricing(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')" id="btn-add-pricing">Add Pricing\n' +
         '                                </button>';
     var table = ' <table class="table table-hover" id="pricing-vehicle-' + vehicleTypeId + '">\n' +
         '                                    <thead>\n' +
@@ -349,7 +349,7 @@ function deletePolicy() {
             type: "POST",
             contentType: "application/json; charset=utf-8",
             // dataType: "json",
-            url: 'http://localhost:8080/policy-instance/delete',
+            url: 'http://localhost:8080/policy/delete',
             data: JSON.stringify(json),
             success: function (res) {
                 console.log(res);

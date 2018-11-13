@@ -16,7 +16,7 @@ public class PolicyHasTblVehicleType implements Serializable {
     private Integer id;
     @Column(name = "min_hour")
     private Integer minHour;
-//    @Transient
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "policyHasTblVehicleTypeId")
     private List<Pricing> pricingList;
 

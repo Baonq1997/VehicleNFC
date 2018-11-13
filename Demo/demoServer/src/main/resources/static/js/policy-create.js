@@ -53,9 +53,9 @@ function loadLocation(locationId) {
             $('#location').val(data.location);
             $('#locationId').val(data.id);
             if (data.isActivated === true) {
-                $('#status').val("Active");
+                $('#status').val("Available");
             } else {
-                $('#status').val("De-active");
+                $('#status').val("Unavailable");
             }
         }, error: function () {
             console.log("Failed to load Location");
@@ -124,7 +124,7 @@ function savePolicyVehicle(locationId) {
         }
 
         var policyJson = {
-            id: policyId,
+            // id: policyId,
             allowedParkingFrom: $('#allowedParkingFrom').val(),
             allowedParkingTo: $('#allowedParkingTo').val()
         }
@@ -406,19 +406,13 @@ function loadPricingTable(vehicleTypeId) {
             $('#pricing-vehicle-'+vehicleTypeId +' tbody').append(row);
         }
     }
-
 }
 
 function deleteModal(pricingId, vehicleTypeId) {
     $('#deleteModal').modal();
-
-    // frm.submit(function (e) {
-    //     e.preventDefault();
     $('#btn-delete-pricing').off().click(function () {
         $.ajax({
             type: "POST",
-            // dataType: "json",
-            // contentType: "application/json; charset=utf-8",
             url: 'http://localhost:8080/pricing/delete-pricing/?id=' + pricingId,
             success: function (res) {
                 console.log(res);
@@ -434,7 +428,6 @@ function deleteModal(pricingId, vehicleTypeId) {
                 localStorage.setItem('pricingList-'+vehicleTypeId, JSON.stringify(pricings));
                 emptyTable(vehicleTypeId);
                 loadPricingTable(vehicleTypeId);
-                // location.reload(true);
             }, error: function (res) {
                 console.log("Failed to delete");
             }

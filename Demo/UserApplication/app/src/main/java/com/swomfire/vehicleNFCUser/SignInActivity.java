@@ -61,23 +61,23 @@ public class SignInActivity extends Activity {
                         editor.putString("userId", result.getId());
                         editor.putString("userName", result.getLastName() + " " + result.getFirstName());
                         editor.commit();
-                        if (result.isActivated()) {
-                            if (result.getVehicle() != null) {
+                        if (result.getVehicle() != null) {
+                            if (result.isActivated()) {
                                 Intent intent = new Intent(context, NFCActivity.class);
                                 startActivity(intent);
                             } else {
-                                Intent intent = new Intent(context, AddVehicleActivity.class);
+                                Intent intent = new Intent(context, VerifyActivity.class);
+                                intent.putExtra("phoneNumber", phone);
+                                intent.putExtra("type", "create-account");
+                                intent.putExtra("userId", result.getId());
+                                intent.putExtra("userName", result.getLastName() + " " + result.getFirstName());
                                 startActivity(intent);
                             }
-
                         } else {
-                            Intent intent = new Intent(context, VerifyActivity.class);
-                            intent.putExtra("phoneNumber", phone);
-                            intent.putExtra("type", "create-account");
-                            intent.putExtra("userId", result.getId());
-                            intent.putExtra("userName", result.getLastName() + " " + result.getFirstName());
+                            Intent intent = new Intent(context, AddVehicleActivity.class);
                             startActivity(intent);
                         }
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Số điện thoại hoặc mật khẩu không đúng!", Toast.LENGTH_LONG).show();
                         txtPhone.setText("");

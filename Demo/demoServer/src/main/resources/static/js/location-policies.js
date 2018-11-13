@@ -102,9 +102,9 @@ function loadTable(data) {
             row += '<td> Empty </td>'
         }
         // row += '<td> <button class="editBtn" onclick="Edit('+ data[i].policyId +', ' + data[i].vehicleTypeId.id + ', '+ locationId +')">Edit</button>';
-        row += '<td> <button class="btn btn-success" onclick="getExistedLocations(' + policyList[i].id + ')">Add To Location</button>';
-        row += '<td> <button class="btn btn-primary" onclick="editPolicy(' + policyList[i].id + ')">Edit</button>';
-        row += '<td> <button class="btn btn-danger" onclick="deletePolicy(' + policyList[i].id + ')">Delete</button>';
+        row += '<td> <a href="#" class="btn btn-primary btnAction" onclick="getExistedLocations(' + policyList[i].id + ')"><i class="fas fa-plus-square"></i></a>';
+        row += '<a href="#" class="btn btn-primary btnAction" onclick="editPolicy(' + policyList[i].id + ')"><i class="lnr lnr-pencil"></i> </a>';
+        row += '<a href="#" class="btn btn-danger btnAction" onclick="deletePolicy(' + policyList[i].id + ')"><i class="lnr lnr-trash"></i></a></td>';
         row += '</tr>';
         $('#location-policies tbody').append(row);
     }
@@ -267,7 +267,7 @@ function addPolicyToLocation(policyId) {
         $.ajax({
            type: "POST",
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(jsonObjec t),
+            data: JSON.stringify(jsonObject),
             url: 'http://localhost:8080/location/add-policy',
             success: function (data) {
                 $('#addLocationModal').modal('hide');
@@ -288,8 +288,8 @@ function filterPolicies(pageNumber) {
         if (pageNumber != null) {
             url = url+"&page="+pageNumber;
         }
-       var allowedParkingFrom = $('#allowedParkingFrom').val();
-       var allowedParkingTo = $('#allowedParkingTo').val();
+       // var allowedParkingFrom = $('#allowedParkingFrom').val();
+       // var allowedParkingTo = $('#allowedParkingTo').val();
         var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
@@ -300,14 +300,14 @@ function filterPolicies(pageNumber) {
         }).get();
         console.log("ARR" + vehicleTypeArr);
         var listSearchParam = [];
-        if (allowedParkingFrom !== "") {
-            var allowedParkingFromObj = createSearchObject("allowedParkingFrom", ">", allowedParkingFrom);
-            listSearchParam.push(allowedParkingFromObj);
-        }
-        if (allowedParkingTo !== "") {
-            var allowedParkingToObj = createSearchObject("allowedParkingTo", "<", allowedParkingTo);
-            listSearchParam.push(allowedParkingToObj);
-        }
+        // if (allowedParkingFrom !== "") {
+        //     var allowedParkingFromObj = createSearchObject("allowedParkingFrom", ">", allowedParkingFrom);
+        //     listSearchParam.push(allowedParkingFromObj);
+        // }
+        // if (allowedParkingTo !== "") {
+        //     var allowedParkingToObj = createSearchObject("allowedParkingTo", "<", allowedParkingTo);
+        //     listSearchParam.push(allowedParkingToObj);
+        // }
         if (vehicleTypeArr!= null && vehicleTypeArr.length > 0) {
 
             var vehicleTypes = createSearchObject("vehicleTypes", ":", vehicleTypeArr);

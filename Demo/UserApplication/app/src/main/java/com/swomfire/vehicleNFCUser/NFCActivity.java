@@ -107,7 +107,7 @@ public class NFCActivity extends Activity implements NfcAdapter.CreateNdefMessag
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
         SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
         String restoredText = prefs.getString("userId", "1");
-        String message = "{'userId':" + restoredText + ",'token':'" + token + "'}";
+        String message = "{'userId':'" + restoredText + "','token':'" + token + "'}";
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;

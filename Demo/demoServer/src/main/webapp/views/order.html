@@ -15,6 +15,8 @@
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />-->
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+    <link rel="stylesheet" href="/css/user.css">
     <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
     <!--<link rel="stylesheet" href="/assets/css/demo.css">-->
     <link rel="stylesheet" href="/css/order.css">
@@ -25,104 +27,103 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
 </head>
 <body>
-<div class="main-content">
-    <div class="container-fluid">
-        <div class="panel panel-headline">
+<div class="panel">
+    <div class="panel-body">
+        <div class="row">
+                 <span class="content-name">
+                Order management
+            </span>
+            <form action="" class="search-box" method="post">
+                <span>CheckInDate</span>
+                <input data-date-format="dd/mm/yyyy" autocomplete="off" required="required" class="form-control"
+                       id="datepicker" placeholder="Choose date" style="width: 30%;">
+                <select id="search-filter" class="form-control">
+                    <option value="vehicleNumber" selected="selected">Search By Vehicle Number</option>
+                    <option value="locationId">Search By Location</option>
+                    <option value="orderStatusId">Search By Status</option>
+                </select>
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 50%; float: right;"/>
+                <button class="btn btn-primary btnAction" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+                <input type="hidden" id="search-date">
+                <input type="hidden" id="search-value">
+            </form>
+        </div>
+        <div class="content-list-table">
+            <div class="row">
+                <table class="table table-hover" id="order-table" style="display: none;">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>CheckIn Date</th>
+                        <th>CheckOut Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Vehicle Number</th>
+                        <th>License Plate</th>
+                        <th>Duration</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-            <div class="searchBox">
-                <div class="form-container">
-                    <form action="" id="search-box" method="post">
-                        <span>CheckInDate</span>
-                        <input data-date-format="dd/mm/yyyy" autocomplete="off" required="required" class="form-control"
-                               id="datepicker" placeholder="Choose date">
-                        <select id="search-filter" class="form-control">
-                            <option value="vehicleNumber" selected="selected">Search By Vehicle Number</option>
-                            <option value="locationId">Search By Location</option>
-                            <option value="orderStatusId">Search By Status</option>
-                        </select>
-                        <input type="text" class="form-control" id="searchValue" name="searchValue" value=""/>
-                        <button class="search-button" id="searchBtn" name="Search" value="Go">Go</button>
-
-                        <input type="hidden" id="search-date">
-                        <input type="hidden" id="search-value">
-                    </form>
+                    </tbody>
+                </table>
+                <div class="row paging">
+                    <ul class="nav nav-pills" id="pagination"></ul>
                 </div>
             </div>
-            <div class="panel-body">
-                <div class="row">
-                    <table class="table table-hover" id="order-table" style="display: none;">
+            <div class="row" id="order-detail" style="display: none;">
+                <div class="form-group">
+                    <label class="col-form-label">Location:</label>
+                    <p class="form-control" id="location"></p>
+                </div>
+                <div class="form-group" style="width:48%; float: left;">
+                    <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
+                    <p class="form-control" id="allowedParkingFrom"></p>
+                </div>
+                <div class="form-group" style="width: 48%; float: right;">
+                    <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
+                    <p class="form-control" id="allowedParkingTo"></p>
+                </div>
+                <div class="form-group" style="width:48%; float: left;">
+                    <label for="checkInDate" class="col-form-label">CheckIn Date:</label>
+                    <p class="form-control" id="checkInDate"></p>
+                </div>
+                <div class="form-group" style="width: 48%; float: right;">
+                    <label for="checkOutDate" class="col-form-label">CheckOut Date:</label>
+                    <p class="form-control" id="checkOutDate"></p>
+                </div>
+                <div class="form-group">
+                    <label for="orderPricings" class="col-form-label">Pricings:</label>
+                    <table id="orderPricings" class="table table-hover">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>CheckIn Date</th>
-                            <th>CheckOut Date</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th>Vehicle Number</th>
-                            <th>License Plate</th>
-                            <th>Duration</th>
-                            <th>Total</th>
-                            <th>Action</th>
+                            <th>From Hour:</th>
+                            <th>Price Per Hour</th>
+                            <th>Amount</th>
+                            <!--<th>Late Fee Per Hour</th>-->
                         </tr>
                         </thead>
                         <tbody>
 
                         </tbody>
                     </table>
-                    <div class="row paging">
-                        <ul class="nav nav-pills" id="pagination"></ul>
-                    </div>
                 </div>
-                <div class="row" id="order-detail" style="display: none;">
-                    <div class="form-group">
-                        <label class="col-form-label">Location:</label>
-                        <p class="form-control" id="location"></p>
-                    </div>
-                    <div class="form-group" style="width:48%; float: left;">
-                        <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
-                        <p class="form-control" id="allowedParkingFrom"></p>
-                    </div>
-                    <div class="form-group" style="width: 48%; float: right;">
-                        <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
-                        <p class="form-control" id="allowedParkingTo"></p>
-                    </div>
-                    <div class="form-group" style="width:48%; float: left;">
-                        <label for="checkInDate" class="col-form-label">CheckIn Date:</label>
-                        <p class="form-control" id="checkInDate"></p>
-                    </div>
-                    <div class="form-group" style="width: 48%; float: right;">
-                        <label for="checkOutDate" class="col-form-label">CheckOut Date:</label>
-                        <p class="form-control" id="checkOutDate"></p>
-                    </div>
-                    <div class="form-group">
-                        <label for="orderPricings" class="col-form-label">Pricings:</label>
-                        <table id="orderPricings" class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>From Hour:</th>
-                                <th>Price Per Hour</th>
-                                <th>Amount</th>
-                                <!--<th>Late Fee Per Hour</th>-->
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="form-group">
-                        <label for="duration" class="col-form-label">Duration:</label>
-                        <p class="form-control" id="duration"></p>
-                    </div>
-                    <div class="btn-wrapper">
-                        <button type="button" class="btn btn-success" id="btn-deposit">Deposit
-                        </button>
-                    </div>
+                <div class="form-group">
+                    <label for="duration" class="col-form-label">Duration:</label>
+                    <p class="form-control" id="duration"></p>
+                </div>
+                <div class="btn-wrapper">
+                    <button type="button" class="btn btn-success" id="btn-deposit">Deposit
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 
