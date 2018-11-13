@@ -51,6 +51,12 @@
         <activity
             android:name=".ActivityTopUpExtras"
             android:theme="@style/AppTheme.PopUpTheme" />
+        <activity
+            android:name=".AddVehicleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddVehicleSuccessActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name="service.CustomFBMService">
             <intent-filter>

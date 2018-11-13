@@ -54,17 +54,22 @@ public class SignInActivity extends Activity {
                     progressDialog.cancel();
                     User result = response.body();
                     if (result != null) {
+                        SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                        a.clear();
+                        SharedPreferences.Editor editor = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                        editor.putString("phoneNumberSignIn", phone);
+                        editor.putString("userId", result.getId());
+                        editor.putString("userName", result.getLastName() + " " + result.getFirstName());
+                        editor.commit();
                         if (result.isActivated()) {
-                            SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
-                            a.clear();
-                            SharedPreferences.Editor editor = getSharedPreferences("localData", MODE_PRIVATE).edit();
-                            editor.putString("phoneNumberSignIn", phone);
-                            editor.putString("userId", result.getId());
-                            editor.putString("userName", result.getLastName() + " " + result.getFirstName());
-                            editor.commit();
+                            if (result.getVehicle() != null) {
+                                Intent intent = new Intent(context, NFCActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(context, AddVehicleActivity.class);
+                                startActivity(intent);
+                            }
 
-                            Intent intent = new Intent(context, NFCActivity.class);
-                            startActivity(intent);
                         } else {
                             Intent intent = new Intent(context, VerifyActivity.class);
                             intent.putExtra("phoneNumber", phone);

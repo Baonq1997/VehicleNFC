@@ -6,6 +6,7 @@ import java.util.List;
 
 import model.Order;
 import model.User;
+import model.Vehicle;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -87,4 +88,13 @@ public interface RmaAPIService {
 
     @GET("/user/register-token")
     Call<Boolean> sendDeviceTokenToServer(@Query("token") String token, @Query("PhoneNumber") String phoneNumber);
+
+    @POST("/vehicle/replace-vehicle")
+    @FormUrlEncoded
+    Call<Vehicle> changeVehicle(@Field("phoneNumber") String phone, @Field("vehicleNumber") String number, @Field("licenseId") String plate);
+
+    @POST("/user/unbind-vehicle")
+    @FormUrlEncoded
+    Call<Boolean> unbindVehicle(@Field("userId") String userid);
+
 }

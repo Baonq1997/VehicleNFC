@@ -1,8 +1,10 @@
 package com.swomfire.vehicleNFCUser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -20,6 +22,7 @@ import remote.RmaAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import service.DBHelper;
 import service.UserService;
 
 public class ProfileActivity extends Activity {
@@ -134,6 +137,60 @@ public class ProfileActivity extends Activity {
         String restoredText = prefs.getString("phoneNumberSignIn", "1");
         //String name = "1324658";
         getUserInfo(restoredText);
+    }
+
+    public void onClickChangeVehicle(View v) {
+        //Intent intent = new Intent(this, ChangeVehicleActivity.class);
+        //startActivity(intent);
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
+                        String userid = prefs.getString("userId", "1");
+
+                        RmaAPIService mService = RmaAPIUtils.getAPIService();
+                        mService.unbindVehicle(userid).enqueue(new Callback<Boolean>() {
+
+                            @Override
+                            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                                if (response.isSuccessful()) {
+                                    if (response.body()) {
+                                        DBHelper db = new DBHelper(context);
+                                        //TODO clear all records
+                                        db.deleteAllContact();
+                                        //Clear old id
+                                        SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                                        a.clear().commit();
+                                        //clear sqlite db
+                                        context.deleteDatabase("ParkingWithNFC.db");
+
+                                        Intent intent = new Intent(getApplicationContext(), SignInActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Boolean> call, Throwable t) {
+
+                            }
+                        });
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        dialog.dismiss();
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Bạn có chắc sẽ gỡ bỏ phương tiện khỏi thiết bị hiện tại?").setPositiveButton("Có", dialogClickListener)
+                .setNegativeButton("Không", dialogClickListener).show();
     }
 
     public void onBackButton(View view) {

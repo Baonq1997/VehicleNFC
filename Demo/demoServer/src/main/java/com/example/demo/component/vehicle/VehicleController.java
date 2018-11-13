@@ -129,22 +129,7 @@ public class VehicleController {
     public ResponseEntity<Vehicle> replaceVehicle(@Param(value = "phoneNumber") String phoneNumber
             , @Param(value = "vehicleNumber") String vehicleNumber
             , @Param(value = "licenseId") String licenseId) {
-        Optional<User> user = userService.getUserByPhone(phoneNumber);
-        if (user.isPresent()) {
-            Optional<User> owner = userService.getUserByVehicleNumber(vehicleNumber);
-            if (!owner.isPresent()) {
-                Vehicle vehicle = new Vehicle();
-                vehicle.setVehicleNumber(vehicleNumber);
-                vehicle.setLicensePlateId(licenseId);
-                Optional<Vehicle> savedVehicle = vehicleService.saveVehicle(vehicle);
-                if (savedVehicle.isPresent()) {
-                    user.get().setVehicle(savedVehicle.get());
-                    userService.saveUser(user.get());
-                    return ResponseEntity.status(OK).body(vehicle);
-                }
-            }
-        }
-        return ResponseEntity.status(OK).body(null);
+        return ResponseEntity.status(OK).body(userService.changeVehicle(phoneNumber,vehicleNumber,licenseId));
     }
 
 

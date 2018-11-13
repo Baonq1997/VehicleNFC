@@ -317,10 +317,42 @@ public class UserService {
                 vehicle.get().setActive(false);
                 vehicleRepository.save(vehicle.get());
                 user.get().setVehicle(null);
+                user.get().setActivated(false);
                 userRepository.save(user.get());
                 return true;
             }
         }
         return false;
+    }
+
+    public Vehicle changeVehicle(String phoneNumber, String vehicleNumber, String licenseId) {
+        Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
+        if (user.isPresent()) {
+            Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(vehicleNumber);
+            if (vehicle.isPresent()) {
+                if (userRepository.findByVehicle(vehicle.get()).isPresent()) {
+                    return null;
+                }
+            } else {
+                vehicle = Optional.of(new Vehicle());
+                vehicle.get().setVehicleNumber(vehicleNumber);
+            }
+            vehicle.get().setLicensePlateId(licenseId);
+            vehicleRepository.save(vehicle.get());
+            if (!vehicle.get().isVerified()) {
+                try {
+                    PushNotificationService.sendUserNeedVerifyNotification(
+                            "fhRoDKtJR4Q:APA91bFRKKjR2GydlMD0akn71EluhoayB7YXe3a9M5MVat1IRPGo-59onV4VmI-KLj3b-e0zQ2k55brMCxTGJPIcZK2eNslJMnTdq8BNecpqJwsDO5InyL-ALvF0ojQEb_PMtX_xtYsf",
+                            user.get().getPhoneNumber()
+                    );
+                } catch (Exception e) {
+                    System.err.println("Cannot connect to firebase");
+                }
+            }
+            user.get().setVehicle(vehicle.get());
+            saveUser(user.get());
+            return vehicle.get();
+        }
+        return null;
     }
 }
