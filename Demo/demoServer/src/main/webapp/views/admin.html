@@ -101,14 +101,32 @@
                            class="pointer sub-menu userHolder"><i class="fas fa-plus-square"></i><span class="title">Create a new User</span></a>
                     </li>
                     <li>
-                    <li><a onclick="switchContentFragment('/location/index',$(this))"
-                           class="pointer menu"><i
-                            class="lnr lnr-map-marker"></i> <span class="title">Locations</span></a></li>
-
-                    <li><a onclick="switchContentFragment('/policy/create',$(this))" class="pointer menu"><i
-                            class="lnr lnr-book"></i>
-                        <span class="title">Policies</span></a>
+                    <li><a onclick="openHideList($(this),true)" id="locationHolder" isOpen="false"
+                           class="pointer menu holder"><i
+                            class="lnr lnr-user"></i> <span class="title">Locations</span><i
+                            class="lnr lnr-chevron-left float-right menu-icon" id="locationHolderIcon"></i></a>
                     </li>
+                    <li><a onclick="switchContentFragment('/location/index',$('#locationHolder'))"
+                           class="pointer sub-menu locationHolder"><i class="lnr lnr-list"></i><span class="title">Manage</span></a>
+                    </li>
+                    <li><a onclick="switchContentFragment('/location/create',$('#locationHolder'))"
+                           class="pointer sub-menu locationHolder"><i class="far fa-check-square"></i><span class="title">Create</span></a>
+                    </li>
+                    <!--<li><a onclick="switchContentFragment('/location/index',$(this))"-->
+                           <!--class="pointer menu"><i-->
+                            <!--class="lnr lnr-map-marker"></i> <span class="title">Locations</span></a></li>-->
+                    <li><a onclick="openHideList($(this),true)" id="policyHolder" isOpen="false"
+                           class="pointer menu holder"><i
+                            class="lnr lnr-book"></i> <span class="title">Policies</span><i
+                            class="lnr lnr-chevron-left float-right menu-icon" id="policyHolderIcon"></i></a>
+                    </li>
+                    <li><a onclick="switchContentFragment('/policy/index',$('#policyHolder'))"
+                           class="pointer sub-menu policyHolder"><i class="lnr lnr-list"></i><span class="title">Manage</span></a>
+                    </li>
+                    <li><a onclick="switchContentFragment('/policy/create',$('#policyHolder'))"
+                           class="pointer sub-menu policyHolder"><i class="far fa-check-square"></i><span class="title">Create</span></a>
+                    </li>
+
                     <li><a onclick="switchContentFragment('/order/index',$(this))" class="pointer menu"><i
                             class="lnr lnr-file-empty"></i> <span class="title">Orders</span></a>
                     </li>

@@ -8,7 +8,7 @@ function createLocation() {
         var location = {
             location: $('#location').val(),
             description: $('#description').val(),
-            isActivate: isActivate
+            isActivated: isActivate
         }
         $.ajax({
             type: "POST",

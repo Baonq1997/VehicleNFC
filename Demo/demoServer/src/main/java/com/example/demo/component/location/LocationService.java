@@ -49,7 +49,7 @@ public class LocationService {
     }
 
     public Location saveLocation(Location location) {
-        if (location.getId() == null || location.getId() == 0) {
+        if (location.getId() == null) {
             // create
             locationRepository.save(location);
             return location;

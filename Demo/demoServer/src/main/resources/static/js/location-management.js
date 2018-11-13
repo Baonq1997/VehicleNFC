@@ -49,7 +49,7 @@ function loadData(res) {
         row += '<td>' + content[i].location + '</td>';
         row += '<td>' + content[i].description + '</td>';
         row += '<td>' + convertStatus(content[i].activated) + '</td>';
-        row += '<td><a href="#" onclick="viewPolicy(' + content[i].id + ')" class="btn btn-primary viewBtn">View Policies</a>';
+        row += '<td><a href="#" onclick="viewPolicy(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="lnr lnr-magnifier"></i></a>';
         row += '<a href="#" onclick="deleteLocation(' + content[i].id + ')" class="btn btn-danger btnAction"><i class="lnr lnr-trash"></i></a>';
         row += '<a href="#" onclick="getLocationModal(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="lnr lnr-pencil"></i></a>';
         row += '<a href="#" onclick="createPolicy(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="fas fa-plus-square"></i></a></td>';
