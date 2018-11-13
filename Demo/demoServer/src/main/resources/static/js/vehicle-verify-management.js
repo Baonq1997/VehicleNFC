@@ -7,9 +7,8 @@ $(document).ready(function (e) {
 });
 
 function emptyTable() {
-    $('#user-table td').remove();
+    $('#user-table tbody tr').remove();
 }
-
 
 function emptyPaginationLi() {
     var a = document.getElementById("pagination");
@@ -41,6 +40,10 @@ function loadData(res) {
         row += cellBuilder(deleteStr + verify);
         row += '</tr>';
         $('#user-table tbody').append(row);
+    }
+
+    for (var i = 0; i < res.pageSize - content.length; i++) {
+        $('#user-table tbody').append('<tr class="blank-row"></tr>');
     }
 
     var pageNumber = res.pageNumber;

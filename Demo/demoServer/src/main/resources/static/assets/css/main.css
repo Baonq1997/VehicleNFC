@@ -2858,3 +2858,7 @@ ul.activity-timeline > li:last-child:after {
 .col-form-label{
     font-size: 18px;
 }
+
+.blank-row{
+    height: 57.6px;
+}

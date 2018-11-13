@@ -22,7 +22,7 @@ $(document).ready(function (e) {
 });
 
 function emptyTable() {
-    $('#location-table td').remove();
+    $('#location-table tbody tr').remove();
 }
 
 function emptyPaginationLi() {
@@ -55,6 +55,10 @@ function loadData(res) {
         row += '<a href="#" onclick="createPolicy(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="fas fa-plus-square"></i></a></td>';
         row += '</tr>';
         $('#location-table tbody').append(row);
+    }
+
+    for (var i = 0; i < res.pageSize - content.length; i++) {
+        $('#location-table tbody').append('<tr class="blank-row"></tr>');
     }
 
     var pageNumber = res.pageNumber;

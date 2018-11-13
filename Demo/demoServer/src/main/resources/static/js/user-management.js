@@ -20,7 +20,7 @@ $(document).ready(function (e) {
 });
 
 function emptyTable() {
-    $('#user-table td').remove();
+    $('#user-table tbody tr').remove();
 }
 
 function emptyPaginationLi() {
@@ -28,10 +28,9 @@ function emptyPaginationLi() {
 }
 
 function loadData(res) {
-    var content = "";
-    content = res.data;
+    var content = res.data;
     var row = "";
-    for (i = 0; i < content.length; i++) {
+    for (var i = 0; i < content.length; i++) {
         row = '<tr>';
         // row += '<td>' + content[i].id + '</td>';
         row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
@@ -49,6 +48,9 @@ function loadData(res) {
         row += cellBuilder(deleteStr + edit);
         row += '</tr>';
         $('#user-table tbody').append(row);
+    }
+    for (var i = 0; i < res.pageSize - content.length; i++) {
+        $('#user-table tbody').append('<tr class="blank-row"></tr>');
     }
 
     var pageNumber = res.pageNumber;
