@@ -290,8 +290,9 @@ function deletePolicy() {
             allowedParkingFrom: $('#allowedParkingFrom').val(),
             allowedParkingTo: $('#allowedParkingTo').val()
         }
+        var locationId = $('#locationArr :selected').val();
         var json = {
-            locationId: parseInt(locationArr[0].id),
+            locationId: parseInt(locationId),
             policy: policyJson,
             policyHasVehicleTypeId: policyHasVehicleTypeId,
             vehicleTypes: vehicleTypeArr
@@ -305,7 +306,7 @@ function deletePolicy() {
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);
-                window.location.href  = 'http://localhost:8080/user/admin';
+                window.top.location.href = "'http://localhost:8080/policy/index";
             }, error: function (data) {
                 console.log(data);
             }
@@ -363,8 +364,8 @@ function loadPricingTable(vehicleTypeId) {
         for (let i = 0; i < pricings.length; i++) {
             let row = '<tr>';
             row += '<td>' + pricings[i].fromHour + '</td>';
-            row += '<td>' + pricings[i].pricePerHour + '</td>';
-            row += '<td>' + pricings[i].lateFeePerHour + '</td>';
+            row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
+            row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
             // row += '<td><a href="#" onclick="loadPricingModal(' + policyHasVehicleType + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
             row += '<td><a href="#" onclick="savePricing(' + policyHasVehicleType + ',' + vehicleTypeId + ',' + pricings[i].id + ')" class="btn btn-primary btnAction"><i class="lnr lnr-pencil"></i></a></td>'
             row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + vehicleTypeId + ')" class="btn btn-danger btnAction-remove"><i class="lnr lnr-trash"></i></a></td>'
@@ -471,4 +472,7 @@ function containsObject(obj, list) {
         }
     }
     return false;
+}
+function convertMoney(money) {
+    return (money * 1000).toLocaleString() + " VNĐ";
 }
