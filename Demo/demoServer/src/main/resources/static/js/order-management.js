@@ -52,7 +52,7 @@ function loadData(res) {
         var row = "";
         for (i = 0; i < content.length; i++) {
             row = '<tr>';
-            row += '<td>' + content[i].id + '</td>';
+            row += '<td>' +(i + (res.pageNumber * res.pageSize) + 1)+ '</td>';
             row += '<td>' + convertDate(content[i].checkInDate) + '</td>';
             row += '<td>' + convertDate(content[i].checkOutDate) + '</td>';
             row += '<td>' + content[i].locationId.location + '</td>';

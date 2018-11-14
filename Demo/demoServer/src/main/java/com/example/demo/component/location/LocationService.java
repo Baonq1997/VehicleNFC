@@ -2,6 +2,7 @@ package com.example.demo.component.location;
 
 import com.example.demo.component.policy.*;
 import com.example.demo.component.vehicleType.VehicleType;
+import com.example.demo.config.PaginationEnum;
 import com.example.demo.config.ResponseObject;
 
 import com.example.demo.config.SearchCriteria;
@@ -124,6 +125,7 @@ public class LocationService {
         responseObject.setData(resultList);
         responseObject.setTotalPages(totalPages + 1);
         responseObject.setPageNumber(pageNumber);
+        responseObject.setPageSize(PaginationEnum.locationPageSize.getNumberOfRows());
         return responseObject;
 
     }

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/assets/css/main.css">
-    <!--<link rel="stylesheet" href="/css/location-policies.css">-->
+    <link rel="stylesheet" href="/css/location-policies.css">
     <link rel="stylesheet" href="/css/user.css">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?fsamily=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
@@ -26,7 +26,7 @@
                 <p class="form-control" id="location"></p>
             </div>
             <input type="hidden" id="locationId" value="">
-            <div class="form-group" style="width: 48%; float: right;">
+            <div class="form-group" style="width: 40%; float: right;">
                 <label for="status" class="col-form-label">Status:</label>
                 <p class="form-control" id="status"></p>
             </div>
@@ -48,23 +48,27 @@
 
             <!--</div>-->
             <!--<input type="hidden" id="allowedParkingTo">-->
-            <div class="form-group" style="width: 50%; float: left;">
+
+
+        </div>
+        <div class="row">
+            <div class="form-group">
                 <label class="col-form-label">Vehicle Allowed:</label>
                 <div id="filter">
 
                 </div>
+
             </div>
             <button class="btn btn-primary btnAction" type="button" id="filter-btn" value="Go" style="float: left;">
                 <i class="lnr lnr-magnifier"></i>
             </button>
         </div>
-
         <div id="policies" class="content-list-table">
             <div class="row">
                 <table class="table table-hover" id="location-policies">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>No.</th>
                         <th>Allowed Parking</th>
                         <th>Vehicle Allowed</th>
                         <th colspan="3">Action</th>

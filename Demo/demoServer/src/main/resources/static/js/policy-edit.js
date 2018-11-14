@@ -141,8 +141,8 @@ function loadData(data) {
                     row += '<td>' + pricings[i].fromHour + '</td>';
                     row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
                     row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
-                    row += '<td><a href="#" onclick="savePricing(' + data[j].id + ' , ' + pricings[i].id + ')" class="btn btn-primary saveBtn btnAction"><i class="lnr lnr-pencil"></i></a></td>'
-                    row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + data[j].id + ')" class="btn btn-danger btnAction-remove"><i class="lnr lnr-trash"></i></a></td>'
+                    row += '<td><a href="#" onclick="savePricing(' + data[j].id + ' , ' + pricings[i].id + ')" class="btn btn-primary btnAction"><i class="lnr lnr-pencil"></i></a>'
+                    row += '<a href="#" onclick="deleteModal(' + pricings[i].id + ',' + data[j].id + ')" class="btn btn-danger btnAction"><i class="lnr lnr-trash"></i></a></td>'
                     row += '</tr>';
                     $('#pricing-vehicle-' + vehicleId + ' tbody').append(row);
                 }
@@ -209,15 +209,17 @@ function submitPricing() {
 }
 
 function createTable(vehicleTypeId, policyHasVehicleTypeId) {
-    var btnAddPricing = '<button class="btn btn-primary btnAction" type="button" value="Add Pricing" onclick="addPricing(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')" id="btn-add-pricing">Add Pricing\n' +
-        '                                </button>';
+    var btnAddPricing = ' <div class="row">' +
+        '<button class="btn btn-primary" type="button" value="Add" style="float: left;" onclick="addPricing(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')" id="btn-add-pricing">Add' +
+        '</button></div>';
+
     var table = ' <table class="table table-hover" id="pricing-vehicle-' + vehicleTypeId + '">\n' +
         '                                    <thead>\n' +
         '                                    <tr>\n' +
         '                                        <th>From Hour:</th>\n' +
         '                                        <th>Price Per Hour</th>\n' +
         '                                        <th>Late Fee Per Hour</th>\n' +
-        '                                        <th colspan="2">Action</th>\n' +
+        '                                        <th>Action</th>\n' +
         '                                    </tr>\n' +
         '                                    </thead>\n' +
         '                                    <tbody>\n' +
@@ -253,8 +255,8 @@ function savePricing(policyVehicleId, pricingId) {
             url: updateFrm.attr('action')+'?policyVehicleId='+policyVehicleId,
             data: updateFrm.serialize(),
             success: (res) => {
-                location.reload(true);
-            console.log(res);
+            location.reload(true);
+        console.log(res);
         console.log("Update Successfully");
         $('#updatePricingModal').modal('hide');
     }, error: (res) => {
