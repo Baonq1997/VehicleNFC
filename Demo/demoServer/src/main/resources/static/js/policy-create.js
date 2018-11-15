@@ -397,8 +397,8 @@ function loadPricingTable(vehicleTypeId) {
         for (let i = 0; i < pricings.length; i++) {
             let row = '<tr>';
             row += '<td>' + pricings[i].fromHour + '</td>';
-            row += '<td>' + pricings[i].pricePerHour + '</td>';
-            row += '<td>' + pricings[i].lateFeePerHour + '</td>';
+            row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
+            row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
             // row += '<td><a href="#" onclick="loadPricingModal(' + policyHasVehicleType + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
             row += '<td><a href="#" onclick="savePricing(' + policyHasVehicleType + ',' + vehicleTypeId + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
             row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + vehicleTypeId + ')" class="btn btn-danger delBtn">Delete</a></td>'
@@ -498,4 +498,7 @@ function convertTime(dateTypeLong) {
             [dateStr.getHours(),
                 dateStr.getMinutes()].join(':');
     return dformat;
+}
+function convertMoney(money) {
+    return (money * 1000).toLocaleString() + " VNĐ";
 }

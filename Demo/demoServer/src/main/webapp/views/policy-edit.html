@@ -65,30 +65,33 @@
                                 </span>
                         </div>
                         <input type="hidden" id="allowedParkingTo">
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="save-policy">Save Policy</button>
+                        <div class="row">
+                            <button class="btn btn-primary" id="save-policy" style="margin-top: 20px;">Save Policy</button>
                         </div>
-                        <div class="form-group">
-                            <label  class="col-form-label">Pricings:</label><Br/>
-                            <div class="pricing-container">
+                        <div class="content-list-table">
+                            <div class="row">
+                                <label  class="col-form-label">Pricings:</label><Br/>
+                                <div class="pricing-container">
 
+                                </div>
                             </div>
+
                             <!--<button class="btn btn-primary" value="Add Pricing" id="btn-add-pricing">Add Pricing-->
                             <!--</button>-->
                             <!--<table id="orderPricings" class="table table-hover">-->
-                                <!--<thead>-->
-                                <!--<tr>-->
-                                    <!--<th>From Hour:</th>-->
-                                    <!--<th>Price Per Hour</th>-->
-                                    <!--<th>Late Fee Per Hour</th>-->
-                                <!--</tr>-->
-                                <!--</thead>-->
-                                <!--<tbody>-->
+                            <!--<thead>-->
+                            <!--<tr>-->
+                            <!--<th>From Hour:</th>-->
+                            <!--<th>Price Per Hour</th>-->
+                            <!--<th>Late Fee Per Hour</th>-->
+                            <!--</tr>-->
+                            <!--</thead>-->
+                            <!--<tbody>-->
 
-                                <!--</tbody>-->
+                            <!--</tbody>-->
                             <!--</table>-->
                         </div>
-                        <div class="row">
+                        <div class="row" style="margin-top: 10px;">
                             <div class="button-wrapper">
                                 <button class="btn btn-danger" id="delete-policy">Delete Policy</button>
                             </div>
@@ -104,7 +107,7 @@
 
 <div class="myForm">
     <form action="/pricing/save-pricing" id="save-pricing" method="POST">
-            <div class="modal fade" id="savePricingModal" tabindex="-1" role="dialog"
+        <div class="modal fade" id="savePricingModal" tabindex="-1" role="dialog"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

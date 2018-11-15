@@ -20,30 +20,29 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
 </head>
 <body>
-<div id="wrapper">
-    <div class="main">
+<div id="panel">
+    <div class="panel-body">
         <!-- MAIN CONTENT -->
-        <div class="main-content">
-            <div class="container-fluid">
-                <div class="panel panel-headline">
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label for="location" class="col-form-label">Location:</label>
-                            <input type="text" class="form-control" id="location" name="location" value=""/>
-                        </div>
-                        <div class="form-group">
-                            <label for="description" class="col-form-label">Description:</label>
-                            <textarea id="description" class="form-control"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <input type="radio" name="status" value="Available">Available<br>
-                            <input type="radio" name="status" value="Unavailable">Unavailable<br>
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-primary" id="btn-save-location">Save</button>
-                        </div>
-                    </div>
-                </div>
+        <div class="row">
+            <span class="content-name">
+               Create Locaiton
+            </span>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label for="location" class="col-form-label">Location:</label>
+                <input type="text" class="form-control" id="location" name="location" value=""/>
+            </div>
+            <div class="form-group">
+                <label for="description" class="col-form-label">Description:</label>
+                <textarea id="description" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="radio" name="status" value="Available">Available<br>
+                <input type="radio" name="status" value="Unavailable">Unavailable<br>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="btn-save-location">Save</button>
             </div>
         </div>
     </div>

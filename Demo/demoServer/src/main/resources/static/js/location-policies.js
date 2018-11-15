@@ -65,21 +65,14 @@ function loadVehicles() {
 
 function loadTable(data) {
     var policyList = data.policyList;
-    
+
     $('#location').text(data.location);
     $('#locationId').val(data.id);
-    if (data.isActivated === true) {
-        $('#status').text("Active");
-
-    } else {
-        $('#status').text("De-active");
-        // var h1 = 'This location is de-active.'
-        // $('#policies').append();
-    }
+    var index = 0;
     for (let i = 0; i < policyList.length; i++) {
         var vehicleList = policyList[i].policyHasTblVehicleTypes;
         row = '<tr>';
-        row += '<td>' + policyList[i].id + '</td>';
+        row += '<td>' + (++index) + '</td>';
         row += '<td>' + msToTime(policyList[i].allowedParkingFrom) + ' - ' + msToTime(policyList[i].allowedParkingTo) + '</td>';
         if (vehicleList != null || vehicleList.length != 0) {
             // row += "<td><ul>";
@@ -257,15 +250,15 @@ function addPolicyToLocation(policyId) {
                 }
             }
         }
-        
+
         var jsonObject = {
             policyId: policyId,
             locationArr: locations,
             currentLocationId: existedLocations
         }
-        
+
         $.ajax({
-           type: "POST",
+            type: "POST",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(jsonObject),
             url: 'http://localhost:8080/location/add-policy',
@@ -288,8 +281,8 @@ function filterPolicies(pageNumber) {
         if (pageNumber != null) {
             url = url+"&page="+pageNumber;
         }
-       // var allowedParkingFrom = $('#allowedParkingFrom').val();
-       // var allowedParkingTo = $('#allowedParkingTo').val();
+        // var allowedParkingFrom = $('#allowedParkingFrom').val();
+        // var allowedParkingTo = $('#allowedParkingTo').val();
         var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
@@ -337,7 +330,7 @@ function emptyTable() {
 }
 function loadTableAfterFilter(response) {
     var data = response.data;
-    if (data.length != 0) {
+    if (data != null) {
         for (var i = 0; i < data.length; i++) {
             var vehicleList = data[i].policyHasTblVehicleTypes;
             row = '<tr>';
@@ -352,14 +345,14 @@ function loadTableAfterFilter(response) {
             } else {
                 row += '<td> N/A </td>'
             }
-            row += '<td> <button class="btn btn-success" onclick="getExistedLocations(' + data[i].id + ')">Add To Location</button>';
-            row += '<td> <button class="btn btn-primary" onclick="editPolicy(' + data[i].id + ')">Edit</button>';
-            row += '<td> <button class="btn btn-danger" onclick="deletePolicy(' + data[i].id + ')">Delete</button>';
+            row += '<td> <a href="#" class="btn btn-primary btnAction" onclick="getExistedLocations(' + data[i].id + ')"><i class="fas fa-plus-square"></i></a>';
+            row += '<a href="#" class="btn btn-primary btnAction" onclick="editPolicy(' + data[i].id + ')"><i class="lnr lnr-pencil"></i> </a>';
+            row += '<a href="#" class="btn btn-danger btnAction" onclick="deletePolicy(' + data[i].id + ')"><i class="lnr lnr-trash"></i></a></td>';
             row += '</tr>';
             $('#location-policies tbody').append(row);
         }
     } else {
-        var row = '<td colspan="4"><strong> No data </strong></td>';
+        var row = '<td colspan="4" style="text-align: center;"><strong> No data </strong></td>';
         $('#location-policies tbody').append(row);
     }
 }

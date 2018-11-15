@@ -23,13 +23,6 @@ body {
     margin: 5px;
 }
 
-#location-policies tr,td,th{
-    text-align: center;
-}
-#location-policies td {
-    vertical-align: middle;
-    text-align: center;
-}
 
 .location-container {
     width: 100%;

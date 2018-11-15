@@ -3,6 +3,7 @@ package com.example.demo.component.policy;
 import com.example.demo.component.location.Location;
 import com.example.demo.component.location.LocationRepository;
 import com.example.demo.component.vehicleType.VehicleType;
+import com.example.demo.config.PaginationEnum;
 import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,6 +192,10 @@ public class PolicyService {
                     for (PolicyHasTblVehicleType instance : policyHasTblVehicleTypes) {
                         ids.add(instance.getPolicyId());
                     }
+                    if (ids.size() == 0) {
+                        responseObject.setData(null);
+                        return responseObject;
+                    }
                     Expression<String> policyExpression = policyJoin.get("policyId");
                     Predicate policyPredicate = policyExpression.in(ids);
                     predicate = builder.and(predicate,policyPredicate);
@@ -232,6 +237,7 @@ public class PolicyService {
         responseObject.setData(resultList);
         responseObject.setTotalPages(totalPages + 1);
         responseObject.setPageNumber(pageNumber);
+        responseObject.setPageSize(PaginationEnum.locationPageSize.getNumberOfRows());
         return responseObject;
     }
 }

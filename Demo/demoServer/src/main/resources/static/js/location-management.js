@@ -13,12 +13,15 @@ $(document).ready(function (e) {
     //         // alert("Can't load data")
     //     }
     // });
+
     filterLocations(0);
     $('#searchBtn').off().on('click', function () {
         searchValue = $('#searchValue').val();
         filterLocations(0);
     });
-
+    $('#close-btn').on('click', function (e) {
+       location.reload(true);
+    });
 });
 
 function emptyTable() {
@@ -37,15 +40,12 @@ function loadData(res) {
     var content = "";
     content = res.data;
     var row = "";
+    var index = 0;
     for (i = 0; i < content.length; i++) {
-        var status = "";
-        if (content[i].activated === true) {
-            status = "Active";
-        } else {
-            status = "De-active"
-        }
+
         row = '<tr>';
-        row += '<td>' + content[i].id + '</td>';
+        // row += '<td>' + content[i].id + '</td>';
+        row += '<td>' + (i + (res.pageNumber * res.pageSize) + 1) + '</td>';
         row += '<td>' + content[i].location + '</td>';
         row += '<td>' + showText(content[i].description) + '</td>';
         row += '<td>' + convertStatus(content[i].activated) + '</td>';
@@ -130,22 +130,26 @@ function deleteLocation(locationId) {
         })
     })
 }
+var isActive ;
 function getLocationModal(locationId) {
     $.ajax({
         type: "GET",
         dataType: "json",
         url: "http://localhost:8080/location/get/" + locationId,
         success: function (data) {
-            $('#updatePricingModal #location').val(data.location);
-            $('#updatePricingModal #description').val(data.description);
-            $('#updatePricingModal #status').val(data.activated);
-            $('#updatePricingModal #btn-change-status').text(convertStatus(data.activated));
-            $('#updatePricingModal').modal();
+            $('#update-location #location').val(data.location);
+            $('#update-location #description').val(data.description);
+            $('#update-location #status').val(data.activated);
+            isActive = data.activated;
+            $('#update-location #btn-change-status').text(convertStatus(!data.activated));
+            $('#update-location').show();
+            $('#location-main').hide();
         }, error: function (data) {
             console.log(data);
         }
     })
     updateLocation(locationId);
+    changeLocationStatus(locationId);
 }
 
 function convertStatusToBoolean(status) {
@@ -156,13 +160,13 @@ function convertStatusToBoolean(status) {
     }
 }
 
-function updateLocation(locationId) {
-    $('#btn-save-location').off().click(function (e) {
+function changeLocationStatus(locationId) {
+    $('#btn-change-status').off().on('click', function (e) {
         var location = {
             id: locationId,
-            location: $('#updatePricingModal #location').val(),
-            description: $('#updatePricingModal #description').val(),
-            isActivated: convertStatusToBoolean($('#updatePricingModal #status').val()),
+            location: $('#update-location #location').val(),
+            description: $('#update-location #description').val(),
+            activated: !isActive,
             policyList: null
         }
         $.ajax({
@@ -173,6 +177,36 @@ function updateLocation(locationId) {
             data: JSON.stringify(location),
             success: function (data) {
                 console.log("Update successfully");
+                getLocationModal(locationId);
+                isActive = location.activated;
+                // $('#updatePricingModal #btn-change-status').text(convertStatus(data.activated));
+            }, error: function (data) {
+                console.log(data);
+            }
+        })
+    });
+}
+
+function updateLocation(locationId) {
+    $('#btn-save-location').off().click(function (e) {
+        var location = {
+            id: locationId,
+            location: $('#update-location #location').val(),
+            description: $('#update-location #description').val(),
+            activated: isActive,
+            policyList: null
+        }
+        $.ajax({
+            url: 'http://localhost:8080/location/save',
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(location),
+            success: function (data) {
+                console.log("Update successfully");
+                $('#update-location').hide();
+                $('#location-main').show();
+                location.reload(true);
             }, error: function (data) {
                 console.log(data);
             }

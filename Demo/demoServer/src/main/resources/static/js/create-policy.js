@@ -4,7 +4,7 @@ var locationArr = [];
 var locationExistedArr= [];
 var policyHasVehicleTypeId = [];
 $(document).ready(function () {
-
+    localStorage.clear();
     loadVehicleTypes();
     loadLocations();
     savePolicyVehicle();
@@ -40,12 +40,14 @@ function loadLocations() {
                 console.log("VehicleTypes: " + data);
                 for (i = 0; i < data.length; i++) {
                     var chk = '<input type="checkbox" class="locations" name="locationChk" id="location-' + i + '" value="' + data[i].id + '"><label>' + data[i].location + '</label>';
-                    $('#locationArr').append(chk);
-                    if (containsObject(data,locationArr)) {
-                        if (!containsObject(data, locationExistedArr)) {
-                            locationExistedArr.push(data);
-                        }
-                    }
+                    var select = '<option id="location-'+ i +'" value="'+data[i].id + '"><label>' + data[i].location + '</label>';
+                    $('#locationArr').append(select);
+                    // $('#locationArr').append(chk);
+                    // if (containsObject(data,locationArr)) {
+                    //     if (!containsObject(data, locationExistedArr)) {
+                    //         locationExistedArr.push(data);
+                    //     }
+                    // }
                 }
             }
 
@@ -131,15 +133,15 @@ function savePolicyVehicle() {
     $('#save-policy-vehicle').on('click', function () {
         vehicleTypeArr = [];
 
-        var checkedLocaitons = $('input[name=locationChk]:checked').map(function (i) {
-            var location = {
-                id: this.value,
-                location: $(this).next('label').text()
-            }
-            locationArr.push(location);
-            return this;
-        }).get();
-
+        // var checkedLocaitons = $('input[name=locationChk]:checked').map(function (i) {
+        //     var location = {
+        //         id: this.value,
+        //         location: $(this).next('label').text()
+        //     }
+        //     locationArr.push(location);
+        //     return this;
+        // }).get();
+        var locationId = $('#locationArr :selected').val();
         var vehicleTypes = $('input[name=chk]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
@@ -185,7 +187,7 @@ function savePolicyVehicle() {
             allowedParkingTo: $('#allowedParkingTo').val()
         }
         var json = {
-            locationId: parseInt(locationArr[0].id),
+            locationId: locationId,
             policy: policyJson,
             vehicleTypes: vehicleArr
         }
@@ -288,8 +290,9 @@ function deletePolicy() {
             allowedParkingFrom: $('#allowedParkingFrom').val(),
             allowedParkingTo: $('#allowedParkingTo').val()
         }
+        var locationId = $('#locationArr :selected').val();
         var json = {
-            locationId: parseInt(locationArr[0].id),
+            locationId: parseInt(locationId),
             policy: policyJson,
             policyHasVehicleTypeId: policyHasVehicleTypeId,
             vehicleTypes: vehicleTypeArr
@@ -303,7 +306,7 @@ function deletePolicy() {
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);
-                window.location.href  = 'http://localhost:8080/user/admin';
+                window.top.location.href = "'http://localhost:8080/policy/index";
             }, error: function (data) {
                 console.log(data);
             }
@@ -361,11 +364,11 @@ function loadPricingTable(vehicleTypeId) {
         for (let i = 0; i < pricings.length; i++) {
             let row = '<tr>';
             row += '<td>' + pricings[i].fromHour + '</td>';
-            row += '<td>' + pricings[i].pricePerHour + '</td>';
-            row += '<td>' + pricings[i].lateFeePerHour + '</td>';
+            row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
+            row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
             // row += '<td><a href="#" onclick="loadPricingModal(' + policyHasVehicleType + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
-            row += '<td><a href="#" onclick="savePricing(' + policyHasVehicleType + ',' + vehicleTypeId + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
-            row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + vehicleTypeId + ')" class="btn btn-danger delBtn">Delete</a></td>'
+            row += '<td><a href="#" onclick="savePricing(' + policyHasVehicleType + ',' + vehicleTypeId + ',' + pricings[i].id + ')" class="btn btn-primary btnAction"><i class="lnr lnr-pencil"></i></a></td>'
+            row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + vehicleTypeId + ')" class="btn btn-danger btnAction-remove"><i class="lnr lnr-trash"></i></a></td>'
             row += '</tr>';
             $('#pricing-vehicle-'+vehicleTypeId +' tbody').append(row);
         }
@@ -469,4 +472,7 @@ function containsObject(obj, list) {
         }
     }
     return false;
+}
+function convertMoney(money) {
+    return (money * 1000).toLocaleString() + " VNĐ";
 }

@@ -2776,11 +2776,6 @@ ul.activity-timeline > li:last-child:after {
     border-right: 0;
 }
 
-#btn-add-pricing {
-    margin-left: 0;
-    margin-bottom: 5px;
-}
-
 :root {
     --main-bg-color: white;
     --main-bg-active-color: white;
