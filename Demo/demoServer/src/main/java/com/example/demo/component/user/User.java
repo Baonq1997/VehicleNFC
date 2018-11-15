@@ -43,7 +43,7 @@ public class User implements Serializable {
     private String lastName;
 
     @JoinColumn(name = "tbl_vehicle_vehicle_number", referencedColumnName = "vehicle_number")
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     private Vehicle vehicle;
 
 //    @Transient

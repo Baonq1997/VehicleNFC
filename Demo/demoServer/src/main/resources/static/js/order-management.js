@@ -18,7 +18,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         $('#search-date').val($('#datepicker').val());
-        var searchValue =  $('#searchValue').val();
+        var searchValue = $('#searchValue').val();
         $('#search-value').val(searchValue);
         filterOrder(0);
     });
@@ -26,9 +26,11 @@ $(document).ready(function () {
     $('#btn-deposit').on('click', function (e) {
         e.preventDefault();
         $('#deposit-modal').modal();
+        $('#deposit-modal #order-id').val();
     })
     depositModal();
 });
+
 function initOrders() {
     $.ajax({
         type: "GET",
@@ -36,27 +38,27 @@ function initOrders() {
         url: 'http://localhost:8080/order/get-orders',
         success: function (data) {
             console.log(data);
-            $('#order-table').attr('display','block');
+            $('#order-table').attr('display', 'block');
             loadData(data);
         }, error: function () {
             alert("Can't load data")
         }
     });
 }
+
 function loadData(res) {
     var content = "";
     content = res.data;
     $('#order-table').show();
     if (content.length != 0) {
-
         var row = "";
-        for (i = 0; i < content.length; i++) {
-            row = '<tr>';
-            row += '<td>' + content[i].id + '</td>';
+        for (var i = 0; i < content.length; i++) {
+            row = '<tr style="height: 59px">';
+            row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
             row += '<td>' + convertDate(content[i].checkInDate) + '</td>';
             row += '<td>' + convertDate(content[i].checkOutDate) + '</td>';
-            row += '<td>' + content[i].locationId.location + '</td>';
-            if (content[i].orderStatusId.name === "close") {
+            row += '<td>' + content[i].location.location + '</td>';
+            if (content[i].orderStatusId.name === "Close") {
                 row += '<td style=" color: #ff0000;">' + content[i].orderStatusId.name + '</td>';
             } else {
                 row += '<td style="color: #339933;">' + content[i].orderStatusId.name + '</td>';
@@ -64,7 +66,7 @@ function loadData(res) {
 
             // row += '<td>' + content[i].userId.firstName+' '+ content[i].userId.lastName + '</td>';
             // row += '<td>' + content[i].userId.phoneNumber + '</td>';
-            row += '<td>' + content[i].userId.vehicleNumber + '</td>';
+            row += '<td>' + content[i].userId.vehicle.vehicleNumber + '</td>';
             row += '<td>' + content[i].userId.vehicle.licensePlateId + '</td>';
             var duration = "";
             if (content[i].duration === null) {
@@ -85,59 +87,68 @@ function loadData(res) {
             $('#order-table tbody').append(row);
         }
 
-        var pageNumber = res.pageNumber;
-        console.log("page: " + pageNumber);
-        console.log("Total Page: " + res.totalPages);
-        var currentPage;
-        var li = "";
-        for (currentPage = 0; currentPage <= res.totalPages - 1; currentPage++) {
-            if (currentPage === pageNumber) {
-                li = '<li class="nav-item active">\n' +
-                    '<a href="#" class="nav-link" onclick="filterOrder(' + currentPage + ')">' + (currentPage+ 1) + '</a>\n' +
-                    '</li>';
-                $('#pagination').append(li);
-            } else {
-
-                li = '<li class="nav-item">\n' +
-                    '<a href="#" class="nav-link" onclick="filterOrder(' + currentPage + ')">\n' +
-                    +(currentPage+1) + '</a>\n' +
-                    '</li>';
-                $('#pagination').append(li);
-            }
+        for (var i = 0; i < res.pageSize - content.length; i++) {
+            $('#order-table tbody').append('<tr class="blank-row"></tr>');
         }
-    } else {
-        var row = '<tr>No data</tr>'
-        $('#order-table tbody').append(row);
     }
 
+    var pageNumber = res.pageNumber;
+    console.log("page: " + pageNumber);
+    console.log("Total Page: " + res.totalPages);
+    $('#pagination').append(createPageButton(0, 'First', false, false));
+    $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+    if (pageNumber > 2) {
+        $('#pagination').append(createEtcButton());
+    }
+    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+            $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
+        }
+    }
+    if (res.totalPages - pageNumber > 3) {
+        $('#pagination').append(createEtcButton());
+    }
+    $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+    $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
+}
+
+function createPageButton(pageNumber, label, isDisable, isActive) {
+    var className = (isActive) ? 'nav-item active' : 'nav-item';
+    className += (isDisable) ? ' disabled-href' : '';
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="filterOrder(' + pageNumber + ')">' + label + '</a>\n' +
+        '</li>';
+}
+
+function createEtcButton() {
+    return '<li class="etc ">...</li>';
 }
 
 function filterOrder(pageNumber) {
     var url = "http://localhost:8080/order/filter-order";
     if (pageNumber != null) {
-        url = url+"?page="+pageNumber;
+        url = url + "?page=" + pageNumber;
     }
     var searchType = $('#search-filter option:selected').val();
     var searchValue = $('#search-value').val();
     var checkInDate = convertDateToMs($('#search-date').val());
     console.log(checkInDate);
     var timeType = 'checkInDate';
-    console.log("Search By: "+searchType);
-    console.log("SearchValue: "+searchValue);
+    console.log("Search By: " + searchType);
+    console.log("SearchValue: " + searchValue);
     var listFilterObject = [];
     if (searchValue !== "") {
         var searchValue = createSearchObject(searchType, ":", searchValue);
         listFilterObject.push(searchValue);
     }
-    var searchTime = createSearchObject(timeType,":", checkInDate);
+    var searchTime = createSearchObject(timeType, ":", checkInDate);
     listFilterObject.push(searchTime);
     $.ajax({
-        type:'POST',
+        type: 'POST',
         url: url,
-        dataType:"json",
+        dataType: "json",
         contentType: 'application/json',
         data: JSON.stringify(listFilterObject),
-        success:function(response){
+        success: function (response) {
 
             emptyTable();
             emptyPaginationLi();
@@ -148,15 +159,16 @@ function filterOrder(pageNumber) {
         }
     });
 }
+
 function getOrderById(id) {
     var obj = "";
     $.ajax({
-       type: "GET",
-       dataType: "json",
+        type: "GET",
+        dataType: "json",
         sync: false,
-       url:  'http://localhost:8080/order/get-order/'+id,
-        success:function (res) {
-           console.log("Order:"+res.id)
+        url: 'http://localhost:8080/order/get-order/' + id,
+        success: function (res) {
+            console.log("Order:" + res.id)
             obj = res;
 
         }, error: function (data) {
@@ -166,12 +178,19 @@ function getOrderById(id) {
     });
     return obj;
 }
+
+function closeForm() {
+    $('#order-detail').hide();
+    $('.searchBox').show();
+    $('#order-list').show();
+}
+
 function viewPricingDetail(orderId) {
     $('#order-detail').show();
     $('.searchBox').hide();
-    $('#order-table').hide();
-    emptyPaginationLi();
-    var order = $.getValues("http://localhost:8080/order/get-order/"+orderId);
+    $('#order-list').hide();
+    // emptyPaginationLi();
+    var order = $.getValues("http://localhost:8080/order/get-order/" + orderId);
     console.log(order);
     $.ajax({
         type: "GET",
@@ -180,22 +199,25 @@ function viewPricingDetail(orderId) {
         success: function (res) {
             // console.log(res);
             // $('.myForm #lastName').text(order.userId.firstName+' '+ order.userId.lastName);
+            $('#order-detail #order-id').text(order.id);
+            $('#order-detail #vehicleNumber').text(order.userId.vehicle.vehicleNumber);
+            $('#order-detail #licenseId').text(order.userId.vehicle.licensePlateId);
             $('#order-detail #phoneNumber').text(order.userId.phoneNumber);
-            $('#order-detail #location').text(order.locationId.location);
+            $('#order-detail #location').text(order.location.location);
             $('#order-detail #allowedParkingFrom').text(convertTime(order.allowedParkingFrom));
             $('#order-detail #allowedParkingTo').text(convertTime(order.allowedParkingTo));
             $('#order-detail #checkInDate').text(convertDate(order.checkInDate));
             $('#order-detail #checkOutDate').text(convertDate(order.checkOutDate));
             let row = "";
             emptyPricingTable();
-            console.log("Pricing SIze: "+res.length);
+            console.log("Pricing SIze: " + res.length);
             var hourHasPrices = order.hourHasPrices;
             var passHour = 0;
-            var minutes = hourHasPrices[hourHasPrices.length-1].minutes;
-            console.log("MInute: "+minutes);
+            var minutes = hourHasPrices[hourHasPrices.length - 1].minutes;
+            console.log("MInute: " + minutes);
             var checkInDate = order.checkInDate;
             var checkOutDate = order.checkOutDate;
-            for ( i = 0; i < hourHasPrices.length; i++) {
+            for (i = 0; i < hourHasPrices.length; i++) {
                 // table as receipt
                 var hourHasPrice = hourHasPrices[i];
                 var milliseconds = convertToMilliseconds(hourHasPrice.hour - passHour, "hour");
@@ -208,12 +230,12 @@ function viewPricingDetail(orderId) {
                 } else {
                     toHour = msToTime(checkInDate + milliseconds);
                 }
-                console.log("checkIndate: "+checkInDate);
-                console.log("toHour: "+toHour);
+                console.log("checkIndate: " + checkInDate);
+                console.log("toHour: " + toHour);
                 row = '<tr>';
                 row += '<td>' + convertTime(checkInDate) + ' To ' + toHour + '</td>';
-                row += '<td>' + hourHasPrice.price + '</td>';
-                row += '<td>' + hourHasPrice.total + '</td>';
+                row += '<td>' + convertMoney(hourHasPrice.price) + '</td>';
+                row += '<td>' + convertMoney(hourHasPrice.total) + '</td>';
                 row += '</tr>';
 
                 checkInDate += milliseconds;
@@ -238,12 +260,11 @@ function viewPricingDetail(orderId) {
             }
             var rowTotal = '<tr><td></td><td><label>Total: </label></td><td><label>' + total + ' .000VNĐ</label></td></tr>';
             $('#order-detail #orderPricings tbody').append(rowTotal);
-            $('#order-detail #total').text(total);
             // $('.myForm #vehicleTypeId').text(order.userId.vehicleTypeId.name);
             $('#deposit-modal #order-id').val(orderId);
             $('#deposit-modal #user-id').val(order.userId.id);
             $('#deposit-modal #phone').text(order.userId.phoneNumber);
-            $('#deposit-modal #username').text(order.userId.firstName + " "+ order.userId.lastName);
+            $('#deposit-modal #username').text(order.userId.firstName + " " + order.userId.lastName);
             $('#deposit-modal #checkInDate').text(convertDate(order.checkInDate));
             $('#deposit-modal #checkOutDate').text(convertDate(order.checkOutDate));
             $('#deposit-modal #duration').text(msToTime(duration));
@@ -255,15 +276,16 @@ function viewPricingDetail(orderId) {
     });
     // $('.myForm #OrderDetailModal').modal();
 }
+
 jQuery.extend({
-    getValues: function(url) {
+    getValues: function (url) {
         var result = null;
         $.ajax({
             url: url,
             type: 'get',
             dataType: 'json',
             async: false,
-            success: function(data) {
+            success: function (data) {
                 result = data;
             }, error: function (res) {
                 console.log(res);
@@ -275,29 +297,22 @@ jQuery.extend({
 
 function depositModal() {
     $('#btn-submit-deposit').on('click', function (e) {
-        var user = {
-            id: $('#deposit-modal #user-id').val(),
-            money: $('#deposit-modal #refund-money').val()
-        }
-        var order = {
-            id: $('#deposit-modal #order-id').val()
-        }
-        var orderRefund = {
-            user: user,
-            order: order,
-            refundMoney: $('#deposit-modal #refund-money').val()
-        }
         $.ajax({
             type: "POST",
-            url: 'http://localhost:8080/order/refund',
-            dataType:"json",
-            contentType: 'application/json',
-            data: JSON.stringify(orderRefund),
+            url: 'http://localhost:8080/refund/request',
+            data: {
+                orderId: $('#deposit-modal #order-id').val(),
+                amount: $('#deposit-modal #refund-money').val(),
+                username: $('#main-content', window.parent.document).attr('username')
+            },
             success: function (data) {
-                console.log("Successfully refund");
-                console.log(data);
+                if (data) {
+                    alert("Request refund success");
+                } else {
+                    alert("Request refund fail");
+                }
                 $('#deposit-modal').modal('hide');
-                location.reload(true);
+                // location.reload(true);
             }, error: function (data) {
                 console.log(data);
             }
@@ -306,15 +321,17 @@ function depositModal() {
 }
 
 function emptyTable() {
-    $('#order-table tbody').remove();
+    $('#order-table tbody tr').remove();
 }
 
 function emptyPricingTable() {
     $('#orderPricings td').remove();
 }
+
 function emptyPaginationLi() {
     $('#pagination').empty();
 }
+
 function createSearchObject(key, operation, value) {
     var obj = {
         key: key,
@@ -324,15 +341,16 @@ function createSearchObject(key, operation, value) {
     return obj;
 }
 
-function msToTime (ms) {
-    var seconds = parseInt(ms/1000);
-    var minutes = parseInt(seconds/60, 10);
-    seconds = seconds%60;
-    var hours = parseInt(minutes/60, 10);
-    minutes = minutes%60;
+function msToTime(ms) {
+    var seconds = parseInt(ms / 1000);
+    var minutes = parseInt(seconds / 60, 10);
+    seconds = seconds % 60;
+    var hours = parseInt(minutes / 60, 10);
+    minutes = minutes % 60;
 
     return hours + ':' + minutes;
 }
+
 // function parseTimeToLong(clockPicker, type) {
 //     var time = $('.' + clockPicker + ' #' + type).val();
 //     var temp = time.split(":")
@@ -342,13 +360,13 @@ function msToTime (ms) {
 //     $('#allowed' + type).val(ms);
 // }
 function convertDate(dateTypeLong) {
-    if (dateTypeLong === null){
+    if (dateTypeLong === null) {
         return "Empty";
     }
     var dateStr = new Date(dateTypeLong),
         dformat = [dateStr.getDate(),
-                dateStr.getMonth()+1,
-                dateStr.getFullYear()].join('-')+' '+
+                dateStr.getMonth() + 1,
+                dateStr.getFullYear()].join('-') + ' ' +
             [dateStr.getHours(),
                 dateStr.getMinutes(),
                 dateStr.getSeconds()].join(':');
@@ -356,19 +374,19 @@ function convertDate(dateTypeLong) {
 }
 
 function convertDateAsTimeDate(dateTypeLong) {
-    if (dateTypeLong === null){
+    if (dateTypeLong === null) {
         return "Empty";
     }
     var dateStr = new Date(dateTypeLong),
         dformat = [dateStr.getDate(),
-                dateStr.getMonth()+1].join('-')+' '+
+                dateStr.getMonth() + 1].join('-') + ' ' +
             [dateStr.getHours(),
                 dateStr.getMinutes()].join(':');
     return dformat;
 }
 
 function convertTime(dateTypeLong) {
-    if (dateTypeLong === null){
+    if (dateTypeLong === null) {
         return "Empty";
     }
     var dateStr = new Date(dateTypeLong),
@@ -409,26 +427,44 @@ function compare2Dates(date1, date2) {
     // let checkOutDate = convertDate(date2);
     var checkInDate = new Date(date1);
     var checkOutDate = new Date(date2);
-    var isTheSameDate =  (checkInDate.getDate() == checkOutDate.getDate()
+    var isTheSameDate = (checkInDate.getDate() == checkOutDate.getDate()
         && checkInDate.getMonth() == checkOutDate.getMonth()
         && checkInDate.getFullYear() == checkOutDate.getFullYear());
     return isTheSameDate;
 }
 
 function sortHeaders() {
-    $('th').click(function(){
+    $('th').click(function () {
         var table = $(this).parents('table').eq(0)
         var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
         this.asc = !this.asc
-        if (!this.asc){rows = rows.reverse()}
-        for (var i = 0; i < rows.length; i++){table.append(rows[i])}
+        if (!this.asc) {
+            rows = rows.reverse()
+        }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i])
+        }
     })
+
     function comparer(index) {
-        return function(a, b) {
+        return function (a, b) {
             var valA = getCellValue(a, index), valB = getCellValue(b, index)
             return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
         }
     }
-    function getCellValue(row, index){ return $(row).children('td').eq(index).text() }
+
+    function getCellValue(row, index) {
+        return $(row).children('td').eq(index).text()
+    }
+
     // end sort table headers
+}
+
+function cellBuilder(text, className) {
+    text = (text != null) ? text : "N/A";
+    return "<td class='" + className + "'>" + text + "</td>";
+}
+
+function convertMoney(money) {
+    return (money * 1000).toLocaleString() + " VNĐ";
 }

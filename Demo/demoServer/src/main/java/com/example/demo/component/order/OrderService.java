@@ -338,7 +338,7 @@ public class OrderService {
                 } else if (type == User.class) {
                     if (param.getKey().equalsIgnoreCase("vehicleNumber")) {
                         Join<Order, User> join = r.join("userId");
-                        Predicate vehiclePredicate = builder.equal(join.get("vehicleNumber"), param.getValue());
+                        Predicate vehiclePredicate = builder.equal(join.get("vehicle"), param.getValue());
                         predicate = builder.and(predicate, vehiclePredicate);
                     }
                 } else {
@@ -360,6 +360,7 @@ public class OrderService {
             User user = order.getUserId();
 //            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
             order.setUserId(user);
+            order.setLocation(locationRepository.findById(order.getLocationId()).get());
 //            result.add(order);
         }
         responseObject.setData(orderList);

@@ -188,24 +188,24 @@ public class LocationService {
         Optional<Location> location = locationRepository.findById(locationId);
         List<VehicleType> vehicleTypeList = new ArrayList<>();
         //Todo
-//        if (location.isPresent()) {
-//            List<Policy> policyList = location.get().getPolicyList();
-//            if (policyList != null) {
-//                for (Policy policy : policyList) {
-//                    List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findByPolicyId(policy.getId());
-//                    if (policyHasTblVehicleTypes != null) {
-//                        for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
-//                            VehicleType vehicleType = policyHasTblVehicleType.getVehicleTypeId();
-//                            if (!vehicleTypeList.contains(vehicleType)) {
-//                                vehicleTypeList.add(vehicleType);
-//                            }
-//                        }
-//                    }
-//
-//                }
-//            }
-//
-//        }
+        if (location.isPresent()) {
+            List<Policy> policyList = location.get().getPolicyList();
+            if (policyList != null) {
+                for (Policy policy : policyList) {
+                    List<PolicyHasTblVehicleType> policyHasTblVehicleTypes = policyHasVehicleTypeRepository.findAllByPolicyId(policy.getId());
+                    if (policyHasTblVehicleTypes != null) {
+                        for (PolicyHasTblVehicleType policyHasTblVehicleType : policyHasTblVehicleTypes) {
+                            VehicleType vehicleType = policyHasTblVehicleType.getVehicleTypeId();
+                            if (!vehicleTypeList.contains(vehicleType)) {
+                                vehicleTypeList.add(vehicleType);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+        }
         return vehicleTypeList;
     }
 

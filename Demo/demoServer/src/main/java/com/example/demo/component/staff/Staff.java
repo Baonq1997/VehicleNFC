@@ -18,8 +18,10 @@ public class Staff implements Serializable {
     @Size(max = 45)
     @Column(name = "password")
     private String password;
-    @Column(name = "is_deactivated")
-    private Boolean isDeactivated;
+    @Column(name = "is_active")
+    private Boolean isActive;
+    @Column(name = "is_manager")
+    private Boolean isManager;
 
     public Staff() {
     }
@@ -44,11 +46,19 @@ public class Staff implements Serializable {
         this.password = password;
     }
 
-    public Boolean getDeactivated() {
-        return isDeactivated;
+    public Boolean getActive() {
+        return isActive;
     }
 
-    public void setDeactivated(Boolean deactivated) {
-        isDeactivated = deactivated;
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public Boolean getManager() {
+        return isManager;
+    }
+
+    public void setManager(Boolean manager) {
+        isManager = manager;
     }
 }

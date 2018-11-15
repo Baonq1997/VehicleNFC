@@ -30,3 +30,9 @@
     font-size: 20px;
     margin: 10px;
 }
+
+.detail-row{
+    width: 100%;
+    display: block;
+    float: left;
+}

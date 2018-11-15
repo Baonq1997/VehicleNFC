@@ -27,24 +27,23 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
 </head>
 <body>
-<div class="panel">
+<div class="panel" id="order-list">
     <div class="panel-body">
         <div class="row">
                  <span class="content-name">
                 Order management
             </span>
             <form action="" class="search-box" method="post">
-                <span>CheckInDate</span>
                 <input data-date-format="dd/mm/yyyy" autocomplete="off" required="required" class="form-control"
                        id="datepicker" placeholder="Choose date" style="width: 30%;">
-                <select id="search-filter" class="form-control">
+                <select id="search-filter" class="form-control" style="border-radius: 0">
                     <option value="vehicleNumber" selected="selected">Search By Vehicle Number</option>
                     <option value="locationId">Search By Location</option>
                     <option value="orderStatusId">Search By Status</option>
                 </select>
                 <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
-                       style="width: 50%; float: right;"/>
-                <button class="btn btn-primary btnAction" id="searchBtn" name="Search">
+                       style="width: 30%; float: right;"/>
+                <button class="btn btn-primary btnAction" id="searchBtn" name="Search" style="width: 50px">
                     <i class="lnr lnr-magnifier"></i>
                 </button>
                 <input type="hidden" id="search-date">
@@ -76,28 +75,58 @@
                     <ul class="nav nav-pills" id="pagination"></ul>
                 </div>
             </div>
-            <div class="row" id="order-detail" style="display: none;">
-                <div class="form-group">
-                    <label class="col-form-label">Location:</label>
-                    <p class="form-control" id="location"></p>
+        </div>
+    </div>
+</div>
+<div class="panel" id="order-detail" style="display: none">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+               Order detail. Location: <span id="location"></span>
+            </span>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <input type="hidden" id="order-id">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label class="col-form-label">Vehicle:</label>
+                        <span id="vehicleNumber"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="col-form-label">License: </label>
+                        <span id="licenseId"></span>
+                    </div>
                 </div>
-                <div class="form-group" style="width:48%; float: left;">
-                    <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
-                    <p class="form-control" id="allowedParkingFrom"></p>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
+                        <span id="allowedParkingFrom"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="col-form-label">To: </label>
+                        <span id="allowedParkingTo"></span>
+                    </div>
                 </div>
-                <div class="form-group" style="width: 48%; float: right;">
-                    <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
-                    <p class="form-control" id="allowedParkingTo"></p>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="checkInDate" class="col-form-label">Parking from:</label>
+                        <span id="checkInDate"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="col-form-label">To: </label>
+                        <span id="checkOutDate"></span>
+                    </div>
                 </div>
-                <div class="form-group" style="width:48%; float: left;">
-                    <label for="checkInDate" class="col-form-label">CheckIn Date:</label>
-                    <p class="form-control" id="checkInDate"></p>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label for="duration" class="col-form-label">Duration:</label>
+                        <span id="duration"></span>
+                    </div>
                 </div>
-                <div class="form-group" style="width: 48%; float: right;">
-                    <label for="checkOutDate" class="col-form-label">CheckOut Date:</label>
-                    <p class="form-control" id="checkOutDate"></p>
-                </div>
-                <div class="form-group">
+            </div>
+            <div class="col-lg-6">
+                <div>
                     <label for="orderPricings" class="col-form-label">Pricings:</label>
                     <table id="orderPricings" class="table table-hover">
                         <thead>
@@ -113,67 +142,40 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="form-group">
-                    <label for="duration" class="col-form-label">Duration:</label>
-                    <p class="form-control" id="duration"></p>
-                </div>
-                <div class="btn-wrapper">
-                    <button type="button" class="btn btn-success" id="btn-deposit">Deposit
-                    </button>
-                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="btn-wrapper">
+                <button type="button" class="btn btn-success" id="btn-deposit">Refund
+                </button>
+                <button type="button" class="btn btn-success" onclick="closeForm()">Close
+                </button>
             </div>
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="deposit-modal" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"><strong>Deposit</strong></h5>
+                <h5 class="modal-title" id="exampleModalLabel"><strong>Refund</strong></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group" style="width:45%; float: left; margin-left: 2%;">
-                    <label class="col-form-label">User:</label>
-                    <p class="form-control" id="username"></p>
-                </div>
-                <div class="form-group" style="width: 45%; float: left; margin-right: 2%;">
-                    <label class="col-form-label">Phone:</label>
-                    <p class="form-control" id="phone"></p>
-                </div>
-                <div class="form-group" style="width:45%; float: left; margin-left: 2%;">
-                    <label for="checkInDate" class="col-form-label">CheckIn Date:</label>
-                    <p class="form-control" id="checkInDate"></p>
-                </div>
-                <div class="form-group" style="width: 45%; float: left; margin-right: 2%;">
-                    <label for="checkOutDate" class="col-form-label">CheckOut Date:</label>
-                    <p class="form-control" id="checkOutDate"></p>
-                </div>
-
-                <div class="form-group" style="width:45%; float: left; margin-left: 2%;">
-                    <label for="duration" class="col-form-label">Duration:</label>
-                    <p class="form-control" id="duration"></p>
-                </div>
-                <div class="form-group" style="width: 45%; float: left; margin-right:2%;">
-                    <label for="duration" class="col-form-label">Total:</label>
-                    <p class="form-control" id="total"></p>
-                </div>
                 <div class="form-group">
-                    <label for="duration" class="col-form-label">Refund:</label>
-                    <input class="form-control" id="refund-money" value="">
+                    <label for="duration" class="col-form-label">Amount:</label>
+                    <input type="number" class="form-control" id="refund-money">
                 </div>
-                <input type="hidden" id="user-id">
                 <input type="hidden" id="order-id">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
                 </button>
-                <button type="button" class="btn btn-success" id="btn-submit-deposit">Deposit
+                <button type="button" class="btn btn-success" id="btn-submit-deposit">Refund
                 </button>
             </div>
         </div>

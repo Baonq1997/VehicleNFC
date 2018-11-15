@@ -102,64 +102,9 @@
                         </div>
                     </li>
                     <li>
-                    <li><a onclick="openHideList($(this),true)" id="vehicleHolder" isOpen="false"
-                           class="active pointer menu holder-active"><i
-                            class="lnr lnr-car"></i> <span class="title">Vehicles</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="vehicleHolderIcon"></i></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/vehicle/get-verify',$('#vehicleHolder'))"
-                           class="pointer sub-menu vehicleHolder"><i class="far fa-check-square"></i><span
-                            class="title">Verify</span></a></li>
-                    <li><a onclick="switchContentFragment('/vehicle/index',$('#vehicleHolder'))"
-                           class="pointer sub-menu vehicleHolder"><i
-                            class="lnr lnr-list"></i> <span class="title">Manage</span></a></li>
-                    <li>
-                    <li><a onclick="openHideList($(this),true)" id="userHolder" isOpen="false"
-                           class="pointer menu holder"><i
-                            class="lnr lnr-user"></i> <span class="title">Users</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="userHolderIcon"></i></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/user/get-verify',$('#userHolder'))"
-                           class="pointer sub-menu userHolder"><i class="far fa-check-square"></i><span class="title">Verify</span></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/user/get-user',$('#userHolder'))"
-                           class="pointer sub-menu userHolder"><i
-                            class="lnr lnr-list"></i> <span class="title">Manage</span></a></li>
-                    <li><a onclick="switchContentFragment('/user/get-create',$('#userHolder'))"
-                           class="pointer sub-menu userHolder"><i class="fas fa-plus-square"></i><span class="title">Create a new User</span></a>
-                    </li>
-                    <li>
-                    <li><a onclick="openHideList($(this),true)" id="locationHolder" isOpen="false"
-                           class="pointer menu holder"><i
-                            class="lnr lnr-user"></i> <span class="title">Locations</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="locationHolderIcon"></i></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/location/index',$('#locationHolder'))"
-                           class="pointer sub-menu locationHolder"><i class="lnr lnr-list"></i><span class="title">Manage</span></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/location/create',$('#locationHolder'))"
-                           class="pointer sub-menu locationHolder"><i class="far fa-check-square"></i><span
-                            class="title">Create</span></a>
-                    </li>
-                    <!--<li><a onclick="switchContentFragment('/location/index',$(this))"-->
-                    <!--class="pointer menu"><i-->
-                    <!--class="lnr lnr-map-marker"></i> <span class="title">Locations</span></a></li>-->
-                    <li><a onclick="openHideList($(this),true)" id="policyHolder" isOpen="false"
-                           class="pointer menu holder"><i
-                            class="lnr lnr-book"></i> <span class="title">Policies</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="policyHolderIcon"></i></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/policy/index',$('#policyHolder'))"
-                           class="pointer sub-menu policyHolder"><i class="lnr lnr-list"></i><span
-                            class="title">Manage</span></a>
-                    </li>
-                    <li><a onclick="switchContentFragment('/policy/create',$('#policyHolder'))"
-                           class="pointer sub-menu policyHolder"><i class="far fa-check-square"></i><span class="title">Create</span></a>
-                    </li>
-
-                    <li><a onclick="switchContentFragment('/order/index',$(this))" class="pointer menu"><i
-                            class="lnr lnr-file-empty"></i> <span class="title">Orders</span></a>
-                    </li>
+                    <li><a onclick="switchContentFragment('/refund/index',$(this))"
+                           class="pointer menu active"><i class="far fa-check-square"></i><span
+                            class="title">Refund request</span></a></li>
                     <li id="shortenNavBar" onclick="shortenNavBar()" class="pointer">
                         <a class="menu" style="border-bottom: 0;color: white"><i
                                 id="shortenNavBarIcon" class="lnr lnr-chevron-left"></i> <span class="title">Hide</span></a>
@@ -184,9 +129,9 @@
 <!--<script src="/assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>-->
 <script src="/assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 <script src="/assets/vendor/chartist/js/chartist.min.js"></script>
-<script src="/assets/scripts/klorofil-common.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase.js"></script>
 <script src="/js/main.js"></script>
+<script src="/assets/scripts/klorofil-common.js"></script>
 <script>
     var username = checkCookie('username');
     if (username !== null && username.trim() !== '') {
@@ -203,13 +148,8 @@
 
     function setUpNoti(payload) {
         // alert(payload.phoneNumber);
-        if (typeof(payload.phoneNumber) !== 'undefined') {
-            $('#noti-container').append(buildPhoneNotiBody(payload.phoneNumber));
-            $('#bell-noti').text(++notiNumber);
-        } else {
-            $('#noti-container').append(buildRequestNotiBody(payload.orderId, payload.status));
-            $('#bell-noti').text(++notiNumber);
-        }
+        $('#noti-container').append(buildNotiBody(payload.orderId));
+        $('#bell-noti').text(++notiNumber);
     }
 
     // Initialize Firebase
@@ -225,13 +165,12 @@
     const messaging = firebase.messaging();
     messaging.requestPermission().then(
         function () {
-            console.log("have permission");
-            messaging.getToken().then(function (token) {
-                if (token) {
+            console.log("have permission")
+            messaging.getToken().then(function(token) {
+                if(token) {
                     //update user token
                     console.log('Token acquired', token);
-                    $.get('token?username=' + username + '&token=' + token + '&isManager=false', function (data) {
-                    });
+                    $.get('token?username='+username+'&token='+token+'&isManager=true', function (data) {});
                 } else {
                     //you don't have permission to show notifications
                 }
@@ -249,19 +188,11 @@
         setUpNoti(payload.data);
     })
 
-    function buildPhoneNotiBody(phone) {
-        $('#noti-nothing').remove();
-        return "<li" + " id='" + "noti" + phone + "'" +
-            " onclick='notiClick(\"" + phone + "\")'><a href=\"#\" class=\"notification-item\"><span class=\"dot bg-danger\"></span>" +
-            "[VERIFY] User with phone number: " + phone +
-            "</a></li>";
-    }
-
-    function buildRequestNotiBody(orderId, status) {
+    function buildNotiBody(orderId) {
         $('#noti-nothing').remove();
         return "<li" + " id='" + "noti" + orderId + "'" +
             " onclick='notiClick(\"" + orderId + "\")'><a href=\"#\" class=\"notification-item\"><span class=\"dot bg-danger\"></span>" +
-            "[" + status + "] Order with Id: " + orderId +
+            "[REFUND] Order with Id: " + orderId +
             "</a></li>";
     }
 
@@ -396,7 +327,7 @@
         }
 
     });
-    switchContentFragment('/vehicle/index', null);
+    switchContentFragment('/refund/index', null);
 
 </script>
 

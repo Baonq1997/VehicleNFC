@@ -182,4 +182,32 @@ public class PushNotificationService {
         }
         return result + "K";
     }
+
+    public static void sendRefundNotification(String appToken, Integer orderId, boolean isRequest, String status) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set("Authorization", "key=" + FIREBASE_SERVER_KEY);
+            httpHeaders.set("Content-Type", "application/json;charset=UTF-8");
+            JSONObject msg = new JSONObject();
+            JSONObject json = new JSONObject();
+            String title = (isRequest) ? "Refund Request need approved" : "";
+            String body = (isRequest) ? "Refund Request need approved" : "";
+
+            msg.put("title", title);
+            msg.put("body", body);
+            msg.put("orderId", orderId);
+            msg.put("status", status);
+
+            json.put("data", msg);
+
+            json.put("to", appToken);
+
+            HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
+            String response = restTemplate.postForObject(FIREBASE_API_URL, httpEntity, String.class);
+            System.out.println(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

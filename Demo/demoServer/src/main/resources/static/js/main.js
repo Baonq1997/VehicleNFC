@@ -43,56 +43,7 @@ function shortenNavBar() {
     show = !show;
 }
 
-var notiNumber = 0;
 
-function setUpNoti(payload) {
-    // alert(payload.phoneNumber);
-    $('#noti-container').append(buildNotiBody(payload.phoneNumber));
-    $('#bell-noti').text(++notiNumber);
-}
-
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyDkGKXxs-SsX7cfOdX6XND2lb1LAQ3u8FI",
-    authDomain: "userapplication-f0a2a.firebaseapp.com",
-    databaseURL: "https://userapplication-f0a2a.firebaseio.com",
-    projectId: "userapplication-f0a2a",
-    storageBucket: "userapplication-f0a2a.appspot.com",
-    messagingSenderId: "200004929613"
-};
-firebase.initializeApp(config);
-const messaging = firebase.messaging();
-messaging.requestPermission().then(
-    function () {
-        console.log("have permission")
-        console.log(messaging.getToken());
-    }
-).catch(
-    function (reason) {
-        console.log(reason)
-    }
-)
-
-messaging.onMessage(function (payload) {
-    console.log('onMessage: ', payload);
-    setUpNoti(payload.data);
-})
-
-function buildNotiBody(phone) {
-    $('#noti-nothing').remove();
-    return "<li" + " id='" + "noti" + phone + "'" +
-        " onclick='notiClick(\"" + phone + "\")'><a href=\"#\" class=\"notification-item\"><span class=\"dot bg-danger\"></span>" +
-        "[VERIFY] User with phone number: " + phone +
-        "</a></li>";
-}
-
-function notiClick(phoneNumber) {
-    // this.parentNode.removeChild(this);
-    $("#noti" + phoneNumber).remove();
-    $('#bell-noti').text(--notiNumber);
-    switchContentFragment('/user/get-verify', $('#userHolder'));
-    $('#main-content').attr('phone', phoneNumber);
-}
 
 var lastClassName;
 
@@ -119,8 +70,3 @@ function openHideList(holder) {
     lastClassName = className;
 }
 
-function checkNotiBox() {
-    if ($('#noti-container').children().size() === 0) {
-        $('#noti-container').append("<p id='noti-nothing'>Nothing in the box</p>");
-    }
-}

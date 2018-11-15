@@ -2861,4 +2861,5 @@ ul.activity-timeline > li:last-child:after {
 
 .blank-row{
     height: 57.6px;
+    border-bottom-color: transparent !important;
 }

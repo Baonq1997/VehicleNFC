@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parking With NFC</title>
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/logo.png">
+</head>
+<body>
+<form action="/staff/login" method="post" id="login-form">
+    <input type="text" name="username" placeholder="username">
+    <input type="password" name="password" placeholder="******">
+    <button type="submit">Login</button>
+    <button type="reset">Reset</button>
+</form>
+</body>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $('#login-form').on('submit', function (e) {
+        $.ajax({
+            type: 'post',
+            url: '/staff/login',
+            data: $('#login-form').serialize(),
+            success: function (data) {
+                if (data != null) {
+                    var url = (data.manager) ? '/staff/manager' : '/staff/admin';
+                    document.cookie = "username=" + data.username + ";url=" + url;
+                    location.href = url;
+                }
+            }
+        });
+        e.preventDefault();
+    });
+    var username = checkCookie('username');
+    if (username !== null && username !== '') {
+        location.href = checkCookie('url')
+    }
+
+    function checkCookie(name) {
+        return getCookie(name);
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+</script>
+</html>
