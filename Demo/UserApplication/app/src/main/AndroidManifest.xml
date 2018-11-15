@@ -57,6 +57,9 @@
         <activity
             android:name=".AddVehicleSuccessActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".NotVerifiedVehicleActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name="service.CustomFBMService">
             <intent-filter>

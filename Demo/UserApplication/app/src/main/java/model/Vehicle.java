@@ -33,7 +33,7 @@ public class Vehicle {
     @Expose
     private VehicleType VehicleTypeId;
 
-    @SerializedName("isVerified")
+    @SerializedName("verified")
     @Expose
     private boolean isVerified;
 

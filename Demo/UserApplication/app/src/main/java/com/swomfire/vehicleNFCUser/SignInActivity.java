@@ -65,12 +65,15 @@ public class SignInActivity extends Activity {
                             if (result.isActivated()) {
                                 Intent intent = new Intent(context, NFCActivity.class);
                                 startActivity(intent);
-                            } else {
+                            } else if (result.getVehicle().isVerified()) {
                                 Intent intent = new Intent(context, VerifyActivity.class);
                                 intent.putExtra("phoneNumber", phone);
                                 intent.putExtra("type", "create-account");
                                 intent.putExtra("userId", result.getId());
                                 intent.putExtra("userName", result.getLastName() + " " + result.getFirstName());
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(context, NotVerifiedVehicleActivity.class);
                                 startActivity(intent);
                             }
                         } else {

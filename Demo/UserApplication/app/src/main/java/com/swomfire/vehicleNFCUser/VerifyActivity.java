@@ -19,6 +19,7 @@ import remote.RmaAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import service.DBHelper;
 
 public class VerifyActivity extends Activity {
 
@@ -104,6 +105,39 @@ public class VerifyActivity extends Activity {
                             Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
                             intent.putExtra("phone", phone);
                             startActivity(intent);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Mã xác nhận không đúng! Vui lòng nhập lại.", Toast.LENGTH_LONG).show();
+                            edtConfirm.setText("");
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                    Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            });
+        } else if (type.matches("unbindVehicle")) {
+            String userID = (String) getIntent().getExtras().get("userID");
+            mService.comfirmUnbindVehicle(userID, code).enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful()) {
+                        Boolean result = response.body();
+                        if (result) {
+                            DBHelper db = new DBHelper(getApplicationContext());
+                            //TODO clear all records
+                            db.deleteAllContact();
+                            //Clear old id
+                            SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
+                            a.clear().commit();
+                            //clear sqlite db
+                            getApplicationContext().deleteDatabase("ParkingWithNFC.db");
+
+                            Intent intent = new Intent(getApplicationContext(), WelcomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Mã xác nhận không đúng! Vui lòng nhập lại.", Toast.LENGTH_LONG).show();
                             edtConfirm.setText("");

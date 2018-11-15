@@ -93,8 +93,12 @@ public interface RmaAPIService {
     @FormUrlEncoded
     Call<Vehicle> changeVehicle(@Field("phoneNumber") String phone, @Field("vehicleNumber") String number, @Field("licenseId") String plate);
 
-    @POST("/user/unbind-vehicle")
+    @POST("/user/request-unbind-vehicle")
     @FormUrlEncoded
     Call<Boolean> unbindVehicle(@Field("userId") String userid);
+
+    @POST("/user/confirm-unbind-vehicle")
+    @FormUrlEncoded
+    Call<Boolean> comfirmUnbindVehicle(@Field("userId") String userid, @Field("confirmCode") String confirmCode);
 
 }

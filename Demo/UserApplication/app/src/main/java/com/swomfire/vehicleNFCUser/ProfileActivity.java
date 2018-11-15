@@ -158,18 +158,11 @@ public class ProfileActivity extends Activity {
                             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                                 if (response.isSuccessful()) {
                                     if (response.body()) {
-                                        DBHelper db = new DBHelper(context);
-                                        //TODO clear all records
-                                        db.deleteAllContact();
-                                        //Clear old id
-                                        SharedPreferences.Editor a = getSharedPreferences("localData", MODE_PRIVATE).edit();
-                                        a.clear().commit();
-                                        //clear sqlite db
-                                        context.deleteDatabase("ParkingWithNFC.db");
 
-                                        Intent intent = new Intent(getApplicationContext(), SignInActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        Intent intent = new Intent(getApplicationContext(), VerifyActivity.class);
+                                        intent.putExtra("type", "unbindVehicle");
+                                        intent.putExtra("userID", userid);
                                         startActivity(intent);
-                                        finish();
                                     }
                                 }
                             }
