@@ -48,7 +48,7 @@
     if (username !== null && username.trim() !== '') {
         // $('#staff-username').html(username);
     } else {
-        location.href = 'login';
+        location.href = '/staff/login';
     }
 </script>
 <body class="main-body">
@@ -250,7 +250,7 @@
 
     function buildPhoneNotiBody(phone) {
         $('#noti-nothing').remove();
-        return "<li" + " id='" + "noti" + phone + "'" +
+        return "<li" + " id='" + "notiP" + phone + "'" +
             " onclick='notiClick(\"" + phone + "\")'><a href=\"#\" class=\"notification-item\"><span class=\"dot bg-danger\"></span>" +
             "[VERIFY] User with phone number: " + phone +
             "</a></li>";
@@ -258,15 +258,20 @@
 
     function buildRequestNotiBody(orderId, status) {
         $('#noti-nothing').remove();
-        return "<li" + " id='" + "noti" + orderId + "'" +
-            " onclick='notiClick(\"" + orderId + "\")'><a href=\"#\" class=\"notification-item\"><span class=\"dot bg-danger\"></span>" +
+        return "<li" + " id='" + "notiR" + orderId + "'" +
+            " onclick='requestClick(\"" + orderId + "\")'><a href=\"#\" class=\"notification-item\"><span class=\"dot bg-danger\"></span>" +
             "[" + status + "] Order with Id: " + orderId +
             "</a></li>";
     }
 
+    function requestClick(requestId){
+        $("#notiR" + requestId).remove();
+        $('#bell-noti').text(--notiNumber);
+    }
+
     function notiClick(phoneNumber) {
         // this.parentNode.removeChild(this);
-        $("#noti" + phoneNumber).remove();
+        $("#notiP" + phoneNumber).remove();
         $('#bell-noti').text(--notiNumber);
         switchContentFragment('/user/get-verify', $('#userHolder'));
         $('#main-content').attr('phone', phoneNumber);

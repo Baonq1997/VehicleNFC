@@ -59,11 +59,11 @@ public class RefundRequestController {
 
     @PostMapping("/request")
     public ResponseEntity<Boolean> searchVehicle(@Param("orderId") Integer orderId
-            , @Param("amount") String amount
+            , @Param("amount") String amount, @Param("description") String description
             , @Param("username") String username) {
         Map<String, String> managerList = (Map<String, String>) servletContext.getAttribute("managerTokenList");
         try {
-            if (refundRequestService.requestRefundOrder(orderId, username, Double.parseDouble(amount))) {
+            if (refundRequestService.requestRefundOrder(orderId, username, Double.parseDouble(amount),description)) {
                 if (managerList != null) {
                     for (Map.Entry<String, String> token : managerList.entrySet()) {
                         PushNotificationService.sendRefundNotification(token.getValue(), orderId, true, null);

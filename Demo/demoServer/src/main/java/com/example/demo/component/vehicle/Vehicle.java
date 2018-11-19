@@ -33,6 +33,9 @@ public class Vehicle {
     @Column(name = "is_verified")
     private boolean isVerified = false;
 
+    @Column(name = "tbl_user_id")
+    private Integer ownerId;
+
     @NotNull
     @Column(name = "is_active")
     private boolean isActive = true;
@@ -117,5 +120,13 @@ public class Vehicle {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public Integer getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Integer ownerId) {
+        this.ownerId = ownerId;
     }
 }

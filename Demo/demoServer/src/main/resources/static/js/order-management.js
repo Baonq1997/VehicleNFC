@@ -50,6 +50,7 @@ function loadData(res) {
     var content = "";
     content = res.data;
     $('#order-table').show();
+    $('#guide-msg').hide();
     if (content.length != 0) {
         var row = "";
         for (var i = 0; i < content.length; i++) {
@@ -60,14 +61,15 @@ function loadData(res) {
             row += '<td>' + content[i].location.location + '</td>';
             if (content[i].orderStatusId.name === "Close") {
                 row += '<td style=" color: #ff0000;">' + content[i].orderStatusId.name + '</td>';
-            } else {
+            } else if (content[i].orderStatusId.name === "Open") {
                 row += '<td style="color: #339933;">' + content[i].orderStatusId.name + '</td>';
+            } else {
+                row += '<td style="color: #323599;">' + content[i].orderStatusId.name + '</td>';
             }
 
             // row += '<td>' + content[i].userId.firstName+' '+ content[i].userId.lastName + '</td>';
             // row += '<td>' + content[i].userId.phoneNumber + '</td>';
             row += '<td>' + content[i].userId.vehicle.vehicleNumber + '</td>';
-            row += '<td>' + content[i].userId.vehicle.licensePlateId + '</td>';
             var duration = "";
             if (content[i].duration === null) {
                 duration = 0;
@@ -81,14 +83,20 @@ function loadData(res) {
             } else {
                 total = content[i].total;
             }
-            row += '<td>' + total + '</td>';
-            row += '<td><a href="#" onclick="viewPricingDetail(' + content[i].id + ')" class="btn btn-primary viewBtn">View Detail</a></td>'
+            row += '<td>' + convertMoney(total) + '</td>';
+            row += '<td class="text-center"><a href="#" onclick="viewPricingDetail(' + content[i].id + ')" class="btn btn-primary btnAction"><i class="fas fa-info"></i></a></td>'
             row += '</tr>';
             $('#order-table tbody').append(row);
         }
-
-        for (var i = 0; i < res.pageSize - content.length; i++) {
+    }
+    for (var i = 0; i < res.pageSize - content.length; i++) {
+        if (i === 2) {
+            $('#order-table tbody').append('<tr class="blank-row"><td colspan="9" id="no-data-row"><span>No Result found</span></td></tr>');
+        } else {
             $('#order-table tbody').append('<tr class="blank-row"></tr>');
+        }
+        if (i === res.pageSize - 1) {
+            $('#no-data-row').show();
         }
     }
 
@@ -208,6 +216,11 @@ function viewPricingDetail(orderId) {
             $('#order-detail #allowedParkingTo').text(convertTime(order.allowedParkingTo));
             $('#order-detail #checkInDate').text(convertDate(order.checkInDate));
             $('#order-detail #checkOutDate').text(convertDate(order.checkOutDate));
+            if (order.orderStatusId.name === "Close") {
+                $('#order-detail #btn-deposit').show();
+            } else {
+                $('#order-detail #btn-deposit').hide();
+            }
             let row = "";
             emptyPricingTable();
             console.log("Pricing SIze: " + res.length);
@@ -258,7 +271,7 @@ function viewPricingDetail(orderId) {
             } else {
                 total = order.total;
             }
-            var rowTotal = '<tr><td></td><td><label>Total: </label></td><td><label>' + total + ' .000VNĐ</label></td></tr>';
+            var rowTotal = '<tr><td></td><td><label>Total: </label></td><td><label>' + convertMoney(total) + '</label></td></tr>';
             $('#order-detail #orderPricings tbody').append(rowTotal);
             // $('.myForm #vehicleTypeId').text(order.userId.vehicleTypeId.name);
             $('#deposit-modal #order-id').val(orderId);
@@ -274,7 +287,6 @@ function viewPricingDetail(orderId) {
             console.log("Could not load data");
         }
     });
-    // $('.myForm #OrderDetailModal').modal();
 }
 
 jQuery.extend({
@@ -303,16 +315,17 @@ function depositModal() {
             data: {
                 orderId: $('#deposit-modal #order-id').val(),
                 amount: $('#deposit-modal #refund-money').val(),
+                description: $('#deposit-modal #refund-description').val(),
                 username: $('#main-content', window.parent.document).attr('username')
             },
             success: function (data) {
                 if (data) {
                     alert("Request refund success");
+                    location.reload(true);
                 } else {
                     alert("Request refund fail");
                 }
                 $('#deposit-modal').modal('hide');
-                // location.reload(true);
             }, error: function (data) {
                 console.log(data);
             }
@@ -365,8 +378,7 @@ function convertDate(dateTypeLong) {
     }
     var dateStr = new Date(dateTypeLong),
         dformat = [dateStr.getDate(),
-                dateStr.getMonth() + 1,
-                dateStr.getFullYear()].join('-') + ' ' +
+                dateStr.getMonth() + 1].join('/') + ' ' +
             [dateStr.getHours(),
                 dateStr.getMinutes(),
                 dateStr.getSeconds()].join(':');

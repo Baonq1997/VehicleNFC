@@ -1,6 +1,7 @@
 package com.example.demo.component.order;
 
 import com.example.demo.component.user.User;
+import com.example.demo.component.vehicle.Vehicle;
 import com.example.demo.component.vehicleType.VehicleType;
 import com.example.demo.component.location.Location;
 import com.example.demo.model.HourHasPrice;
@@ -40,11 +41,11 @@ public class Order implements Serializable {
     @JoinColumn(name = "tbl_user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
-    @Column(name = "tbl_location_id")
+    @Column(name = "tbl_location_id", updatable = false)
     private Integer locationId;
-    @JoinColumn(name = "tbl_vehicle_type_id", referencedColumnName = "id")
+    @JoinColumn(name = "tbl_vehicle_vehicle_number", referencedColumnName = "vehicle_number")
     @ManyToOne(optional = false)
-    private VehicleType vehicleTypeId;
+    private Vehicle vehicle;
     //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tblOrderId")
     @OneToMany(mappedBy = "orderId")
     private List<OrderPricing> orderPricingList;
@@ -153,12 +154,12 @@ public class Order implements Serializable {
         this.location = location;
     }
 
-    public VehicleType getVehicleTypeId() {
-        return vehicleTypeId;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicleTypeId(VehicleType vehicleTypeId) {
-        this.vehicleTypeId = vehicleTypeId;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
     public List<OrderPricing> getOrderPricingList() {

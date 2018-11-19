@@ -94,13 +94,13 @@ public class OrderController {
         }
     }
 
-    @PostMapping(value = "/refund")
-    public ResponseEntity refundOrder(@RequestBody RefundObject refundObject) {
-        Order order = refundObject.getOrder();
-        User user = refundObject.getUser();
-        Double refundMoney = (Double) refundObject.getRefundMoney();
-        orderService.refundOrder(order, user, refundMoney);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+//    @PostMapping(value = "/refund")
+//    public ResponseEntity refundOrder(@RequestBody RefundObject refundObject) {
+//        Order order = refundObject.getOrder();
+//        User user = refundObject.getUser();
+//        Double refundMoney = (Double) refundObject.getRefundMoney();
+//        orderService.refundOrder(order, user, refundMoney);
+//        return ResponseEntity.status(HttpStatus.OK).build();
+//    }
 
 }

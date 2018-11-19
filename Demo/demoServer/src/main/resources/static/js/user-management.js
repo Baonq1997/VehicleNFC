@@ -38,10 +38,17 @@ function loadData(res) {
         // row += '<td>' + content[i].password + '</td>';
         row += '<td>' + content[i].firstName + ' ' + content[i].lastName + '</td>';
         row += '<td class="text-right">' + (content[i].money * 1000).toLocaleString() + " vnđ" + '</td>';
-        row += '<td class="text-right">' + content[i].vehicle.vehicleNumber + '</td>';
-        var vehicleType = (content[i].vehicle.vehicleTypeId != null)
-            ? content[i].vehicle.vehicleTypeId.name : "N/A";
-        row += '<td class="text-center">' + vehicleType + '</td>';
+        if (content[i].vehicle == null) {
+            row += '<td class="text-center">N/A</td>';
+            row += '<td class="text-center">N/A</td>';
+        } else {
+            var vehicleNumber = (content[i].vehicle.vehicleNumber != null)
+                ? content[i].vehicle.vehicleNumber : "N/A";
+            row += '<td class="text-center">' + vehicleNumber + '</td>';
+            var vehicleType = (content[i].vehicle.vehicleTypeId != null)
+                ? content[i].vehicle.vehicleTypeId.name : "N/A";
+            row += '<td class="text-center">' + vehicleType + '</td>';
+        }
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
         var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].decodedId + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
         var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].decodedId + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";

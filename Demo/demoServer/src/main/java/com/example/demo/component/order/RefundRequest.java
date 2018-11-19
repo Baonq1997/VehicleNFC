@@ -22,6 +22,9 @@ public class RefundRequest implements Serializable {
     @Column(name = "amount")
     private Double amount;
 
+    @Column(name = "description")
+    private String description;
+
     @JoinColumn(name = "tbl_staft_username", referencedColumnName = "username")
     @ManyToOne(optional = false)
     private Staff staff;
@@ -117,5 +120,13 @@ public class RefundRequest implements Serializable {
 
     public void setCloseDate(Long closeDate) {
         this.closeDate = closeDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

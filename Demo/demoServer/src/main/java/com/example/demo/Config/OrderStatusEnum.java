@@ -1,7 +1,7 @@
 package com.example.demo.config;
 
 public enum OrderStatusEnum {
-    Open(1,"Open"), Close(2,"close"), Refund(3,"refund");
+    Open(1, "Open"), Close(2, "close"), Refunded(3, "Refunded"), RefundRequested(3, "Refund requested");
 
     private int id;
     private String name;

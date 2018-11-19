@@ -4,11 +4,13 @@ import com.example.demo.component.staff.Staff;
 import com.example.demo.component.staff.StaffRepository;
 import com.example.demo.component.user.User;
 import com.example.demo.component.user.UserRepository;
+import com.example.demo.config.OrderStatusEnum;
 import com.example.demo.config.RefundStatusEnum;
 import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -25,13 +27,15 @@ public class RefundRequestService {
 
     private final RefundRequestRepository refundRequestRepository;
     private final RefundStatusRepository refundStatusRepository;
+    private final OrderStatusRepository orderStatusRepository;
     private final StaffRepository staffRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
-    public RefundRequestService(RefundRequestRepository refundRequestRepository, RefundStatusRepository refundStatusRepository, StaffRepository staffRepository, OrderRepository orderRepository, UserRepository userRepository) {
+    public RefundRequestService(RefundRequestRepository refundRequestRepository, RefundStatusRepository refundStatusRepository, OrderStatusRepository orderStatusRepository, StaffRepository staffRepository, OrderRepository orderRepository, UserRepository userRepository) {
         this.refundRequestRepository = refundRequestRepository;
         this.refundStatusRepository = refundStatusRepository;
+        this.orderStatusRepository = orderStatusRepository;
         this.staffRepository = staffRepository;
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
@@ -80,9 +84,10 @@ public class RefundRequestService {
                         Predicate staffPredicate = builder.like(join.get("username"), "%" + param.getValue() + "%");
                         predicate = builder.and(predicate, staffPredicate);
                     }
-
-                } else {
-
+                } else if (r.get(param.getKey()).getJavaType() == RefundStatus.class) {
+                    Join<RefundRequest, Staff> join = r.join("refundStatus");
+                    Predicate staffPredicate = builder.like(join.get("name"), "%" + param.getValue() + "%");
+                    predicate = builder.and(predicate, staffPredicate);
                 }
             } else {
                 predicate = builder.and(predicate,
@@ -109,17 +114,24 @@ public class RefundRequestService {
         return responseObject;
     }
 
-    public boolean requestRefundOrder(Integer orderId, String username, double amount) {
+    @Transactional
+    public boolean requestRefundOrder(Integer orderId, String username, double amount, String description) {
         Optional<Staff> staff = staffRepository.findByUsername(username);
         if (staff.isPresent()) {
-            RefundRequest refundRequest = new RefundRequest();
-            refundRequest.setStaff(staff.get());
-            refundRequest.setAmount(amount);
-            refundRequest.setCreateDate(new Date().getTime());
-            refundRequest.setOrderId(orderId);
-            refundRequest.setRefundStatus(refundStatusRepository.findByName(RefundStatusEnum.Open.getName()).get());
-            refundRequestRepository.save(refundRequest);
-            return true;
+            Optional<Order> order = orderRepository.findById(orderId);
+            if (order.isPresent()) {
+                order.get().setOrderStatusId(orderStatusRepository.findByName(OrderStatusEnum.RefundRequested.getName()).get());
+                orderRepository.save(order.get());
+                RefundRequest refundRequest = new RefundRequest();
+                refundRequest.setStaff(staff.get());
+                refundRequest.setAmount(amount);
+                refundRequest.setCreateDate(new Date().getTime());
+                refundRequest.setOrderId(orderId);
+                refundRequest.setDescription(description);
+                refundRequest.setRefundStatus(refundStatusRepository.findByName(RefundStatusEnum.Open.getName()).get());
+                refundRequestRepository.save(refundRequest);
+                return true;
+            }
         }
         return false;
     }
@@ -129,19 +141,26 @@ public class RefundRequestService {
         if (manager.isPresent()) {
             Optional<RefundRequest> refundRequest = refundRequestRepository.findById(requestId);
             if (refundRequest.isPresent()) {
-                if (isApprove) {
-                    Optional<Order> order = orderRepository.findById(refundRequest.get().getOrderId());
-                    if (order.isPresent()) {
-                        User user = order.get().getUserId();
-                        user.setMoney(user.getMoney() + refundRequest.get().getAmount());
-                        userRepository.save(user);
+                Optional<Order> order = orderRepository.findById(refundRequest.get().getOrderId());
+                if (order.isPresent()) {
+                    if (isApprove) {
+                        if (order.isPresent()) {
+                            order.get().setOrderStatusId(orderStatusRepository.findByName(OrderStatusEnum.Refunded.getName()).get());
+                            orderRepository.save(order.get());
+                            User user = order.get().getUserId();
+                            user.setMoney(user.getMoney() + refundRequest.get().getAmount());
+                            userRepository.save(user);
+                        }
+                    }else {
+                        order.get().setOrderStatusId(orderStatusRepository.findByName(OrderStatusEnum.Close.getName()).get());
+                        orderRepository.save(order.get());
                     }
+                    refundRequest.get().setManager(manager.get());
+                    refundRequest.get().setCloseDate(new Date().getTime());
+                    refundRequest.get().setRefundStatus(refundStatusRepository.findByName(RefundStatusEnum.approveEnum(isApprove).getName()).get());
+                    refundRequestRepository.save(refundRequest.get());
+                    return refundRequest;
                 }
-                refundRequest.get().setManager(manager.get());
-                refundRequest.get().setCloseDate(new Date().getTime());
-                refundRequest.get().setRefundStatus(refundStatusRepository.findByName(RefundStatusEnum.approveEnum(isApprove).getName()).get());
-                refundRequestRepository.save(refundRequest.get());
-                return refundRequest;
             }
         }
         return null;

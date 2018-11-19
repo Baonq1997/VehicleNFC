@@ -24,7 +24,7 @@ public class Policy implements Serializable {
     private long allowedParkingTo;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "tbl_location_id", nullable = false)
+    @Column(name = "tbl_location_id", updatable = false)
     private Integer locationId;
 
     @JoinColumn(name = "tbl_policy_id", updatable = false)

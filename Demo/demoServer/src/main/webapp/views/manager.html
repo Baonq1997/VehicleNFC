@@ -102,7 +102,7 @@
                         </div>
                     </li>
                     <li>
-                    <li><a onclick="switchContentFragment('/refund/index',$(this))"
+                    <li><a onclick="switchContentFragment('/refund/index',$(this))" id="btnRequest"
                            class="pointer menu active"><i class="far fa-check-square"></i><span
                             class="title">Refund request</span></a></li>
                     <li id="shortenNavBar" onclick="shortenNavBar()" class="pointer">
@@ -200,8 +200,8 @@
         // this.parentNode.removeChild(this);
         $("#noti" + phoneNumber).remove();
         $('#bell-noti').text(--notiNumber);
-        switchContentFragment('/user/get-verify', $('#userHolder'));
-        $('#main-content').attr('phone', phoneNumber);
+        switchContentFragment('/refund/index', $('#btnRequest'));
+        $('#main-content').attr('requestId', phoneNumber);
     }
 
     function checkNotiBox() {

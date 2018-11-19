@@ -33,7 +33,10 @@
     });
     var username = checkCookie('username');
     if (username !== null && username !== '') {
-        location.href = checkCookie('url')
+        var url = checkCookie('url');
+        if (url !== null && url !== '') {
+            location.href = url
+        }
     }
 
     function checkCookie(name) {

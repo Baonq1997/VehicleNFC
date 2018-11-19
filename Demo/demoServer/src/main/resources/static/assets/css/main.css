@@ -2747,7 +2747,7 @@ ul.activity-timeline > li:last-child:after {
     margin-right: 17px !important;
 }
 
-.btnAction .far,.btnAction .fas {
+.btnAction .far, .btnAction .fas {
     margin-right: 0 !important;
 }
 
@@ -2839,22 +2839,36 @@ ul.activity-timeline > li:last-child:after {
     pointer-events: none;
 }
 
-.disabled-href a{
+.disabled-href a {
     background: #bbbbbb;
     border: 2px solid #bbbbbb;
     color: #555555;
 }
 
-.etc{
+.etc {
     padding: 10px;
     font-size: 21px;
 }
 
-.col-form-label{
+.col-form-label {
     font-size: 18px;
 }
 
-.blank-row{
+.blank-row {
     height: 57.6px;
     border-bottom-color: transparent !important;
+}
+
+body {
+    font-size: 18px;
+}
+
+#no-data-row {
+    display: none;
+    text-align: center;
+    border: 0;
+}
+
+#no-data-row:hover {
+    background: white;
 }

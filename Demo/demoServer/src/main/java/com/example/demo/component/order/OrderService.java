@@ -151,7 +151,7 @@ public class OrderService {
 
 //        Vehicle vehicle = vehicleRepository.findByVehicleNumber(checkInUser.getVehicleNumber()).get();
         Vehicle vehicle = checkInUser.getVehicle();
-        order.setVehicleTypeId(vehicle.getVehicleTypeId());
+        order.setVehicle(vehicle);
 
         order.setUserId(checkInUser);
         order.setLocationId(locationRepository.findById(location.getId()).get().getId());
@@ -351,7 +351,7 @@ public class OrderService {
         query.orderBy(builder.desc(r.get("checkInDate")), builder.desc(r.get("checkOutDate")));
         TypedQuery<Order> typedQuery = entityManager.createQuery(query);
         List<Order> orders = typedQuery.getResultList();
-        int totalPages = orders.size() / pageSize;
+        int totalPages = (int) Math.ceil((double) orders.size() / pageSize);
         typedQuery.setFirstResult(pagNumber * pageSize);
         typedQuery.setMaxResults(pageSize);
         List<Order> orderList = typedQuery.getResultList();
@@ -364,42 +364,49 @@ public class OrderService {
 //            result.add(order);
         }
         responseObject.setData(orderList);
-        responseObject.setTotalPages(totalPages + 1);
+        responseObject.setPageSize(pageSize);
+        responseObject.setTotalPages(totalPages);
         responseObject.setPageNumber(pagNumber);
         return responseObject;
     }
 
     public List<Order> findOrdersByUserId(Integer userId) {
-        List<Order> orders = orderRepository.findByUserIdOrderByCheckInDateDesc(userRepository.findById(userId).get());
-
-        for (Order order : orders) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            if (user.get().getActivated() && user.get().getVehicle() != null) {
+                List<Order> orders = orderRepository.findByUserIdAndVehicleOrderByCheckInDateDesc(user.get(), user.get().getVehicle());
+                for (Order order : orders) {
 //            order.getUserId().setVehicle(
 //                    vehicleRepository.findByVehicleNumber(order.getUserId().getVehicle()).get()
 //            );
-            order.setLocation(locationRepository.findById(order.getLocationId()).get());
-            order.setOrderPricingList(orderPricingRepository.findByOrderId(order.getId()));
+                    order.setLocation(locationRepository.findById(order.getLocationId()).get());
+                    order.setOrderPricingList(orderPricingRepository.findByOrderId(order.getId()));
+                }
+                return orders;
+            }
         }
-        return orders;
+        return null;
+
     }
 
-    @Transactional
-    public void refundOrder(Order order, User user, Double refundMoney) {
-        double lastRefund = 0;
-        OrderStatus orderStatus = orderStatusRepository.findByName(OrderStatusEnum.Refund.getName()).get();
-        Order orderDB = orderRepository.findById(order.getId()).get();
-        orderDB.setOrderStatusId(orderStatus);
-        //Todo
-//        if (orderDB.getRefund() != null) {
-//            lastRefund = orderDB.getRefund();s
-//        }
-//        orderDB.setRefund(refundMoney);
-        orderRepository.save(orderDB);
-
-        User userDB = userRepository.findById(user.getId()).get();
-        double currentMoney = userDB.getMoney();
-        userDB.setMoney(currentMoney + refundMoney - lastRefund);
-        userRepository.save(userDB);
-    }
+//    @Transactional
+//    public void refundOrder(Order order, User user, Double refundMoney) {
+//        double lastRefund = 0;
+//        OrderStatus orderStatus = orderStatusRepository.findByName(OrderStatusEnum.Refund.getName()).get();
+//        Order orderDB = orderRepository.findById(order.getId()).get();
+//        orderDB.setOrderStatusId(orderStatus);
+//        //Todo
+////        if (orderDB.getRefund() != null) {
+////            lastRefund = orderDB.getRefund();s
+////        }
+////        orderDB.setRefund(refundMoney);
+//        orderRepository.save(orderDB);
+//
+//        User userDB = userRepository.findById(user.getId()).get();
+//        double currentMoney = userDB.getMoney();
+//        userDB.setMoney(currentMoney + refundMoney - lastRefund);
+//        userRepository.save(userDB);
+//    }
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();

@@ -119,7 +119,7 @@ public class PushNotificationService {
 
                 body += "Quý khách đậu xe tại: " + order.getLocation().getLocation() + "\n";
                 body += "Vào lúc: " + date + "\n";
-                body += "Bảng giá cho loại xe: " + order.getVehicleTypeId().getName() + "\n";
+                body += "Bảng giá cho loại xe: " + order.getVehicle().getVehicleTypeId().getName() + "\n";
                 for (OrderPricing orderPricing : order.getOrderPricingList()) {
                     body += (orderPricing.getFromHour() == 0) ? "Từ Giờ đầu: " + convertMoneyNoVND(orderPricing.getPricePerHour()) + " VNĐ/h\n"
                             : "Từ giờ thứ " + orderPricing.getFromHour() + ": " + convertMoneyNoVND(orderPricing.getPricePerHour()) + " VNĐ/h\n";

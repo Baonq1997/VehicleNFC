@@ -25,17 +25,18 @@
     <!-- ICONS -->
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
 </head>
 <body>
 <div class="panel" id="order-list">
     <div class="panel-body">
         <div class="row">
                  <span class="content-name">
-                Order management
+                     Look up Order
             </span>
             <form action="" class="search-box" method="post">
                 <input data-date-format="dd/mm/yyyy" autocomplete="off" required="required" class="form-control"
-                       id="datepicker" placeholder="Choose date" style="width: 30%;">
+                       id="datepicker" placeholder="dd/mm/yyyy" style="width: 20%;">
                 <select id="search-filter" class="form-control" style="border-radius: 0">
                     <option value="vehicleNumber" selected="selected">Search By Vehicle Number</option>
                     <option value="locationId">Search By Location</option>
@@ -50,18 +51,19 @@
                 <input type="hidden" id="search-value">
             </form>
         </div>
-        <div class="content-list-table">
+        <div class="content-list-table" style="min-height: 430px  ">
             <div class="row">
+                <h3 id="guide-msg" style="width: 100%;text-align: center; margin-top: 13%;">Choose date and vehicle
+                    number to search for order</h3>
                 <table class="table table-hover" id="order-table" style="display: none;">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>No.</th>
                         <th>CheckIn Date</th>
                         <th>CheckOut Date</th>
                         <th>Location</th>
                         <th>Status</th>
                         <th>Vehicle Number</th>
-                        <th>License Plate</th>
                         <th>Duration</th>
                         <th>Total</th>
                         <th>Action</th>
@@ -82,11 +84,18 @@
     <div class="panel-body">
         <div class="row">
             <span class="content-name">
-               Order detail. Location: <span id="location"></span>
+               Order detail
             </span>
         </div>
         <div class="row">
             <div class="col-lg-6">
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-lg-12">
+                        <label class="col-form-label">Location:</label>
+                        <span id="location"></span>
+                    </div>
+                </div>
+                <br/>
                 <input type="hidden" id="order-id">
                 <div class="row">
                     <div class="col-lg-6">
@@ -98,6 +107,7 @@
                         <span id="licenseId"></span>
                     </div>
                 </div>
+                <br/>
                 <div class="row">
                     <div class="col-lg-6">
                         <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
@@ -108,6 +118,7 @@
                         <span id="allowedParkingTo"></span>
                     </div>
                 </div>
+                <br/>
                 <div class="row">
                     <div class="col-lg-6">
                         <label for="checkInDate" class="col-form-label">Parking from:</label>
@@ -118,6 +129,7 @@
                         <span id="checkOutDate"></span>
                     </div>
                 </div>
+                <br/>
                 <div class="row">
                     <div class="col-lg-12">
                         <label for="duration" class="col-form-label">Duration:</label>
@@ -125,16 +137,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" style="margin-top: -35px">
                 <div>
-                    <label for="orderPricings" class="col-form-label">Pricings:</label>
+                    <span class="content-name">
+                     Pricings:
+                    </span>
                     <table id="orderPricings" class="table table-hover">
                         <thead>
                         <tr>
                             <th>From Hour:</th>
                             <th>Price Per Hour</th>
                             <th>Amount</th>
-                            <!--<th>Late Fee Per Hour</th>-->
                         </tr>
                         </thead>
                         <tbody>
@@ -144,11 +157,12 @@
                 </div>
             </div>
         </div>
+        <br/>
         <div class="row">
             <div class="btn-wrapper">
-                <button type="button" class="btn btn-success" id="btn-deposit">Refund
+                <button type="button" class="btn btn-primary" id="btn-deposit" style="margin-left: 18px;">Refund
                 </button>
-                <button type="button" class="btn btn-success" onclick="closeForm()">Close
+                <button type="button" class="btn btn-default" onclick="closeForm()" style="margin-left: 18px;">Close
                 </button>
             </div>
         </div>
@@ -166,16 +180,24 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="duration" class="col-form-label">Amount:</label>
-                    <input type="number" class="form-control" id="refund-money">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="duration" class="col-form-label">Description:</label>
+                        <textarea id="refund-description"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="duration" class="col-form-label">Amount:</label>
+                        <input type="number" class="form-control" id="refund-money">
+                    </div>
                 </div>
                 <input type="hidden" id="order-id">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
                 </button>
-                <button type="button" class="btn btn-success" id="btn-submit-deposit">Refund
+                <button type="button" class="btn btn-primary" id="btn-submit-deposit">Refund
                 </button>
             </div>
         </div>

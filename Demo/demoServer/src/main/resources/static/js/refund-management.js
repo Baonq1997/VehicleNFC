@@ -1,5 +1,11 @@
 $(document).ready(function (e) {
-    searchVehicle(0);
+    var phone = $('#main-content', window.parent.document).attr('phone');
+    if (typeof(phone) === 'undefined') {
+        searchVehicle(0);
+    } else {
+        $('#searchValue').val(phone);
+        searchVehicle(0);
+    }
     $('#searchBtn').on('click', function (e) {
         e.preventDefault();
         searchVehicle(0);
@@ -35,33 +41,27 @@ function loadData(res) {
     var row = "";
     for (i = 0; i < content.length; i++) {
         row = '<tr>';
-        var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "N/A";
-        var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "N/A";
         row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
-        row += cellBuilder(content[i].amount, "text-right");
         row += cellBuilder(content[i].staff.username, "text-right");
-        if (content[i].manager != null) {
-            row += cellBuilder(content[i].manager.username, "text-right");
-        } else {
-            row += cellBuilder('N/A', "text-right");
-        }
+        row += cellBuilder(content[i].description, "text-right");
+        row += cellBuilder(convertMoney(content[i].amount), "text-right");
         row += cellBuilder(convertDate(content[i].createDate), "text-right");
-        // row += cellBuilder(content[i].size, "text-right");
-        // row += cellBuilder(convertDate(content[i].expireDate), "text-right");
-        // row += cellBuilder(ownerPhone, "text-right");
-        // var edit = "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "','main-content-save-form'," + setUpSaveFormData + ",'save-vehicle-list')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
-        // var disable = (content[i].owner != null) ? "disabled" : "onclick=\"openDeleteModal('" + content[i].vehicleNumber + "')\" ";
-        // var deleteStr = "<a " + disable +
-        //     " href=\"#\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
-        // row += cellBuilder(deleteStr + edit);
-        row += '<td><a href="#" onclick="approveRequest(' + content[i].id + ',true)" class="btn btn-primary btnAction">Y</a></td>';
-        row += '<td><a href="#" onclick="approveRequest(' + content[i].id + ',false)" class="btn btn-primary btnAction">N</a></td>';
+        row += '<td><a href="#" onclick="approveRequest(' + content[i].id + ',true)" class="btn btn-primary btnAction">Y</a>';
+        row += '<a href="#" onclick="approveRequest(' + content[i].id + ',false)" class="btn btn-primary btnAction">N</a>';
+        row += '<a href="#" onclick="viewPricingDetail(' + content[i].orderId + ')" class="btn btn-primary btnAction"><i class="fas fa-info"></i></a></td>'
         row += '</tr>';
         $('#user-table tbody').append(row);
     }
 
     for (var i = 0; i < res.pageSize - content.length; i++) {
-        $('#user-table tbody').append('<tr class="blank-row"></tr>');
+        if (i === 2) {
+            $('#user-table tbody').append('<tr class="blank-row"><td colspan="9" id="no-data-row"><span>Currently no refund request available</span></td></tr>');
+        } else {
+            $('#user-table tbody').append('<tr class="blank-row"></tr>');
+        }
+        if (i === res.pageSize - 1) {
+            $('#no-data-row').show();
+        }
     }
 
     var pageNumber = res.pageNumber;
@@ -105,9 +105,102 @@ function approveRequest(id, isApprove) {
             isApprove: isApprove
         },
         success: function (response) {
-            location.reload();
+            var msg = (isApprove)?"Request approved":"Request rejected";
+            alert(msg);
+            location.reload(true);
         }, error: function (res) {
             console.log(res);
+        }
+    });
+}
+
+
+function viewPricingDetail(orderId) {
+    $('#order-detail').show();
+    $('#main-content-vehicle-list').hide();
+    // emptyPaginationLi();
+    var order = $.getValues("http://localhost:8080/order/get-order/" + orderId);
+    console.log(order);
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: 'http://localhost:8080/order-pricing/get/' + orderId,
+        success: function (res) {
+            // console.log(res);
+            // $('.myForm #lastName').text(order.userId.firstName+' '+ order.userId.lastName);
+            $('#order-detail #order-id').text(order.id);
+            $('#order-detail #vehicleNumber').text(order.userId.vehicle.vehicleNumber);
+            $('#order-detail #licenseId').text(order.userId.vehicle.licensePlateId);
+            $('#order-detail #phoneNumber').text(order.userId.phoneNumber);
+            $('#order-detail #location').text(order.location.location);
+            $('#order-detail #allowedParkingFrom').text(convertTime(order.allowedParkingFrom));
+            $('#order-detail #allowedParkingTo').text(convertTime(order.allowedParkingTo));
+            $('#order-detail #checkInDate').text(convertDate(order.checkInDate));
+            $('#order-detail #checkOutDate').text(convertDate(order.checkOutDate));
+            let row = "";
+            emptyPricingTable();
+            console.log("Pricing SIze: " + res.length);
+            var hourHasPrices = order.hourHasPrices;
+            var passHour = 0;
+            var minutes = hourHasPrices[hourHasPrices.length - 1].minutes;
+            console.log("MInute: " + minutes);
+            var checkInDate = order.checkInDate;
+            var checkOutDate = order.checkOutDate;
+            for (i = 0; i < hourHasPrices.length; i++) {
+                // table as receipt
+                var hourHasPrice = hourHasPrices[i];
+                var milliseconds = convertToMilliseconds(hourHasPrice.hour - passHour, "hour");
+                if (i === hourHasPrices.length - 1) {
+                    milliseconds += convertToMilliseconds(minutes, "minute");
+                }
+                var toHour = "";
+                if (!compare2Dates(checkInDate, checkOutDate + milliseconds)) {
+                    toHour = convertDateAsTimeDate(checkInDate + milliseconds);
+                } else {
+                    toHour = msToTime(checkInDate + milliseconds);
+                }
+                console.log("checkIndate: " + checkInDate);
+                console.log("toHour: " + toHour);
+                row = '<tr>';
+                row += '<td>' + convertTime(checkInDate) + ' To ' + toHour + '</td>';
+                row += '<td>' + convertMoney(hourHasPrice.price) + '</td>';
+                row += '<td>' + convertMoney(hourHasPrice.total) + '</td>';
+                row += '</tr>';
+
+                checkInDate += milliseconds;
+                passHour = hourHasPrice.hour;
+
+                $('#order-detail #orderPricings tbody').append(row);
+            }
+
+            var duration = "";
+            if (order.duration === null) {
+                duration = 0;
+            } else {
+                duration = order.duration;
+            }
+
+            $('#order-detail #duration').text(msToTime(duration));
+            var total = "";
+            if (order.total === null) {
+                total = 0;
+            } else {
+                total = order.total;
+            }
+            var rowTotal = '<tr><td></td><td><label>Total: </label></td><td><label>' + convertMoney(total) + '</label></td></tr>';
+            $('#order-detail #orderPricings tbody').append(rowTotal);
+            // $('.myForm #vehicleTypeId').text(order.userId.vehicleTypeId.name);
+            $('#deposit-modal #order-id').val(orderId);
+            $('#deposit-modal #user-id').val(order.userId.id);
+            $('#deposit-modal #phone').text(order.userId.phoneNumber);
+            $('#deposit-modal #username').text(order.userId.firstName + " " + order.userId.lastName);
+            $('#deposit-modal #checkInDate').text(convertDate(order.checkInDate));
+            $('#deposit-modal #checkOutDate').text(convertDate(order.checkOutDate));
+            $('#deposit-modal #duration').text(msToTime(duration));
+            $('#deposit-modal #duration').text(total);
+        }, error: function (res) {
+            console.log(res);
+            console.log("Could not load data");
         }
     });
 }
@@ -151,8 +244,9 @@ function searchVehicle(pageNumber) {
 
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
-    // var verifyObject = createSearchObject("isVerified", "=", true);
+    var verifyObject = createSearchObject("refundStatus", ":", 'Open');
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
+    listFilterObject.push(verifyObject);
     listFilterObject.push(filterObject);
     // listFilterObject.push(verifyObject);
     $.ajax({
@@ -195,60 +289,6 @@ function cellBuilder(text, className) {
     return "<td class='" + className + "'>" + text + "</td>";
 }
 
-function loadVehicleInfo(vehicleNumber, form, setUpFunction, vehicleTypeHolder) {
-    $('#' + vehicleTypeHolder).empty();
-    $('#main-content-vehicle-list').hide();
-    $('#' + form).show();
-    $.ajax({
-        type: "GET",
-        dataType: "json",
-        url: 'get-vehicle/' + vehicleNumber,
-        success: function (data) {
-            setUpFunction(data);
-        }, error: function () {
-            alert("Can't load data")
-        }
-    });
-    //load vehicle Type
-    $.ajax({
-        type: "GET",
-        dataType: "json",
-        url: '/vehicle-type/get-all',
-        success: function (data) {
-            setUpVehicleType(data, vehicleTypeHolder)
-        }, error: function () {
-            alert("Can't load data")
-        }
-    });
-}
-
-function setUpFormData(vehicle) {
-    $('#vehicleNumberShow').val(vehicle.vehicleNumber);
-    $('#vehicleNumber').val(vehicle.vehicleNumber);
-    $('#licenseIdShow').val(vehicle.licensePlateId);
-    $('#licenseId').val(vehicle.licensePlateId);
-}
-
-function setUpSaveFormData(vehicle) {
-    $('#save-VehicleNumber').val(vehicle.vehicleNumber);
-    $('#save-VehicleNumber').prop('disabled', true);
-    $('#save-licenseId').val(vehicle.licensePlateId);
-    $('#save-brand').val(vehicle.brand);
-    $('#save-size').val(vehicle.size);
-    if (vehicle.expireDate != null) {
-        $('#save-expireDate').val(vehicle.expireDate);
-        var date = new Date(vehicle.expireDate);
-        $('#save-datepicker').val(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear());
-    }
-}
-
-function setUpVehicleType(list, holder) {
-    $('#' + holder).empty();
-    for (var i = 0; i < list.length; i++) {
-        var option = "<option value='" + list[i].id + "'>" + list[i].name + "</option>";
-        $('#' + holder).append(option);
-    }
-}
 
 function setLongFromExpireDate(holder, id) {
     var time = $('#' + holder).val().split("-");
@@ -271,36 +311,6 @@ $('#save-datepicker').datepicker({
     todayHighlight: true,
 });
 
-$('#verify-vehicle-form').on('submit', function (e) {
-
-    $.ajax({
-        type: 'post',
-        url: 'verify-vehicle',
-        data: $('#verify-vehicle-form').serialize(),
-        success: function (data) {
-            if (data) {
-                location.reload();
-            }
-        }
-    });
-    e.preventDefault();
-});
-
-$('#save-vehicle-form').on('submit', function (e) {
-    $('#save-VehicleNumber').prop('disabled', false);
-    $.ajax({
-        type: 'post',
-        url: 'save-vehicle',
-        data: $('#save-vehicle-form').serialize(),
-        success: function (data) {
-            if (data) {
-                location.reload();
-            }
-        }
-    });
-    e.preventDefault();
-});
-
 function closeForm() {
     $('#verify-vehicle-form').trigger("reset");
     $('#save-vehicle-form').trigger("reset");
@@ -310,36 +320,87 @@ function closeForm() {
     $('#main-content-save-form').hide();
 }
 
-function openSaveForm() {
-    $.ajax({
-        type: "GET",
-        dataType: "json",
-        url: '/vehicle-type/get-all',
-        success: function (data) {
-            setUpVehicleType(data, "save-vehicle-list")
-        }, error: function () {
-            alert("Can't load data")
-        }
-    });
 
-    $('#main-content-vehicle-list').hide();
-    $('#main-content-save-form').show();
+function closeForm() {
+    $('#order-detail').hide();
+    $('#main-content-vehicle-list').show();
 }
 
-function openDeleteModal(vehicleNumber) {
-    $('#deleteModal').modal(focus);
-    $('#delete-vehicleNumber').val(vehicleNumber);
-}
-
-function deleteVehicle(vehicleNumber) {
-    $.post("delete-vehicle",
-        {
-            vehicleNumber: vehicleNumber,
-        },
-        (function (data, status) {
-            if (data) {
-                location.reload();
+jQuery.extend({
+    getValues: function (url) {
+        var result = null;
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                result = data;
+            }, error: function (res) {
+                console.log(res);
             }
-        }));
+        });
+        return result;
+    }
+});
+
+
+function convertMoney(money) {
+    return (money * 1000).toLocaleString() + " VNĐ";
 }
 
+function convertTime(dateTypeLong) {
+    if (dateTypeLong === null) {
+        return "Empty";
+    }
+    var dateStr = new Date(dateTypeLong),
+        dformat =
+            [dateStr.getHours(),
+                dateStr.getMinutes()].join(':');
+    return dformat;
+}
+
+function emptyPricingTable() {
+    $('#orderPricings td').remove();
+}
+
+function convertToMilliseconds(value, type) {
+    if (type === "hour") {
+        return value * 3600000;
+    } else {
+        // minute
+        return value * 60000;
+    }
+}
+
+function compare2Dates(date1, date2) {
+    // let checkInDate = convertDate(date1);
+    // let checkOutDate = convertDate(date2);
+    var checkInDate = new Date(date1);
+    var checkOutDate = new Date(date2);
+    var isTheSameDate = (checkInDate.getDate() == checkOutDate.getDate()
+        && checkInDate.getMonth() == checkOutDate.getMonth()
+        && checkInDate.getFullYear() == checkOutDate.getFullYear());
+    return isTheSameDate;
+}
+function convertDateAsTimeDate(dateTypeLong) {
+    if (dateTypeLong === null) {
+        return "Empty";
+    }
+    var dateStr = new Date(dateTypeLong),
+        dformat = [dateStr.getDate(),
+                dateStr.getMonth() + 1].join('-') + ' ' +
+            [dateStr.getHours(),
+                dateStr.getMinutes()].join(':');
+    return dformat;
+}
+
+function msToTime(ms) {
+    var seconds = parseInt(ms / 1000);
+    var minutes = parseInt(seconds / 60, 10);
+    seconds = seconds % 60;
+    var hours = parseInt(minutes / 60, 10);
+    minutes = minutes % 60;
+
+    return hours + ':' + minutes;
+}
