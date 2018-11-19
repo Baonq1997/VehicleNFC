@@ -49,7 +49,7 @@ public class OrderService {
     public Optional<Order> getOrderById(Integer id) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isPresent()) {
-            order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
+//            order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
             if (order.get().getCheckOutDate() != null) {
                 TimeDuration duration = TimeService.compareTwoDates(order.get().getCheckInDate(), order.get().getCheckOutDate());
 
@@ -117,7 +117,7 @@ public class OrderService {
                 Optional<Order> order = orderRepository.findFirstByUserIdAndOrderStatusId(user.get()
                         , orderStatusRepository.findByName(OrderStatusEnum.Open.getName()).get());
                 if (order.isPresent()) {
-                    order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
+//                    order.get().setLocation(locationRepository.findById(order.get().getLocationId()).get());
                     order.get().setOrderPricingList(orderPricingRepository.findByOrderId(order.get().getId()));
                 }
                 return order;
@@ -154,7 +154,8 @@ public class OrderService {
         order.setVehicle(vehicle);
 
         order.setUserId(checkInUser);
-        order.setLocationId(locationRepository.findById(location.getId()).get().getId());
+//        order.setLocationId(locationRepository.findById(location.getId()).get().getId());
+        order.setLocation(locationRepository.findById(location.getId()).get());
 
         order.setCheckInDate(new Date().getTime());
 
@@ -360,7 +361,7 @@ public class OrderService {
             User user = order.getUserId();
 //            user.setVehicle(vehicleRepository.findByVehicleNumber(user.getVehicleNumber()).get());
             order.setUserId(user);
-            order.setLocation(locationRepository.findById(order.getLocationId()).get());
+//            order.setLocation(locationRepository.findById(order.getLocationId()).get());
 //            result.add(order);
         }
         responseObject.setData(orderList);
@@ -379,7 +380,7 @@ public class OrderService {
 //            order.getUserId().setVehicle(
 //                    vehicleRepository.findByVehicleNumber(order.getUserId().getVehicle()).get()
 //            );
-                    order.setLocation(locationRepository.findById(order.getLocationId()).get());
+//                    order.setLocation(locationRepository.findById(order.getLocationId()).get());
                     order.setOrderPricingList(orderPricingRepository.findByOrderId(order.getId()));
                 }
                 return orders;

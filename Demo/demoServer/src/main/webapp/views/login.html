@@ -22,10 +22,12 @@
             url: '/staff/login',
             data: $('#login-form').serialize(),
             success: function (data) {
-                if (data != null) {
+                if (typeof (data.username) !== 'undefined') {
                     var url = (data.manager) ? '/staff/manager' : '/staff/admin';
                     document.cookie = "username=" + data.username + ";url=" + url;
                     location.href = url;
+                }else {
+                    alert('wrong username or password');
                 }
             }
         });
