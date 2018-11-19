@@ -142,11 +142,11 @@ public class LocationService {
         if (!locationList.isEmpty() && policy.isPresent()) {
             Policy policyDB = policy.get();
             for (Location location : locationList) {
-                for (Location existedLocation : existedLocations) {
-                    if (existedLocation.getId() != location.getId()) {
-                        if (location.getIsDelete().equalsIgnoreCase("true")) {
-                            policyRepository.deleteById(policyDB.getId());
-                        } else {
+//                for (Location existedLocation : existedLocations) {
+//                    if (existedLocation.getId() != location.getId()) {
+//                        if (location.getIsDelete().equalsIgnoreCase("true")) {
+//                            policyRepository.deleteById(policyDB.getId());
+//                        } else {
                             Policy policyInstance = new Policy();
                             policyInstance.setAllowedParkingFrom(policyDB.getAllowedParkingFrom());
                             policyInstance.setAllowedParkingTo(policyDB.getAllowedParkingTo());
@@ -181,9 +181,9 @@ public class LocationService {
                                     }
                                 }
                             }
-                        }
-                    }
-                }
+//                        }
+//                    }
+//                }
             }
         }
 

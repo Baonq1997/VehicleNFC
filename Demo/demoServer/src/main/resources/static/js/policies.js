@@ -1,21 +1,42 @@
 $(document).ready(function () {
-    // initPolicies();
     loadVehicles();
     filterPolicies(0);
     $('#searchBtn').off().on('click', function (e) {
         searchValue = $('#searchValue').val();
         filterPolicies(0);
     });
+    var isShow = false;
+    $('#filter-btn').on('click', function (e) {
+        isShow = !isShow;
+        if (isShow) {
+            $('#filter').show();
+            $('#filter').attr('display', 'flex');
+            $('#filter').attr('flex-wrap', 'wrap');
+        }else {
+            $('#filter').hide();
+        }
+
+        // $('#filter').attr('top',0);
+
+    });
+    $('#btn-close').on('click', function (e) {
+        location.reload(true);
+    });
+    $('#searchLocationBtn').on('click', function (e) {
+        e.preventDefault()
+        searchLocation();
+    });
 });
 var listPolicyJson = [];
 var searchValue = "";
+
 function filterPolicies(pageNumber) {
 
     var vehicleTypeArr = [];
     var locationId = $('#locationId').val();
     var url = "http://localhost:8080/policy/filter-policies";
     if (pageNumber != null) {
-        url = url+"?page="+pageNumber;
+        url = url + "?page=" + pageNumber;
     }
     // var allowedParkingFrom = $('#allowedParkingFrom').val();
     // var allowedParkingTo = $('#allowedParkingTo').val();
@@ -29,19 +50,19 @@ function filterPolicies(pageNumber) {
     }).get();
 
     var listSearchParam = [];
-    if (vehicleTypeArr!= null && vehicleTypeArr.length > 0) {
+    if (vehicleTypeArr != null && vehicleTypeArr.length > 0) {
         var vehicleTypes = createSearchObject("vehicleTypes", ":", vehicleTypeArr);
         listSearchParam.push(vehicleTypes);
     }
-    var locationObj = createSearchObject("locationId",":", searchValue);
+    var locationObj = createSearchObject("locationId", ":", searchValue);
     listSearchParam.push(locationObj);
     $.ajax({
-        type:'POST',
+        type: 'POST',
         url: url,
-        dataType:"json",
+        dataType: "json",
         contentType: 'application/json',
         data: JSON.stringify(listSearchParam),
-        success:function(response){
+        success: function (response) {
 
             emptyTable();
             emptyPaginationLi();
@@ -74,20 +95,21 @@ function initPolicies() {
         }
     })
 }
+
 function emptyLocationCheckboxes() {
-    $('.control-group location').empty();
+    $('#locations').empty();
 }
 
 jQuery.extend({
-    getValues: function(id) {
+    getValues: function (id) {
         var result = null;
-        var url = 'http://localhost:8080/location/get/'+id;
+        var url = 'http://localhost:8080/location/get/' + id;
         $.ajax({
             url: url,
             type: 'get',
             dataType: 'json',
             async: false,
-            success: function(data) {
+            success: function (data) {
                 result = data.location;
             }, error: function (res) {
                 console.log(res);
@@ -97,16 +119,17 @@ jQuery.extend({
     }
 });
 
-var locationName ="";
+var locationName = "";
+
 function getLocationName(id) {
     locationName = "";
-    var url = 'http://localhost:8080/location/get/'+id;
+    var url = 'http://localhost:8080/location/get/' + id;
     $.ajax({
         url: url,
         type: 'get',
         dataType: 'json',
         async: false,
-        success: function(data) {
+        success: function (data) {
             locationName = data.location;
         }, error: function (res) {
             console.log(res);
@@ -116,7 +139,7 @@ function getLocationName(id) {
 
 function loadData(res) {
     var data = res.data;
-    locationName ="";
+    locationName = "";
     if (data != null) {
         for (var i = 0; i < data.length; i++) {
             var vehicleList = data[i].policyHasTblVehicleTypes;
@@ -135,7 +158,7 @@ function loadData(res) {
                 row += '<td> N/A </td>'
             } else {
                 getLocationName(data[i].locationId)
-                row += '<td>'+ locationName + '</td>';
+                row += '<td>' + locationName + '</td>';
             }
             row += '<td> <a href="#" class="btn btn-primary btnAction" onclick="getExistedLocations(' + data[i].id + ')"><i class="fas fa-plus-square"></i></a>';
             row += ' <a href="#" class="btn btn-primary btnAction" onclick="editPolicy(' + data[i].id + ')"><i class="lnr lnr-pencil"></i></a>';
@@ -150,26 +173,32 @@ function loadData(res) {
     var pageNumber = res.pageNumber;
     console.log("page: " + pageNumber);
     console.log("Total Page: " + res.totalPages);
-    var currentPage;
+    // var currentPage;
     var li = "";
-    for (currentPage = 0; currentPage <= res.totalPages - 1; currentPage++) {
-        if (currentPage === pageNumber) {
-            li = '<li class="nav-item active">\n' +
-                '<a href="#" class="nav-link" onclick="filterPolicies(' + currentPage + ')">' + (currentPage+1) + '</a>\n' +
-                '</li>';
-            $('#pagination').append(li);
-        } else {
-
-            li = '<li class="nav-item">\n' +
-                '<a href="#" class="nav-link" onclick="filterPolicies(' + currentPage + ')">\n' +
-                +(currentPage+1)+ '</a>\n' +
-                '</li>';
-            $('#pagination').append(li);
+    $('#pagination').append(createPageButton(0, 'First', false, false));
+    $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+    if (pageNumber > 2) {
+        $('#pagination').append(createEtcButton());
+    }
+    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+            $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
         }
     }
+    if (res.totalPages - pageNumber > 3) {
+        $('#pagination').append(createEtcButton());
+    }
+    $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+    $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
 }
+
 var existedLocations = [];
+var policy;
+
 function getExistedLocations(policyId) {
+    policy = policyId;
+    $('#location-wrapper').show();
+    $('#policy-wrapper').hide();
     existedLocations = [];
     $.ajax({
         type: "GET",
@@ -188,6 +217,38 @@ function getExistedLocations(policyId) {
     });
 }
 
+function searchLocation() {
+
+    var listSearchObject = [];
+    var url = "http://localhost:8080/location/filter?page=0";
+    var searchValue = $('#locationName').val();
+    var searchObject = createSearchObject("location", ":", searchValue);
+    listSearchObject.push(searchObject);
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(listSearchObject),
+        url: url,
+        success: function (data) {
+            emptyLocationCheckboxes();
+            var locations = data.data;
+            for (var i = 0; i < locations.length; i++) {
+                item = ' <label class="control control--checkbox">\n' +
+                    '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
+                    '<label>' + locations[i].location + '</label>\n' +
+                    '                                <div class="control__indicator"></div>\n' +
+                    '                            </label>';
+                $('#locations').append(item);
+            }
+            // loadLocations(policy);
+        }, error: function (data) {
+            console.log(data);
+        }
+    });
+    addPolicyToLocation(policy);
+}
+
 function loadLocations(policyId) {
     $.ajax({
         type: "GET",
@@ -199,14 +260,7 @@ function loadLocations(policyId) {
                 emptyLocationCheckboxes();
                 for (let i = 0; i < locations.length; i++) {
                     var item = "";
-                    if (containsObject(locations[i], existedLocations)) {
-                        item = ' <label class="control control--checkbox">\n' +
-                            '                                <input type="checkbox" value="' + locations[i].id + '" name="chk" checked="checked"/> ' +
-                            '<label>' + locations[i].location + '</label>\n' +
-                            '                                <div class="control__indicator"></div>\n' +
-                            '                            </label>';
-                        $('#locations').append(item);
-                    } else {
+                    if (!containsObject(locations[i], existedLocations)) {
                         item = ' <label class="control control--checkbox">\n' +
                             '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
                             '<label>' + locations[i].location + '</label>\n' +
@@ -221,13 +275,14 @@ function loadLocations(policyId) {
             console.log(data);
         }
     });
-    $('#addLocationModal').modal();
+    // $('#addLocationModal').modal();
     addPolicyToLocation(policyId);
 }
 
 var locationArr = [];
+
 function addPolicyToLocation(policyId) {
-    $('#btn-save-locations').on('click', function () {
+    $('#btn-save-locations').off().on('click', function () {
         var temp = $('input[name=chk]:checked').map(function (i) {
             var location = {
                 id: this.value,
@@ -237,40 +292,40 @@ function addPolicyToLocation(policyId) {
             return this;
         }).get();
         let locations = [];
-        if (existedLocations.length === 0) {
-            locations = locationArr;
-        } else {
-            for (let i = 0; i <locationArr.length; i++) {
-                for (let j = 0; j < existedLocations.length; j++) {
-                    var checkedLocation = locationArr[i];
-                    var existedLocation = existedLocations[j];
-                    if (!containsObject(existedLocation, locationArr)) {
-                        var temp = {
-                            id: existedLocation.id,
-                            location: existedLocation.location,
-                            isDelete: "true"
-
-                        }
-                        if(!containsObject(temp, locations)) {
-                            locations.push(temp);
-                        }
-                    } else {
-                        var temp = {
-                            id: checkedLocation.id,
-                            location: checkedLocation.location,
-                            isDelete: "false"
-                        }
-                        if(!containsObject(temp, locations)) {
-                            locations.push(temp);
-                        }
-                    }
-                }
-            }
-        }
+        // if (existedLocations.length === 0) {
+        //     locations = locationArr;
+        // } else {
+        //     for (let i = 0; i < locationArr.length; i++) {
+        //         for (let j = 0; j < existedLocations.length; j++) {
+        //             var checkedLocation = locationArr[i];
+        //             var existedLocation = existedLocations[j];
+        //             if (!containsObject(existedLocation, locationArr)) {
+        //                 var temp = {
+        //                     id: existedLocation.id,
+        //                     location: existedLocation.location,
+        //                     isDelete: "true"
+        //
+        //                 }
+        //                 if (!containsObject(temp, locations)) {
+        //                     locations.push(temp);
+        //                 }
+        //             } else {
+        //                 var temp = {
+        //                     id: checkedLocation.id,
+        //                     location: checkedLocation.location,
+        //                     isDelete: "false"
+        //                 }
+        //                 if (!containsObject(temp, locations)) {
+        //                     locations.push(temp);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         var jsonObject = {
             policyId: policyId,
-            locationArr: locations,
+            locationArr: locationArr,
             currentLocationId: existedLocations
         }
 
@@ -280,7 +335,7 @@ function addPolicyToLocation(policyId) {
             data: JSON.stringify(jsonObject),
             url: 'http://localhost:8080/location/add-policy',
             success: function (data) {
-                $('#addLocationModal').modal('hide');
+                // $('#addLocationModal').modal('hide');
                 location.reload(true);
             }, error: function (data) {
                 console.log(data);
@@ -333,16 +388,19 @@ function loadVehicles() {
 function emptyLocationCheckboxes() {
     $('#locations').empty();
 }
+
 function emptyTable() {
     $('#policies-table td').remove();
 }
+
 function emptyPaginationLi() {
     $('#pagination').empty();
 }
+
 function containsObject(obj, list) {
     var i;
     for (i = 0; i < list.length; i++) {
-        if (parseInt(list[i].id) === obj.id) {
+        if (parseInt(list[i].id) === parseInt(obj.id)) {
             return true;
         }
     }
@@ -358,12 +416,23 @@ function createSearchObject(key, operation, value) {
     return obj;
 }
 
-function msToTime (ms) {
-    var seconds = parseInt(ms/1000);
-    var minutes = parseInt(seconds/60, 10);
-    seconds = seconds%60;
-    var hours = parseInt(minutes/60, 10);
-    minutes = minutes%60;
+function msToTime(ms) {
+    var seconds = parseInt(ms / 1000);
+    var minutes = parseInt(seconds / 60, 10);
+    seconds = seconds % 60;
+    var hours = parseInt(minutes / 60, 10);
+    minutes = minutes % 60;
 
     return hours + ':' + minutes;
+}
+
+function createPageButton(pageNumber, label, isDisable, isActive) {
+    var className = (isActive) ? 'nav-item active' : 'nav-item';
+    className += (isDisable) ? ' disabled-href' : '';
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="filterPolicies(' + pageNumber + ')">' + label + '</a>\n' +
+        '</li>';
+}
+
+function createEtcButton() {
+    return '<li class="etc ">...</li>';
 }

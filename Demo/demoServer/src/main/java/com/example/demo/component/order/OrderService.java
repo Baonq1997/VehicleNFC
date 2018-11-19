@@ -324,10 +324,10 @@ public class OrderService {
                     predicate = builder.and(predicate,
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
-                } else if (type == Location.class) {
-                    Join<Order, Location> join = r.join("locationId");
-                    Predicate locationNamePredicate = builder.like(join.get("location"), "%" + param.getValue() + "%");
-                    predicate = builder.and(predicate, locationNamePredicate);
+//                } else if (type == Location.class) {
+//                    Join<Order, Location> join = r.join("locationId");
+//                    Predicate locationNamePredicate = builder.like(join.get("location"), "%" + param.getValue() + "%");
+//                    predicate = builder.and(predicate, locationNamePredicate);
                 } else if (type == OrderStatus.class) {
                     Join<Order, OrderStatus> join = r.join("orderStatusId");
                     Predicate locationNamePredicate = builder.like(join.get("name"), param.getValue() + "%");
@@ -338,8 +338,8 @@ public class OrderService {
                     predicate = builder.and(predicate, builder.between(r.get(param.getKey()), (long) param.getValue(), (long) param.getValue() + endOfDay));
                 } else if (type == User.class) {
                     if (param.getKey().equalsIgnoreCase("vehicleNumber")) {
-                        Join<Order, User> join = r.join("userId");
-                        Predicate vehiclePredicate = builder.equal(join.get("vehicle"), param.getValue());
+                        Join<Order, Vehicle> join = r.join("vehicle");
+                        Predicate vehiclePredicate = builder.like(join.get("vehicleNumber"), "%" + param.getValue() + "%");
                         predicate = builder.and(predicate, vehiclePredicate);
                     }
                 } else {

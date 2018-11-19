@@ -88,6 +88,24 @@ function loadData(res) {
             row += '</tr>';
             $('#order-table tbody').append(row);
         }
+        var pageNumber = res.pageNumber;
+        console.log("page: " + pageNumber);
+        console.log("Total Page: " + res.totalPages);
+        $('#pagination').append(createPageButton(0, 'First', false, false));
+        $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+        if (pageNumber > 2) {
+            $('#pagination').append(createEtcButton());
+        }
+        for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+            if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+                $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
+            }
+        }
+        if (res.totalPages - pageNumber > 3) {
+            $('#pagination').append(createEtcButton());
+        }
+        $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+        $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
     }
     for (var i = 0; i < res.pageSize - content.length; i++) {
         if (i === 2) {
@@ -100,24 +118,7 @@ function loadData(res) {
         }
     }
 
-    var pageNumber = res.pageNumber;
-    console.log("page: " + pageNumber);
-    console.log("Total Page: " + res.totalPages);
-    $('#pagination').append(createPageButton(0, 'First', false, false));
-    $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
-    if (pageNumber > 2) {
-        $('#pagination').append(createEtcButton());
-    }
-    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
-        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
-            $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
-        }
-    }
-    if (res.totalPages - pageNumber > 3) {
-        $('#pagination').append(createEtcButton());
-    }
-    $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
-    $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
+
 }
 
 function createPageButton(pageNumber, label, isDisable, isActive) {

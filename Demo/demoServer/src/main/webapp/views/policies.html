@@ -11,26 +11,33 @@
     <link rel="stylesheet" href="/css/user.css">
     <link rel="stylesheet" href="/css/location-policies.css">
     <!-- GOOGLE FONTS -->
-    <link href="https://fonts.googleapis.com/css?fsamily=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?fsamily=Source+Sans+Pro:300,400,600,700" rel="stylesheet">-->
     <!-- ICONS -->
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
     <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
 </head>
 <body>
-<div class="panel">
+<div class="panel" id="policy-wrapper">
     <div class="panel-body">
         <div class="row">
             <span class="content-name">
                 Policy Management
             </span>
             <form action="search-policy" class="search-box" method="post">
-                <label class="col-form-label">Vehicle Allowed:</label>
-                <div id="filter">
 
+                <div class="filter-wrapper">
+
+                    <button class="btn btn-primary btnAction" type="button" id="filter-btn">Filter</button>
+                    <div id="filter" style="display: none;">
+
+                    </div>
                 </div>
+                <!--<div id="filter">-->
+
+                <!--</div>-->
                 <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
-                       style="width: 50%; float: left;"/>
+                       style="width: 80%; float: left;"/>
                 <button class="btn btn-primary btnAction" type="button" id="searchBtn" name="Search">
                     <i class="lnr lnr-magnifier"></i>
                 </button>
@@ -41,11 +48,11 @@
                 <table class="table table-hover" id="policies-table">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>No.</th>
                         <th>Allowed Parking</th>
                         <th>Vehicle Allowed</th>
                         <th>Location</th>
-                        <th> Action</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -58,36 +65,67 @@
                 <ul class="nav nav-pills" id="pagination"></ul>
             </div>
         </div>
+
     </div>
-    <div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Add Policy To Locaitons</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="location-container">
-                        <h3>Locations</h3>
-                        <div class="control-group" id="locations">
+</div>
 
+<div class="panel" id="location-wrapper" style="display: none;">
+    <div class="panel-body">
+        <div class="row">
+             <span class="content-name">
+                Locations
+            </span>
+            <form action="search-location" class="search-box" method="post">
+                <input type="text" class="form-control" id="locationName" name="locationName" value=""
+                       style="width: 80%; float: left;"/>
+                <button class="btn btn-primary btnAction" type="button" id="searchLocationBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="row">
+            <div class="location-container">
+                <div class="control-group" id="locations">
 
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <button type="button" class="btn btn-secondary" id="btn-close">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>
+        </div>
     </div>
-    <script src="/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/js/policies.js"></script>
-    <script src="/assets/scripts/klorofil-common.js"></script>
+</div>
+
+<!--<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"-->
+<!--aria-hidden="true">-->
+<!--<div class="modal-dialog" role="document">-->
+<!--<div class="modal-content">-->
+<!--<div class="modal-header">-->
+<!--<h3 class="modal-title" id="exampleModalLabel">Add Policy To Locaitons</h3>-->
+<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--<span aria-hidden="true">&times;</span>-->
+<!--</button>-->
+<!--</div>-->
+<!--<div class="modal-body">-->
+<!--<div class="location-container">-->
+<!--<h3>Locations</h3>-->
+<!--<div class="control-group" id="locations">-->
+
+
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="modal-footer">-->
+<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+<!--<button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/policies.js"></script>
+<script src="/assets/scripts/klorofil-common.js"></script>
 </body>
 </html>

@@ -105,7 +105,7 @@
                     <li><a onclick="openHideList($(this),true)" id="vehicleHolder" isOpen="false"
                            class="active pointer menu holder-active"><i
                             class="lnr lnr-car"></i> <span class="title">Vehicles</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="vehicleHolderIcon"></i></a>
+                            class="lnr lnr-chevron-right float-right menu-icon" id="vehicleHolderIcon"></i></a>
                     </li>
                     <li><a onclick="switchContentFragment('/vehicle/get-verify',$('#vehicleHolder'))"
                            class="pointer sub-menu vehicleHolder"><i class="far fa-check-square"></i><span
@@ -117,7 +117,7 @@
                     <li><a onclick="openHideList($(this),true)" id="userHolder" isOpen="false"
                            class="pointer menu holder"><i
                             class="lnr lnr-user"></i> <span class="title">Users</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="userHolderIcon"></i></a>
+                            class="lnr lnr-chevron-right float-right menu-icon" id="userHolderIcon"></i></a>
                     </li>
                     <li><a onclick="switchContentFragment('/user/get-verify',$('#userHolder'))"
                            class="pointer sub-menu userHolder"><i class="far fa-check-square"></i><span class="title">Verify</span></a>
@@ -132,7 +132,7 @@
                     <li><a onclick="openHideList($(this),true)" id="locationHolder" isOpen="false"
                            class="pointer menu holder"><i
                             class="lnr lnr-user"></i> <span class="title">Locations</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="locationHolderIcon"></i></a>
+                            class="lnr lnr-chevron-right float-right menu-icon" id="locationHolderIcon"></i></a>
                     </li>
                     <li><a onclick="switchContentFragment('/location/index',$('#locationHolder'))"
                            class="pointer sub-menu locationHolder"><i class="lnr lnr-list"></i><span class="title">Manage</span></a>
@@ -146,7 +146,7 @@
                     <li><a onclick="openHideList($(this),true)" id="policyHolder" isOpen="false"
                            class="pointer menu holder"><i
                             class="lnr lnr-book"></i> <span class="title">Policies</span><i
-                            class="lnr lnr-chevron-left float-right menu-icon" id="policyHolderIcon"></i></a>
+                            class="lnr lnr-chevron-right float-right menu-icon" id="policyHolderIcon"></i></a>
                     </li>
                     <li><a onclick="switchContentFragment('/policy/index',$('#policyHolder'))"
                            class="pointer sub-menu policyHolder"><i class="lnr lnr-list"></i><span
@@ -154,6 +154,9 @@
                     </li>
                     <li><a onclick="switchContentFragment('/policy/create',$('#policyHolder'))"
                            class="pointer sub-menu policyHolder"><i class="fas fa-plus-square"></i><span class="title">Create</span></a>
+                    </li>
+                    <li><a onclick="switchContentFragment('/policy/add-policy',$('#policyHolder'))"
+                           class="pointer sub-menu policyHolder"><i class="fas fa-plus-square"></i><span class="title">Add Policy To Location</span></a>
                     </li>
 
                     <li><a onclick="switchContentFragment('/order/index',$(this))" class="pointer menu"><i

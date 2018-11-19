@@ -81,14 +81,19 @@ public class PolicyService {
                 policyHasVehicleTypeRepository.saveAndFlush(policyHasTblVehicleType);
             } else {
                 if (vehicleTypeList.get(i).getIsDelete().equalsIgnoreCase("true")) {
-                    PolicyHasTblVehicleType instance = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i)).get();
-                    pricingRepository.deleteByPolicyHasTblVehicleTypeId(instance.getId());
+                    Optional<PolicyHasTblVehicleType> policyHasTblVehicleTypeOptional = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i));
+                    if (policyHasTblVehicleTypeOptional.isPresent()) {
+                        PolicyHasTblVehicleType instance = policyHasTblVehicleTypeOptional.get();
+                        pricingRepository.deleteByPolicyHasTblVehicleTypeId(instance.getId());
+                        policyHasVehicleTypeRepository.delete(instance);
+                    }
+
 //                    if (null != pricings || !pricings.isEmpty()) {
 //                        for (Pricing pricing : pricings) {
 //                            pricingRepository.delete(pricing);
 //                        }
 //                    }
-                    policyHasVehicleTypeRepository.delete(instance);
+
 //                    break;
                 } else {
                     Optional<PolicyHasTblVehicleType> instance = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i));

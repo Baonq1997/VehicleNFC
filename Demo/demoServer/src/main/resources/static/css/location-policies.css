@@ -1,8 +1,9 @@
 ul {
     list-style-type: none;
+    padding: 0;
 }
 li {
-    float: left;
+    padding: 5px;
 }
 
 body {
@@ -23,6 +24,24 @@ body {
     margin: 5px;
 }
 
+#filter {
+    /*display: none;*/
+    margin-top: 8px;
+    width: 150px;
+    position: absolute;
+    top: 35px;
+    background-color: white;
+    /*color*/
+}
+
+#filter-btn {
+    border-radius: 0;
+}
+
+.filter-wrapper {
+    height: 100%;
+    position: relative;
+}
 
 .location-container {
     width: 100%;

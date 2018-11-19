@@ -28,6 +28,10 @@ $(document).ready(function () {
             parseTimeToLong("clockpickerTo", "ParkingTo");
         }
     });
+    $('#btn-back').on('click', function (e) {
+        $('#pricing-panel').hide();
+        $('#wrapper').show();
+    });
 });
 function loadLocations() {
     $.ajax({
@@ -128,7 +132,7 @@ function parseTimeToLong(clockPicker, type) {
     $('#allowed' + type).val(ms);
 }
 
-
+var policy;
 function savePolicyVehicle() {
     $('#save-policy-vehicle').on('click', function () {
         vehicleTypeArr = [];
@@ -183,6 +187,7 @@ function savePolicyVehicle() {
         }
 
         var policyJson = {
+            id: policy,
             allowedParkingFrom: $('#allowedParkingFrom').val(),
             allowedParkingTo: $('#allowedParkingTo').val()
         }
@@ -203,9 +208,11 @@ function savePolicyVehicle() {
                 $('#policyId').val(data.id);
                 $('.pricing-container').show();
                 $('.pricing-container').empty();
+                $('#pricing-panel').show();
+                $('#wrapper').hide();
                 $('.button-wrapper').show();
-
-                policyId = data.id;
+                $('#pricing-vehicle tbody').empty();
+                policy = data.id;
                 createPricingTabs(data.id);
                 $('#vehicleTypeArr').empty();
                 loadVehiclesCheckedBoxes();
@@ -216,6 +223,8 @@ function savePolicyVehicle() {
     });
 }
 function createPricingTabs(policyId) {
+    let navTabs = "";
+    let tabPanes = "";
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -306,7 +315,7 @@ function deletePolicy() {
             success: function (data) {
                 console.log("Save successfully");
                 console.log(data);
-                window.top.location.href = "'http://localhost:8080/policy/index";
+                location.href = "/policy/index";
             }, error: function (data) {
                 console.log(data);
             }
@@ -467,7 +476,7 @@ function emptyTable(vehicleTypeId) {
 function containsObject(obj, list) {
     var i;
     for (i = 0; i < list.length; i++) {
-        if (parseInt(list[i].id) === obj.id) {
+        if (parseInt(list[i].id) === parseInt(obj.id)) {
             return true;
         }
     }

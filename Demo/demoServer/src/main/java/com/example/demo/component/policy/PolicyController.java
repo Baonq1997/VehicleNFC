@@ -7,6 +7,7 @@ import com.example.demo.view.DeletePolicyObject;
 import com.example.demo.view.PolicyView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -99,6 +100,12 @@ public class PolicyController {
     @GetMapping("/index")
     public ModelAndView index(ModelAndView mav) {
         mav.setViewName("policies");
+        return mav;
+    }
+
+    @GetMapping("/add-policy")
+    public ModelAndView addPolicy(ModelAndView mav) {
+        mav.setViewName("policy-add-location");
         return mav;
     }
 }

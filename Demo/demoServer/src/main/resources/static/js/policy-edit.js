@@ -73,7 +73,6 @@ function getLocation(locationId) {
         success: function (data) {
             $('#location').text(data.location);
             $('#status').text(convertStatus(data.isActivate));
-            convertStatus()
         }, error: function (data) {
             console.log("Could not load Policy");
             console.log(data);
@@ -356,7 +355,7 @@ function deletePolicy() {
             success: function (res) {
                 console.log(res);
                 console.log("Save successfully");
-                window.location.href = 'http://localhost:8080/user/admin';
+                location.href = '/policy/index';
             }, error: function (res) {
                 console.log(res);
                 console.log("Failed to save");

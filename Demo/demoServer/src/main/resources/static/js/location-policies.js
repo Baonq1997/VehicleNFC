@@ -1,12 +1,16 @@
+var locationId;
 $(document).ready(function () {
     var url = window.location + "";
     console.log("url: " + url);
     var idIndex = url.lastIndexOf("/");
     var id = url.slice(idIndex + 1, url.length);
     console.log("ID: " + id);
-    initData(id);
+    id = id.replace("#","");
+    locationId = id;
+    // initData(id);
+    getLocation();
     loadVehicles();
-    filterPolicies();
+    filterPolicies(0);
     // addLocations();
     $('.clockpickerFrom').clockpicker({
         placement: 'bottom',
@@ -26,21 +30,21 @@ $(document).ready(function () {
     });
 });
 
-function initData(locationId) {
+
+function getLocation() {
     var policies = [];
     $.ajax({
         type: "GET",
         dataType: "json",
         url: 'http://localhost:8080/location/get/' + locationId,
         success: function (data) {
-            if (data != null) {
-                loadTable(data);
-            }
+            $('#location').text(data.location);
+            $('#locationId').val(data.id);
+            $('#status').text(convertStatus(data.activated));
         }, error: function () {
             alert("Can't load data")
         }
     });
-    // console.log(policiesListJson);
 }
 
 function loadVehicles() {
@@ -65,9 +69,6 @@ function loadVehicles() {
 
 function loadTable(data) {
     var policyList = data.policyList;
-
-    $('#location').text(data.location);
-    $('#locationId').val(data.id);
     var index = 0;
     for (let i = 0; i < policyList.length; i++) {
         var vehicleList = policyList[i].policyHasTblVehicleTypes;
@@ -104,13 +105,13 @@ function loadTable(data) {
 }
 
 function editPolicy(policyId) {
-    let locationId = $('#locationId').val();
+    // let locationId = $('#locationId').val();
     let url = "http://localhost:8080/policy/edit?policyId=" + policyId;
     window.location.href = url;
 }
 
 function deletePolicy(policyInstanceId) {
-    let locationId = $('#locationId').val();
+    // let locationId = $('#locationId').val();
     $.ajax({
         type: "POST",
         // url: 'http://localhost:8080/policy/delete-by-location-policy?locationId=' + locationId + '&policyId=' + policyId,
@@ -168,7 +169,17 @@ function getExistedLocations(policyId) {
         }
     });
 }
+
+function convertStatus(status) {
+    if (status === true) {
+        return "Available";
+    } else {
+        return "Unavailable";
+    }
+}
+
 var existedLocations = [];
+
 function loadLocations(policyId) {
     // getExistedLocations(policyId);
     $.ajax({
@@ -208,7 +219,9 @@ function loadLocations(policyId) {
     addPolicyToLocation(policyId);
     // });
 }
-var locationArr =[];
+
+var locationArr = [];
+
 function addPolicyToLocation(policyId) {
     $('#btn-save-locations').on('click', function () {
         var temp = $('input[name=chk]:checked').map(function (i) {
@@ -223,7 +236,7 @@ function addPolicyToLocation(policyId) {
         if (existedLocations.length === 0) {
             locations = locationArr;
         } else {
-            for (let i = 0; i <locationArr.length; i++) {
+            for (let i = 0; i < locationArr.length; i++) {
                 for (let j = 0; j < existedLocations.length; j++) {
                     var checkedLocation = locationArr[i];
                     var existedLocation = existedLocations[j];
@@ -234,7 +247,7 @@ function addPolicyToLocation(policyId) {
                             isDelete: "true"
 
                         }
-                        if(!containsObject(temp, locations)) {
+                        if (!containsObject(temp, locations)) {
                             locations.push(temp);
                         }
                     } else {
@@ -243,7 +256,7 @@ function addPolicyToLocation(policyId) {
                             location: checkedLocation.location,
                             isDelete: "false"
                         }
-                        if(!containsObject(temp, locations)) {
+                        if (!containsObject(temp, locations)) {
                             locations.push(temp);
                         }
                     }
@@ -274,84 +287,106 @@ function addPolicyToLocation(policyId) {
 
 function filterPolicies(pageNumber) {
 
-    $('#filter-btn').on('click', function (e) {
-        var vehicleTypeArr = [];
-        var locationId = $('#locationId').val();
-        var url = "http://localhost:8080/policy/filter-policies?locationId="+locationId;
-        if (pageNumber != null) {
-            url = url+"&page="+pageNumber;
+    // $('#filter-btn').on('click', function (e) {
+    var vehicleTypeArr = [];
+    // var locationId = $('#locationId').val();
+    var url = "http://localhost:8080/policy/filter-policies?locationId=" + locationId;
+    if (pageNumber != null) {
+        url = url + "&page=" + pageNumber;
+    }
+    // var allowedParkingFrom = $('#allowedParkingFrom').val();
+    // var allowedParkingTo = $('#allowedParkingTo').val();
+    var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
+        var vehicleType = {
+            id: this.value,
+            name: $(this).next('label').text()
         }
-        // var allowedParkingFrom = $('#allowedParkingFrom').val();
-        // var allowedParkingTo = $('#allowedParkingTo').val();
-        var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
-            var vehicleType = {
-                id: this.value,
-                name: $(this).next('label').text()
-            }
-            vehicleTypeArr.push(vehicleType.name);
-            return this;
-        }).get();
-        console.log("ARR" + vehicleTypeArr);
-        var listSearchParam = [];
-        // if (allowedParkingFrom !== "") {
-        //     var allowedParkingFromObj = createSearchObject("allowedParkingFrom", ">", allowedParkingFrom);
-        //     listSearchParam.push(allowedParkingFromObj);
-        // }
-        // if (allowedParkingTo !== "") {
-        //     var allowedParkingToObj = createSearchObject("allowedParkingTo", "<", allowedParkingTo);
-        //     listSearchParam.push(allowedParkingToObj);
-        // }
-        if (vehicleTypeArr!= null && vehicleTypeArr.length > 0) {
+        vehicleTypeArr.push(vehicleType.name);
+        return this;
+    }).get();
+    console.log("ARR" + vehicleTypeArr);
+    var listSearchParam = [];
+    // if (allowedParkingFrom !== "") {
+    //     var allowedParkingFromObj = createSearchObject("allowedParkingFrom", ">", allowedParkingFrom);
+    //     listSearchParam.push(allowedParkingFromObj);
+    // }
+    // if (allowedParkingTo !== "") {
+    //     var allowedParkingToObj = createSearchObject("allowedParkingTo", "<", allowedParkingTo);
+    //     listSearchParam.push(allowedParkingToObj);
+    // }
+    if (vehicleTypeArr != null && vehicleTypeArr.length > 0) {
 
-            var vehicleTypes = createSearchObject("vehicleTypes", ":", vehicleTypeArr);
-            listSearchParam.push(vehicleTypes);
+        var vehicleTypes = createSearchObject("vehicleTypes", ":", vehicleTypeArr);
+        listSearchParam.push(vehicleTypes);
+    }
+    $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: "json",
+        contentType: 'application/json',
+        data: JSON.stringify(listSearchParam),
+        success: function (response) {
+
+            emptyTable();
+            emptyLi();
+            // emptyPaginationLi();
+            loadTableAfterFilter(response);
+            console.log(response);
+        }, error: function (res) {
+            console.log(res);
         }
-        $.ajax({
-            type:'POST',
-            url: url,
-            dataType:"json",
-            contentType: 'application/json',
-            data: JSON.stringify(listSearchParam),
-            success:function(response){
-
-                emptyTable();
-                // emptyPaginationLi();
-                loadTableAfterFilter(response);
-                console.log(response);
-            }, error: function (res) {
-                console.log(res);
-            }
-        });
     });
+    // });
 }
 
 function emptyTable() {
     $('#location-policies tbody').empty();
 }
+
 function loadTableAfterFilter(response) {
     var data = response.data;
     if (data != null) {
-        for (var i = 0; i < data.length; i++) {
-            var vehicleList = data[i].policyHasTblVehicleTypes;
-            row = '<tr>';
-            row += '<td>' + data[i].id + '</td>';
-            row += '<td>' + msToTime(data[i].allowedParkingFrom) + ' - ' + msToTime(data[i].allowedParkingTo) + '</td>';
-            if (vehicleList != null || vehicleList.length != 0) {
-                row += '<td class="vehicle-tags">';
-                for (let j = 0; j < vehicleList.length; j++) {
-                    row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
+        // if (data.length != 0) {
+
+            for (var i = 0; i < data.length; i++) {
+                var vehicleList = data[i].policyHasTblVehicleTypes;
+                row = '<tr>';
+                row += '<td>' + (i + (response.pageNumber * response.pageSize) + 1) + '</td>';
+                row += '<td>' + msToTime(data[i].allowedParkingFrom) + ' - ' + msToTime(data[i].allowedParkingTo) + '</td>';
+                if (vehicleList != null || vehicleList.length != 0) {
+                    row += '<td class="vehicle-tags">';
+                    for (let j = 0; j < vehicleList.length; j++) {
+                        row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
+                    }
+                    row += '</td>';
+                } else {
+                    row += '<td> N/A </td>'
                 }
-                row += '</td>';
-            } else {
-                row += '<td> N/A </td>'
+                row += '<td> <a href="#" class="btn btn-primary btnAction" onclick="getExistedLocations(' + data[i].id + ')"><i class="fas fa-plus-square"></i></a>';
+                row += '<a href="#" class="btn btn-primary btnAction" onclick="editPolicy(' + data[i].id + ')"><i class="lnr lnr-pencil"></i> </a>';
+                row += '<a href="#" class="btn btn-danger btnAction" onclick="deletePolicy(' + data[i].id + ')"><i class="lnr lnr-trash"></i></a></td>';
+                row += '</tr>';
+                $('#location-policies tbody').append(row);
             }
-            row += '<td> <a href="#" class="btn btn-primary btnAction" onclick="getExistedLocations(' + data[i].id + ')"><i class="fas fa-plus-square"></i></a>';
-            row += '<a href="#" class="btn btn-primary btnAction" onclick="editPolicy(' + data[i].id + ')"><i class="lnr lnr-pencil"></i> </a>';
-            row += '<a href="#" class="btn btn-danger btnAction" onclick="deletePolicy(' + data[i].id + ')"><i class="lnr lnr-trash"></i></a></td>';
-            row += '</tr>';
-            $('#location-policies tbody').append(row);
-        }
-    } else {
+            var pageNumber = response.pageNumber;
+            $('#pagination').append(createPageButton(0, 'First', false, false));
+            $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+            if (pageNumber > 2) {
+
+                $('#pagination').append(createEtcButton());
+            }
+            for (var currentPage = 0; currentPage < response.totalPages; currentPage++) {
+                if (currentPage > response.pageNumber - 3 && currentPage < response.pageNumber + 3) {
+                    $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
+                }
+            }
+            if (response.totalPages - pageNumber > 3) {
+                $('#pagination').append(createEtcButton());
+            }
+            $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === response.totalPages - 1), false));
+            $('#pagination').append(createPageButton((response.totalPages - 1), 'Last', false, false));
+        // }
+    }else {
         var row = '<td colspan="4" style="text-align: center;"><strong> No data </strong></td>';
         $('#location-policies tbody').append(row);
     }
@@ -359,6 +394,10 @@ function loadTableAfterFilter(response) {
 
 function emptyLocationCheckboxes() {
     $('#locations').empty();
+}
+
+function emptyLi() {
+    $('#pagination').empty();
 }
 
 function createSearchObject(key, operation, value) {
@@ -379,6 +418,7 @@ function containsObject(obj, list) {
     }
     return false;
 }
+
 function parseTimeToLong(clockPicker, type) {
     var time = $('.' + clockPicker + ' #' + type).val();
     var temp = time.split(":")
@@ -387,12 +427,21 @@ function parseTimeToLong(clockPicker, type) {
     var ms = (parseInt(hour * 3600000) + parseInt(minute * 60000));
     $('#allowed' + type).val(ms);
 }
-function msToTime (ms) {
-    var seconds = parseInt(ms/1000);
-    var minutes = parseInt(seconds/60, 10);
-    seconds = seconds%60;
-    var hours = parseInt(minutes/60, 10);
-    minutes = minutes%60;
+function createPageButton(pageNumber, label, isDisable, isActive) {
+    var className = (isActive) ? 'nav-item active' : 'nav-item';
+    className += (isDisable) ? ' disabled-href' : '';
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="filterPolicies(' + pageNumber + ')">' + label + '</a>\n' +
+        '</li>';
+}
+function createEtcButton() {
+    return '<li class="etc ">...</li>';
+}
+function msToTime(ms) {
+    var seconds = parseInt(ms / 1000);
+    var minutes = parseInt(seconds / 60, 10);
+    seconds = seconds % 60;
+    var hours = parseInt(minutes / 60, 10);
+    minutes = minutes % 60;
 
     return hours + ':' + minutes;
 }

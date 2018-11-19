@@ -13,84 +13,108 @@
     <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
     <link rel="stylesheet" href="/css/create-policy.css">
     <!-- GOOGLE FONTS -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">-->
     <!-- ICONS -->
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
 </head>
 <body>
 <div id="wrapper">
-    <div class="main">
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
-            <div class="container-fluid">
-                <div class="panel panel-headline">
-                    <div class="panel-body">
-                        <div class="form-group" style="width: 100%; float: left;">
-                            <button class="btn btn-primary" onclick="goBack()" style="float: left;">Go Back</button>
-                            <script>
-                                function goBack() {
-                                    window.history.back();
-                                }
-                            </script>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" id="locationId">
-                            <div class="left-form-group">
-                                <label class="col-form-label">Location:</label>
-                                <input type="text" class="form-control" id="location">
-                            </div>
-                            <div class="right-form-group">
-                                <label class="col-form-label">Status</label>
-                                <input type="text" class="form-control" id="status">
-                            </div>
+<div class="main">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="panel panel-headline">
+                <div class="panel-body">
 
+                    <div class="form-group">
+                        <input type="hidden" id="locationId">
+                        <div class="left-form-group">
+                            <label class="col-form-label">Location:</label>
+                            <input type="text" class="form-control" id="location">
                         </div>
-                        <div class="form-group">
-                            <label class="col-form-label">Vehicle Type:</label>
-                            <fieldset id="vehicleTypeArr" class="form-control">
-
-                            </fieldset>
+                        <div class="right-form-group">
+                            <label class="col-form-label">Status</label>
+                            <input type="text" class="form-control" id="status">
                         </div>
 
-                        <div class="from-group clockpickerFrom" style="width:48%; float: left; margin-right: 2%;">
-                            <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
-                            <input type="text" class="form-control" id="ParkingFrom">
-                            <span class="input-group-addon">
-                                 <span class="glyphicon glyphicon-time"></span>
-                                </span>
-                        </div>
-                        <input type="hidden" id="allowedParkingFrom">
-                        <div class="from-group clockpickerTo" style="width:48%; float: left; margin-left: 2%;">
-                            <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
-                            <input type="text" class="form-control" id="ParkingTo">
-                            <span class="input-group-addon">
-                                 <span class="glyphicon glyphicon-time"></span>
-                                </span>
-                        </div>
-                        <input type="hidden" id="allowedParkingTo">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Vehicle Type:</label>
+                        <fieldset id="vehicleTypeArr" class="form-control">
 
-                        <div class="row" >
-                            <button class="btn btn-primary" style="margin-top: 20px;" value="Save Policy Vehicle" id="save-policy-vehicle">Save</button>
-                        </div>
-
-                        <div class="form-group">
-
-                            <div class="pricing-container" style="display: none;">
-                                <label  class="col-form-label">Pricings:</label><Br/>
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <div class="button-wrapper"  style="display: none;">
-                                <button class="btn btn-danger" id="delete-policy">Delete Policy</button>
-                            </div>
-                        </div>
+                        </fieldset>
                     </div>
 
+                    <div class="from-group clockpickerFrom" style="width:48%; float: left; margin-right: 2%;">
+                        <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
+                        <input type="text" class="form-control" id="ParkingFrom">
+                        <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-time"></span>
+                                </span>
+                    </div>
+                    <input type="hidden" id="allowedParkingFrom">
+                    <div class="from-group clockpickerTo" style="width:48%; float: left; margin-left: 2%;">
+                        <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
+                        <input type="text" class="form-control" id="ParkingTo">
+                        <span class="input-group-addon">
+                                 <span class="glyphicon glyphicon-time"></span>
+                                </span>
+                    </div>
+                    <input type="hidden" id="allowedParkingTo">
+
+                    <div class="row">
+                        <button class="btn btn-primary" style="margin-top: 20px;" value="Save Policy Vehicle"
+                                id="save-policy-vehicle">Save
+                        </button>
+                    </div>
+
+                    <!--<div class="form-group">-->
+
+                        <!--<div class="pricing-container" style="display: none;">-->
+                            <!--<label class="col-form-label">Pricings:</label><Br/>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                        <!--<div class="button-wrapper" style="display: none;">-->
+                            <!--<button class="btn btn-danger" id="delete-policy">Delete Policy</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="main" id="pricing-panel" style="display: none;">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="panel panel-headline">
+                <div class="panel-body">
+                    <div class="content-list-table">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="pricing-container" style="display: none;">
+                                    <label class="col-form-label">Pricings:</label><Br/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button type="button" id="btn-back" class="btn btn-secondary">Back</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="button-wrapper" style="display: none;">
+        <button class="btn btn-danger" id="delete-policy">Delete Policy</button>
     </div>
 </div>
 

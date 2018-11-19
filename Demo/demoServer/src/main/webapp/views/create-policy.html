@@ -11,9 +11,9 @@
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="/assets/css/main.css">
     <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
-    <!--<link rel="stylesheet" href="/css/create-policy.css">-->
+    <link rel="stylesheet" href="/css/create-policy.css">
     <!-- GOOGLE FONTS -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">-->
     <!-- ICONS -->
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
@@ -26,14 +26,6 @@
             <div class="container-fluid">
                 <div class="panel panel-headline">
                     <div class="panel-body">
-                        <div class="form-group" style="width: 100%; float: left;">
-                            <button class="btn btn-primary" onclick="goBack()" style="float: left;">Go Back</button>
-                            <script>
-                                function goBack() {
-                                    window.history.back();
-                                }
-                            </script>
-                        </div>
                         <div class="form-group">
                             <label class="col-form-label">Locations:</label>
                             <select id="locationArr" class="form-control">
@@ -68,26 +60,64 @@
                         </div>
                         <input type="hidden" id="allowedParkingTo">
 
-                        <div class="form-group" >
-                            <button class="btn btn-primary" style="margin-top: 20px;" value="Save Policy Vehicle" id="save-policy-vehicle">Save Policy Vehicle</button>
-                        </div>
-
                         <div class="form-group">
-                            <div class="pricing-container" style="display: none;">
-                                <label  class="col-form-label">Pricings:</label><Br/>
-                            </div>
+                            <button class="btn btn-primary" style="margin-top: 20px;" value="Save Policy Vehicle"
+                                    id="save-policy-vehicle">Save Policy Vehicle
+                            </button>
+                        </div>
+                        <!--<div class="content-list-table">-->
+                        <!--<div class="row">-->
+                        <!--<div class="form-group">-->
+                        <!--<div class="pricing-container" style="display: none;">-->
+                        <!--<label class="col-form-label">Pricings:</label><Br/>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
 
-                        </div>
-                        <div class="row">
-                            <div class="button-wrapper" style="display: none;">
-                                <button class="btn btn-danger" id="delete-policy">Delete Policy</button>
-                            </div>
-                        </div>
+                        <!--<div class="row">-->
+                            <!--<div class="button-wrapper" style="display: none;">-->
+                                <!--<button class="btn btn-danger" id="delete-policy">Delete Policy</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
 
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+
+<div class="panel" id="pricing-panel" style="display: none;">
+    <div class="container-fluid">
+        <div class="panel panel-headline">
+            <div class="panel-body">
+                <div class="row">
+                    <span class="content-name">
+                      Add Pricing
+                    </span>
+                </div>
+                <div class="content-list-table">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="pricing-container" style="display: none;">
+                                <label class="col-form-label">Pricings:</label><Br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <button type="button" id="btn-back" class="btn btn-secondary">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="button-wrapper" style="display: none;">
+        <button class="btn btn-danger" id="delete-policy">Delete Policy</button>
     </div>
 </div>
 

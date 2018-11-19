@@ -56,12 +56,12 @@ function openHideList(holder) {
             holder.attr('isOpen', 'true');
         } else {
             $('.' + className).attr('class', 'pointer sub-menu ' + className);
-            $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-left float-right menu-icon');
+            $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-right float-right menu-icon');
             holder.attr('isOpen', 'false');
         }
     } else {
         $('.sub-menu-show').attr('class', 'pointer sub-menu ' + lastClassName);
-        $('#' + lastClassName + "Icon").attr('class', 'lnr lnr-chevron-left float-right menu-icon');
+        $('#' + lastClassName + "Icon").attr('class', 'lnr lnr-chevron-right float-right menu-icon');
         $('#' + lastClassName).attr('isOpen', 'false');
         $('.' + className).attr('class', 'pointer sub-menu-show ' + className);
         $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-down float-right menu-icon');
