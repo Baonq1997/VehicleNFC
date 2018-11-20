@@ -105,13 +105,16 @@ $(document).ready(function (e) {
     // end sort table headers
 });
 
+var searchValue = "";
 $(document).ready(function (e) {
 
     $('#searchBtn').on('click', function (e) {
         e.preventDefault();
+        searchValue = $('#searchValue').val();
         searchUser(0);
     });
 });
+
 
 function searchUser(pageNumber) {
     var url = "search-user";
@@ -120,7 +123,7 @@ function searchUser(pageNumber) {
     }
     var listFilterObject = [];
     var vehicleType = $('#search-filter option:selected').val();
-    var searchValue = $('#searchValue').val();
+    // var searchValue = $('#searchValue').val();
     var verify = createSearchObject("isVerified", "=", false, "vehicle");
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
     listFilterObject.push(verify);
@@ -240,14 +243,15 @@ function openDeleteModal(vehicleNumber) {
     $('#delete-id').val(vehicleNumber);
 }
 
-function deleteUser(id) {
+function deleteUser() {
+    var id =  $('#delete-id').val();
     $.post("delete-user",
         {
-            id: id,
+            id: parseInt(id),
         },
         (function (data, status) {
             if (data) {
-                location.reload();
+                location.reload(true);
             }
         }));
 }

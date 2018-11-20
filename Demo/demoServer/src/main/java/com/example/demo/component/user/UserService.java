@@ -171,29 +171,26 @@ public class UserService {
                         builder.lessThanOrEqualTo(r.get(param.getKey()),
                                 param.getValue().toString()));
             } else if (param.getOperation().equalsIgnoreCase(":")) {
-                Object type = param.getType();
-                if (type == null) {
+                Object type = new Object();
+                if (param.getKey().equalsIgnoreCase("vehicle")) {
+                    // do vehicleNumber la object nam trong User
+                    type = User.class;
+                } else {
+                    type = r.get(param.getKey()).getJavaType();
+                }
+                if (type == String.class) {
                     predicate = builder.and(predicate,
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
-                } else if (type.equals("vehicle")) {
-                    Join<User, Vehicle> join = r.join("vehicle");
-                    predicate = builder.and(predicate,
-                            builder.like(join.get(param.getKey()),
-                                    "%" + param.getValue() + "%"));
-                    predicate = builder.and(predicate, predicate);
-                }
-            } else {
-                Object type = param.getType();
-                if (type == null) {
+                } else if (type == User.class) {
+                    if (param.getKey().equalsIgnoreCase("vehicle")) {
+                        Join<User, Vehicle> join = r.join("vehicle");
+                        Predicate vehiclePredicate = builder.like(join.get("vehicleNumber"), "%" + param.getValue() + "%");
+                        predicate = builder.and(predicate, vehiclePredicate);
+                    }
+                } else {
                     predicate = builder.and(predicate,
                             builder.equal(r.get(param.getKey()), param.getValue()));
-                } else if (type.equals("vehicle")) {
-                    Join<User, Vehicle> join = r.join("vehicle");
-                    predicate = builder.and(predicate,
-                            builder.equal(join.get(param.getKey()),
-                                    param.getValue()));
-                    predicate = builder.and(predicate, predicate);
                 }
             }
         }

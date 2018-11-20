@@ -5,20 +5,7 @@ $(document).ready(function () {
         searchValue = $('#searchValue').val();
         filterPolicies(0);
     });
-    var isShow = false;
-    $('#filter-btn').on('click', function (e) {
-        isShow = !isShow;
-        if (isShow) {
-            $('#filter').show();
-            $('#filter').attr('display', 'flex');
-            $('#filter').attr('flex-wrap', 'wrap');
-        }else {
-            $('#filter').hide();
-        }
 
-        // $('#filter').attr('top',0);
-
-    });
     $('#btn-close').on('click', function (e) {
         location.reload(true);
     });
@@ -27,6 +14,18 @@ $(document).ready(function () {
         searchLocation();
     });
 });
+
+var isShow = false;
+function filterBox() {
+    isShow = !isShow;
+    if (isShow === true) {
+        $('#filter').show();
+        // $('#filter').attr('display', 'flex');
+        // $('#filter').attr('flex-wrap', 'wrap');
+    }else {
+        $('#filter').hide();
+    }
+}
 var listPolicyJson = [];
 var searchValue = "";
 

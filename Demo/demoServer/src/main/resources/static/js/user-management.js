@@ -159,7 +159,7 @@ function createSearchObject(key, operation, value) {
     var obj = {
         key: key,
         operation: operation,
-        value: value
+        value: value,
     };
     return obj;
 }
