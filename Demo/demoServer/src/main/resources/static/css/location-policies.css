@@ -17,10 +17,12 @@ body {
     flex-wrap: wrap;
 }
 .vehicle-tags > span{
+    text-align: center;
     vertical-align: middle;
     /*position: absolute;*/
     /*top: 50%;*/
     /*transform: translateY(-50%);*/
+    font-size: 15px;
     margin: 5px;
 }
 

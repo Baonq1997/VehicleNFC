@@ -12,6 +12,7 @@ import com.example.demo.view.Owner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,6 +52,12 @@ public class VehicleController {
     @GetMapping("/get-verify")
     public ModelAndView verify(ModelAndView mav) {
         mav.setViewName("vehicle-verify");
+        return mav;
+    }
+
+    @GetMapping("/create")
+    public ModelAndView createVehicle(ModelAndView mav) {
+        mav.setViewName("create-vehicle");
         return mav;
     }
 

@@ -16,12 +16,54 @@
 <body>
 <div class="panel">
     <div class="panel-body">
-        <form id="create-vehicle" method="post" autocomplete="off">
+        <form id="create-vehicle-form" method="post" autocomplete="off">
             <div class="form-group">
+                <label for="vehicleNumberShow" class="col-form-label">Vehicle Number:</label>
+                <input type="text" class="form-control" id="vehicleNumberShow" maxlength="12"
+                       value=""/>
+                <input type="hidden" class="form-control" id="vehicleNumber" name="vehicleNumber"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="licenseIdShow" class="col-form-label">License Id:</label>
+                <input type="text" class="form-control" id="licenseIdShow" maxlength="10"
+                       value=""/>
+                <input type="hidden" class="form-control" id="licenseId" name="licensePlateId"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="brand" class="col-form-label">Brand:</label>
+                <input type="text" class="form-control" id="brand" name="brand" required
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label for="size" class="col-form-label">Size:</label>
+                <input type="text" class="form-control" id="size" name="size" value="" required/>
+            </div>
+            <div class="form-group">
+                <label for="expireDate" class="col-form-label">Expire Date:</label>
+                <input id="datepicker" data-date-format="dd/mm/yyyy" class="form-control"
+                       onchange="setLongFromExpireDate('datepicker','expireDate')" required>
+                <input type="hidden" class="form-control" id="expireDate" name="expireDate"
+                       value=""/>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label">VehicleType:</label>
+                <select class="form-control" id="vehicle-list" name="vehicleTypeId">
 
+                </select>
+            </div>
+            <div class="form-group">
+                <!--<button type="button" class="btn btn-secondary" onclick="closeForm()">Close-->
+                <!--</button>-->
+                <input type="submit" class="btn btn-primary" value="Save"/>
             </div>
         </form>
     </div>
 </div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/create-vehicle.js"></script>
 </body>
 </html>

@@ -2875,3 +2875,6 @@ body {
 .nav-link {
     padding: 5px 10px !important;
 }
+.badge badge-success {
+    font-size: 20px !important;
+}

@@ -201,7 +201,7 @@ function setUpSaveFormData(vehicle) {
     $('#save-licenseId').val(vehicle.licensePlateId);
     $('#save-brand').val(vehicle.brand);
     $('#save-size').val(vehicle.size);
-    if (vehicle.expireDate != null) {
+    if (vehicle.expireDate !== null) {
         $('#save-expireDate').val(vehicle.expireDate);
         var date = new Date(vehicle.expireDate);
         $('#save-datepicker').val(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear());
@@ -238,7 +238,6 @@ $('#save-datepicker').datepicker({
 });
 
 $('#verify-vehicle-form').on('submit', function (e) {
-
     $.ajax({
         type: 'post',
         url: 'verify-vehicle',

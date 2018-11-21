@@ -1,14 +1,14 @@
 $(document).ready(function (e) {
     var phone = $('#main-content', window.parent.document).attr('phone');
     if (typeof(phone) === 'undefined') {
-        searchVehicle(0);
+        searchRequest(0);
     } else {
         $('#searchValue').val(phone);
-        searchVehicle(0);
+        searchRequest(0);
     }
     $('#searchBtn').on('click', function (e) {
         e.preventDefault();
-        searchVehicle(0);
+        searchRequest(0);
     });
 });
 
@@ -46,8 +46,8 @@ function loadData(res) {
         row += cellBuilder(content[i].description, "text-right");
         row += cellBuilder(convertMoney(content[i].amount), "text-right");
         row += cellBuilder(convertDate(content[i].createDate), "text-right");
-        row += '<td><a href="#" onclick="approveRequest(' + content[i].id + ',true)" class="btn btn-primary btnAction">Y</a>';
-        row += '<a href="#" onclick="approveRequest(' + content[i].id + ',false)" class="btn btn-primary btnAction">N</a>';
+        row += '<td><a href="#" onclick="approveRequest(' + content[i].id + ',true)" class="btn btn-primary btnAction"><i class="fas fa-check"></i></a>';
+        row += '<a href="#" onclick="approveRequest(' + content[i].id + ',false)" class="btn btn-primary btnAction"><i class="fa fa-ban"></i></a>';
         row += '<a href="#" onclick="viewPricingDetail(' + content[i].orderId + ')" class="btn btn-primary btnAction"><i class="fas fa-info"></i></a></td>'
         row += '</tr>';
         $('#user-table tbody').append(row);
@@ -233,7 +233,7 @@ $(document).ready(function (e) {
     // end sort table headers
 });
 
-function searchVehicle(pageNumber) {
+function searchRequest(pageNumber) {
     var url = "search-request";
     if (pageNumber != null) {
         url = url + "?page=" + pageNumber;

@@ -34,7 +34,7 @@ function shortenNavBar() {
     $("#footer").css("font-size", (show) ? "0" : "18px");
     $("#content-title-holder").css("left", (show) ? "50px" : "240px");
     $("#main").width((show) ? "calc(100% - 70px)" : "calc(100% - 260px)");
-    $("#shortenNavBarIcon").attr('class', (show) ? "lnr lnr-chevron-right" : "lnr lnr-chevron-left");
+    $("#shortenNavBarIcon").attr('class', (show) ? "lnr lnr-chevron-down" : "lnr lnr-chevron-left");
     if (!show) {
         $(".menu-icon").show();
     } else {
@@ -52,19 +52,19 @@ function openHideList(holder) {
     if (lastClassName === className) {
         if (holder.attr('isOpen') === 'false') {
             $('.' + className).attr('class', 'pointer sub-menu-show ' + className);
-            $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-down float-right menu-icon');
+            $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-up float-right menu-icon');
             holder.attr('isOpen', 'true');
         } else {
             $('.' + className).attr('class', 'pointer sub-menu ' + className);
-            $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-right float-right menu-icon');
+            $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-down float-right menu-icon');
             holder.attr('isOpen', 'false');
         }
     } else {
         $('.sub-menu-show').attr('class', 'pointer sub-menu ' + lastClassName);
-        $('#' + lastClassName + "Icon").attr('class', 'lnr lnr-chevron-right float-right menu-icon');
+        $('#' + lastClassName + "Icon").attr('class', 'lnr lnr-chevron-down float-right menu-icon');
         $('#' + lastClassName).attr('isOpen', 'false');
         $('.' + className).attr('class', 'pointer sub-menu-show ' + className);
-        $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-down float-right menu-icon');
+        $('#' + className + "Icon").attr('class', 'lnr lnr-chevron-up float-right menu-icon');
         holder.attr('isOpen', 'true');
     }
     lastClassName = className;

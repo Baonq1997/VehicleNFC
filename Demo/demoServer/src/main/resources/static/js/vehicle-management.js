@@ -151,7 +151,6 @@ function convertDate(dateTypeLong) {
     var dateStr = new Date(dateTypeLong),
         dformat = [dateStr.getDate(), dateStr.getMonth() + 1,
             dateStr.getFullYear()].join('-');
-
     return dformat;
 }
 
