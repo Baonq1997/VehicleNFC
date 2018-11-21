@@ -7,4 +7,6 @@ import java.util.List;
 public interface PolicyRepository extends JpaRepository<Policy, Integer> {
 
     List<Policy> findAllByLocationId(Integer locationId);
+
+    List<Policy> findByAllowedParkingFromAndAllowedParkingToAndLocationId(Long allowedParkingFrom, Long allowedParkingTo, Integer locationId);
 }

@@ -45,7 +45,7 @@
 
                         <div class="from-group clockpickerFrom" style="width:48%; float: left; margin-right: 2%;">
                             <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
-                            <input type="text" class="form-control" id="ParkingFrom">
+                            <input type="text" class="form-control" id="ParkingFrom" required="required">
                             <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
@@ -53,7 +53,7 @@
                         <input type="hidden" id="allowedParkingFrom">
                         <div class="from-group clockpickerTo" style="width:48%; float: left; margin-left: 2%;">
                             <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
-                            <input type="text" class="form-control" id="ParkingTo">
+                            <input type="text" class="form-control" id="ParkingTo" required="required">
                             <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
@@ -111,10 +111,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="button-wrapper" style="display: none;">
-                <button type="button" id="btn-back" class="btn btn-secondary">Back</button>
-                <button class="btn btn-danger" type="button" id="delete-policy">Delete Policy</button>
-            </div>
+            <button type="button" id="btn-back" class="btn btn-secondary">Back</button>
+            <!--<div class="button-wrapper" style="display: none;">-->
+
+                <!--<button class="btn btn-danger" type="button" id="delete-policy">Delete Policy</button>-->
+            <!--</div>-->
         </div>
     </div>
 </div>

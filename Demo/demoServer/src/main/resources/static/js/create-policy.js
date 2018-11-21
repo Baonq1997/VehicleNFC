@@ -68,7 +68,7 @@ function loadVehicleTypes() {
         success: function (data) {
             console.log("VehicleTypes: " + data);
             for (i = 0; i < data.length; i++) {
-                var chk = '<input type="checkbox" class="vehicles" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label class="form-control">' + data[i].name + '</label>';
+                var chk = '<input type="checkbox" class="vehicles" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label>' + data[i].name + '</label>';
                 $('#vehicleTypeArr').append(chk);
 
             }
@@ -134,7 +134,7 @@ function parseTimeToLong(clockPicker, type) {
 
 var policy;
 function savePolicyVehicle() {
-    $('#save-policy-vehicle').on('click', function () {
+    $('#save-policy-vehicle').off().on('click', function () {
         vehicleTypeArr = [];
 
         // var checkedLocaitons = $('input[name=locationChk]:checked').map(function (i) {
@@ -146,6 +146,7 @@ function savePolicyVehicle() {
         //     return this;
         // }).get();
         var locationId = $('#locationArr :selected').val();
+        alert(locationId);
         var vehicleTypes = $('input[name=chk]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
@@ -217,7 +218,10 @@ function savePolicyVehicle() {
                 $('#vehicleTypeArr').empty();
                 loadVehiclesCheckedBoxes();
             }, error: function (data) {
-                console.log("Could not save policy vehicle")
+                alert(data.responseText);
+                console.log(data.responseText);
+
+                console.log("Could not save policy vehicle");
             }
         });
     });

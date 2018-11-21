@@ -57,13 +57,19 @@ public class PolicyController {
             Integer locationId = policyView.getLocationId();
             Policy policy = policyView.getPolicy();
             List<VehicleType> vehicleTypeList = policyView.getVehicleTypes();
+            if (policyView.getPolicy().getId() == null) {
+                if (policyService.isExistedPolicy(policy, locationId)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Existed Policy");
+                }
+            }
 
             return ResponseEntity.status(HttpStatus.OK).body(policyService.savePolicy(policy, vehicleTypeList, locationId));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error has occurred");
         }
     }
+
 
     @GetMapping(value = "/create")
     public ModelAndView createPolicy(ModelAndView mav) {

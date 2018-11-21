@@ -55,7 +55,6 @@ public class PolicyService {
         Policy policyDB;
         if (policy.getId() == null) {
 //            // create
-
             Location location = locationRepository.findById(locationId).get();
             policy.setLocationId(locationId);
             policyDB = policyRepository.save(policy);
@@ -244,5 +243,14 @@ public class PolicyService {
         responseObject.setPageNumber(pageNumber);
         responseObject.setPageSize(PaginationEnum.locationPageSize.getNumberOfRows());
         return responseObject;
+    }
+    public boolean isExistedPolicy(Policy policy, Integer locationId) {
+        Long allowedParkingFrom = policy.getAllowedParkingFrom();
+        Long allowedParkingTo = policy.getAllowedParkingTo();
+        List<Policy> policies = policyRepository.findByAllowedParkingFromAndAllowedParkingToAndLocationId(allowedParkingFrom,allowedParkingTo,locationId);
+        if (policies.size() != 0) {
+            return true;
+        }
+        return false;
     }
 }
