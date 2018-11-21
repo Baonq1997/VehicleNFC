@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <link rel="stylesheet" href="/css/location-policies.css">
+    <!-- GOOGLE FONTS -->
+    <!--<link href="https://fonts.googleapis.com/css?fsamily=Source+Sans+Pro:300,400,600,700" rel="stylesheet">-->
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon.png">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div class="panel" id="policy-wrapper">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Policy Management
+            </span>
+            <form action="search-policy" class="search-box" method="post">
+                <!--<label class="col-form-label">Vehicle Allowed:</label>-->
+
+                <!--<div style="height: 100%; background-color: blue;">-->
+                <!--<button class="btn btn-primary" type="button" id="filter-btn">Vehicles</button>-->
+                <!--<div id="filter" style="display: none; margin-top: 8px;  width: 100px; position: relative; background-color: red;">-->
+
+                <!--</div>-->
+                <!--</div>-->
+                <div class="filter-wrapper">
+
+                    <button class="btn btn-primary btnAction" type="button" onclick="filterBox()" id="filter-btn">Filter</button>
+                    <div id="filter" style="display: none;">
+
+                    </div>
+                </div>
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 80%; float: left;"/>
+                <button class="btn btn-primary btnAction" type="button" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="content-list-table">
+            <div class="row">
+                <table class="table table-hover" id="policies-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Allowed Parking</th>
+                        <th>Vehicle Allowed</th>
+                        <th>Location</th>
+                        <th> Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="panel" id="location-wrapper" style="display: none;">
+    <div class="panel-body">
+        <div class="row" >
+             <span class="content-name">
+                Locations
+            </span>
+            <form action="search-location" class="search-box" method="post">
+
+                <input type="text" class="form-control" id="locationName" name="locationName" value=""
+                       style="width: 80%; float: left;"/>
+                <button class="btn btn-primary btnAction" type="button" id="searchLocationBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="row">
+            <div class="location-container">
+                <div class="control-group" id="locations">
+
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-secondary" id="btn-close">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>
+        </div>
+    </div>
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/policy-add-location.js"></script>
+    <script src="/assets/scripts/klorofil-common.js"></script>
+</div>
+</body>
+</html>

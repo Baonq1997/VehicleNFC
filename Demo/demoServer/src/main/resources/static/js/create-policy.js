@@ -68,7 +68,7 @@ function loadVehicleTypes() {
         success: function (data) {
             console.log("VehicleTypes: " + data);
             for (i = 0; i < data.length; i++) {
-                var chk = '<input type="checkbox" class="vehicles" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label>' + data[i].name + '</label>';
+                var chk = '<input type="checkbox" class="vehicles" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label class="form-control">' + data[i].name + '</label>';
                 $('#vehicleTypeArr').append(chk);
 
             }

@@ -2708,7 +2708,7 @@ ul.activity-timeline > li:last-child:after {
 }
 
 .content-list-table {
-    box-shadow: 5px 10px 18px #606e8f;
+    box-shadow: 5px 1px 18px #606e8f;
     padding: 15px;
     margin: 0 -15px;
 }
@@ -2871,4 +2871,7 @@ body {
 
 #no-data-row:hover {
     background: white;
+}
+.nav-link {
+    padding: 5px 10px !important;
 }
