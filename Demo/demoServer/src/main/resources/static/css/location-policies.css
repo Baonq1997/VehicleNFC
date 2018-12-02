@@ -2,9 +2,9 @@ ul {
     list-style-type: none;
     padding: 0;
 }
-li {
-    padding: 5px;
-}
+/*li {*/
+    /*padding: 5px;*/
+/*}*/
 
 body {
     font-size: 20px;

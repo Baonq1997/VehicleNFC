@@ -7,7 +7,7 @@ $(document).ready(function (e) {
 });
 
 function emptyTable() {
-    $('#user-table tbody tr').remove();
+    $('#vehicle-table tbody tr').remove();
 }
 
 function emptyPaginationLi() {
@@ -38,11 +38,11 @@ function loadData(res) {
             " href=\"#\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
         row += cellBuilder(deleteStr + edit);
         row += '</tr>';
-        $('#user-table tbody').append(row);
+        $('#vehicle-table tbody').append(row);
     }
 
     for (var i = 0; i < res.pageSize - content.length; i++) {
-        $('#user-table tbody').append('<tr class="blank-row"></tr>');
+        $('#vehicler-table tbody').append('<tr class="blank-row"></tr>');
     }
 
     var pageNumber = res.pageNumber;
@@ -116,7 +116,7 @@ function searchVehicle(pageNumber) {
 
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
-    var verifyObject = createSearchObject("isVerified", "=", true);
+    var verifyObject = createSearchObject("isVerified", ":", true);
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
     listFilterObject.push(filterObject);
     listFilterObject.push(verifyObject);

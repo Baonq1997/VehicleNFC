@@ -18,7 +18,7 @@
     <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
 </head>
 <body>
-<div class="panel">
+<div class="panel" id="main-wrapper">
     <div class="panel-body">
         <div class="row">
             <div class="form-group" style="width:48%; float: left;">
@@ -52,16 +52,19 @@
 
         </div>
         <div class="row">
-            <div class="form-group">
-                <label class="col-form-label">Vehicle Allowed:</label>
-                <div id="filter">
+            <form id="search-policy" action="" class="search-box" method="post" style="float: left;">
+                <div class="filter-wrapper" style="float: left;">
 
+                    <button class="btn btn-primary btnAction" type="button" onclick="filterBox()" id="filter-btn">Filter</button>
+                    <div id="filter" style="display: none;">
+
+                    </div>
                 </div>
+                <button class="btn btn-primary btnAction" type="submit" id="searchBtn" value="Go" style="float: left;">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
 
-            </div>
-            <button class="btn btn-primary btnAction" type="button" id="filter-btn" value="Go" style="float: left;">
-                <i class="lnr lnr-magnifier"></i>
-            </button>
         </div>
         <div id="policies" class="content-list-table">
             <div class="row">
@@ -86,36 +89,101 @@
     </div>
 </div>
 
-<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="exampleModalLabel">Add Policy To Locaitons</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+<div class="panel" id="location-wrapper" style="display: none;">
+    <div class="panel-body">
+        <div class="row" >
+             <span class="content-name">
+                Locations
+            </span>
+            <form id="location-form-search" action="search-location" class="search-box" method="post">
+
+                <input type="text" class="form-control" id="locationName" name="locationName" value=""
+                       style="width: 80%; float: left;"/>
+                <button class="btn btn-primary btnAction" type="submit" id="searchLocationBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
                 </button>
-            </div>
-            <div class="modal-body">
-                <div class="location-container">
-                    <h3>Locations</h3>
-                    <div class="control-group location" id="locations">
+            </form>
+        </div>
+        <div class="row">
+            <div class="location-container">
+                <div class="control-group">
+                    <table id="locations" class="table table-striped">
 
+                    </table>
 
-                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>
-            </div>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-secondary" id="btn-close">Close</button>
+            <button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>
         </div>
     </div>
 </div>
+
+<!--<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"-->
+     <!--aria-hidden="true">-->
+    <!--<div class="modal-dialog" role="document">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<h3 class="modal-title" id="exampleModalLabel">Add Policy To Locaitons</h3>-->
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+                    <!--<span aria-hidden="true">&times;</span>-->
+                <!--</button>-->
+            <!--</div>-->
+            <!--<div class="modal-body">-->
+                <!--<div class="location-container">-->
+                    <!--<h3>Locations</h3>-->
+                    <!--<div class="control-group location" id="locations">-->
+
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+                <!--<button type="button" class="btn btn-primary" id="btn-save-locations" value="Save">Save</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 <script src="/assets/vendor/jquery/jquery.min.js"></script>
 <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/location-policies.js"></script>
 <script src="/assets/scripts/klorofil-common.js"></script>
 <script src="/assets/scripts/jquery-clockpicker.min.js"></script>
+<script>
+    $(function() {
+        function checkCookie(name) {
+            return getCookie(name);
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var username = checkCookie('username');
+        console.log(username);
+        if (username !== null && username.trim() !== '') {
+            // $('#staff-username').html(username);
+            console.log('true checkcookie');
+        } else {
+            console.log('false checkcookie');
+            location.href = 'http://localhost:8080/staff/login';
+        }
+    });
+</script>
+
 </body>
 </html>

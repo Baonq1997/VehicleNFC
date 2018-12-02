@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Refund</title>
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div class="panel" id="staff-refund-main">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Staff Refund Management
+            </span>
+            <form action="" class="search-box" method="post" class="search-box">
+                <select id="request-filter" class="form-control">
+                    <option value="orderId" selected="selected">Search By Order</option>
+                    <!--<option value="staff">Search By Staff</option>-->
+                    <option value="manager">Search By Manager</option>
+                </select>
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 50%; float: left;"/>
+                <button class="btn btn-primary btnAction" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+
+        </div>
+        <div class="content-list-table" id="location-container">
+            <div class="row">
+                <table class="table table-hover" id="refund-table">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Order</th>
+                        <th>Created Date</th>
+                        <th>Closed Date</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Manager</th>
+                        <th>Description</th>
+                        <th colspan="4">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel" id="order-detail" style="display: none">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+               Order detail
+            </span>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-lg-12">
+                        <label class="col-form-label">Location:</label>
+                        <span id="location"></span>
+                    </div>
+                </div>
+                <br/>
+                <input type="hidden" id="order-id">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label class="col-form-label">Vehicle:</label>
+                        <span id="vehicleNumber"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="col-form-label">License: </label>
+                        <span id="licenseId"></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
+                        <span id="allowedParkingFrom"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="col-form-label">To: </label>
+                        <span id="allowedParkingTo"></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="checkInDate" class="col-form-label">Parking from:</label>
+                        <span id="checkInDate"></span>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="col-form-label">To: </label>
+                        <span id="checkOutDate"></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label for="duration" class="col-form-label">Duration:</label>
+                        <span id="duration"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" style="margin-top: -35px">
+                <div>
+                    <span class="content-name">
+                     Pricings:
+                    </span>
+                    <table id="orderPricings" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>From Hour:</th>
+                            <th>Price Per Hour</th>
+                            <th>Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="btn-wrapper">
+                <button type="button" class="btn btn-default" onclick="closeForm()" style="margin-left: 18px;">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="/js/staff-refund-management.js"></script>
+</body>
+</html>

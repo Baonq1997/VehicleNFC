@@ -52,6 +52,13 @@ public class LocationService {
         return location;
     }
 
+    public boolean checkExistedLocation(String location) {
+        if (locationRepository.findByLocation(location) != null) {
+            return true;
+        }
+        return false;
+    }
+
     public Location saveLocation(Location location) {
         if (location.getId() == null) {
             // create

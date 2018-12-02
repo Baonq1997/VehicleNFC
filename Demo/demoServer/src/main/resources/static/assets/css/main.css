@@ -940,7 +940,7 @@ fieldset[disabled] .btn {
 .panel .table > tbody > tr > th:last-child,
 .panel .table > tfoot > tr > td:last-child,
 .panel .table > tfoot > tr > th:last-child {
-    padding-left: 25px;
+    /*padding-left: 25px;*/
 }
 
 .panel-footer {
@@ -2877,4 +2877,13 @@ body {
 }
 .badge badge-success {
     font-size: 20px !important;
+}
+.nav-link {
+    padding: 5px 10px !important;
+}
+.vehicles {
+    margin-left: 10px !important;
+}
+.vehicle-type {
+    font-size: 17px;
 }

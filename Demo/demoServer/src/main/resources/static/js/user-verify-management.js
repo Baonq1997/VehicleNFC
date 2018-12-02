@@ -29,13 +29,26 @@ function loadData(res) {
         // row += '<td>' + content[i].password + '</td>';
         row += '<td>' + content[i].firstName + ' ' + content[i].lastName + '</td>';
         row += '<td class="text-right">' + (content[i].money * 1000).toLocaleString() + " vnđ" + '</td>';
-        row += '<td class="text-right">' + content[i].vehicle.vehicleNumber + '</td>';
-        var vehicleType = (content[i].vehicle.vehicleTypeId != null)
-            ? content[i].vehicle.vehicleTypeId.name : "N/A";
-        row += '<td class="text-center">' + vehicleType + '</td>';
+        var vehicleNumber;
+        var vehicleType ;
+        var verify
+        if (content[i].vehicle != null) {
+            vehicleNumber =  (content[i].vehicle.vehicleNumber != null)
+                ? showText(content[i].vehicle.vehicleNumber) : "N/A";
+            row += '<td class="text-right">' + vehicleNumber + '</td>';
+            vehicleType = (content[i].vehicle.vehicleTypeId != null)
+                ? showText(content[i].vehicle.vehicleTypeId.name) : "N/A";
+            row += '<td class="text-center">' + vehicleType + '</td>';
+            verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicle.vehicleNumber + "')\" class=\"btn btn-primary btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
+        } else {
+            vehicleNumber = "N/A";
+            vehicleType = "N/A";
+        }
+
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
-        var verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicle.vehicleNumber + "')\" class=\"btn btn-primary btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
-        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].id + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
+        var addVehicle = (content[i].vehicle == null) ?  "<a href=\"#\" onclick=\"addVehicleToUser('" + content[i].decodedId + "')\" class=\"btn btn-success btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
+
+        var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].decodedId + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
         row += cellBuilder(deleteStr + verify);
         row += '</tr>';
         $('#user-table tbody').append(row);
@@ -74,6 +87,14 @@ function createPageButton(pageNumber, label, isDisable, isActive) {
 
 function createEtcButton() {
     return '<li class="etc ">...</li>';
+}
+
+function showText(msg) {
+    if (msg != null) {
+        return msg;
+    } else {
+        return "N/A";
+    }
 }
 
 
@@ -124,7 +145,7 @@ function searchUser(pageNumber) {
     var listFilterObject = [];
     var vehicleType = $('#search-filter option:selected').val();
     // var searchValue = $('#searchValue').val();
-    var verify = createSearchObject("isVerified", "=", false, "vehicle");
+    var verify = createSearchObject("isVerified", ":", false, "vehicle");
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
     listFilterObject.push(verify);
     listFilterObject.push(filterObject);
@@ -247,7 +268,7 @@ function deleteUser() {
     var id =  $('#delete-id').val();
     $.post("delete-user",
         {
-            id: parseInt(id),
+            id: id,
         },
         (function (data, status) {
             if (data) {
@@ -255,3 +276,4 @@ function deleteUser() {
             }
         }));
 }
+

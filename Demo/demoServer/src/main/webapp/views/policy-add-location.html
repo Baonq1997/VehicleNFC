@@ -43,8 +43,8 @@
                 <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
                        style="width: 80%; float: left;"/>
                 <button class="btn btn-primary btnAction" type="button" id="searchBtn" name="Search">
-                    <i class="lnr lnr-magnifier"></i>
-                </button>
+                <i class="lnr lnr-magnifier"></i>
+            </button>
             </form>
         </div>
         <div class="content-list-table">
@@ -78,19 +78,21 @@
              <span class="content-name">
                 Locations
             </span>
-            <form action="search-location" class="search-box" method="post">
+            <form id="location-form-search" action="search-location" class="search-box" method="post">
 
                 <input type="text" class="form-control" id="locationName" name="locationName" value=""
                        style="width: 80%; float: left;"/>
-                <button class="btn btn-primary btnAction" type="button" id="searchLocationBtn" name="Search">
+                <button class="btn btn-primary btnAction" type="submit" id="searchLocationBtn" name="Search">
                     <i class="lnr lnr-magnifier"></i>
                 </button>
             </form>
         </div>
         <div class="row">
             <div class="location-container">
-                <div class="control-group" id="locations">
+                <div class="control-group">
+                    <table id="locations" class="table table-striped">
 
+                    </table>
 
                 </div>
             </div>
@@ -103,7 +105,40 @@
     <script src="/assets/vendor/jquery/jquery.min.js"></script>
     <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="/js/policy-add-location.js"></script>
-    <script src="/assets/scripts/klorofil-common.js"></script>
+    <script src="/assets/scripts/klorofil-common.js">
+        <script>
+        $(function() {
+            function checkCookie(name) {
+                return getCookie(name);
+            }
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+
+            var username = checkCookie('username');
+            console.log(username);
+            if (username !== null && username.trim() !== '') {
+                // $('#staff-username').html(username);
+                console.log('true checkcookie');
+            } else {
+                console.log('false checkcookie');
+                location.href = 'http://localhost:8080/staff/login';
+            }
+        });
+    </script>
+
 </div>
 </body>
 </html>

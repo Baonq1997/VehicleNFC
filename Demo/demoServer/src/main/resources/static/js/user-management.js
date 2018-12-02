@@ -17,7 +17,52 @@ $(document).ready(function (e) {
         $('#searchValue').val(phone);
         searchUser(0);
     }
+    $('#btn-vehicle').on('click', function (e) {
+        showVehicleModal();
+    })
 });
+
+var userId;
+
+function deleteVehicle() {
+    $('#delete-btn').off().on('click', function () {
+        $.ajax({
+            type: "POST",
+            // dataType: "json",
+            url: "http://localhost:8080/user/unbind-vehicle?userId=" + userId,
+            success: function (data) {
+                location.reload(true);
+            }, error: function (data) {
+                console.log(data);
+            }
+        });
+    });
+
+}
+
+function showVehicleModal() {
+    let vehicleNumber = $('#vehicleNumberHidden').val();
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/vehicle/get-vehicle/" + vehicleNumber,
+        success: function (data) {
+            $('#deleteVehicleModal #vehicleNumber').text(data.vehicleNumber);
+            $('#deleteVehicleModal #licensePlateId').text(data.licensePlateId);
+            $('#deleteVehicleModal #brand').text(data.brand);
+            if (data.expireDate === null) {
+                $('#deleteVehicleModal #expireDate').text("N/A");
+            } else {
+                var date = new Date(data.expireDate);
+                $('#deleteVehicleModal #expireDate').text(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear());
+            }
+
+        }, error: function (data) {
+            console.log(data);
+        }
+    });
+    deleteVehicle();
+    $('#deleteVehicleModal').modal();
+}
 
 function emptyTable() {
     $('#user-table tbody tr').remove();
@@ -38,10 +83,14 @@ function loadData(res) {
         // row += '<td>' + content[i].password + '</td>';
         row += '<td>' + content[i].firstName + ' ' + content[i].lastName + '</td>';
         row += '<td class="text-right">' + (content[i].money * 1000).toLocaleString() + " vnđ" + '</td>';
+        var addVehicle;
         if (content[i].vehicle == null) {
             row += '<td class="text-center">N/A</td>';
             row += '<td class="text-center">N/A</td>';
+            addVehicle = "<a href=\"#\" onclick=\"addVehicleToUser('" + content[i].phoneNumber + "')\" class=\"btn btn-success btnAction\"><i class=\"fas fa-plus-square\"></i></a>";
+            // "<a href=\"#\" onclick=\"addVehicleToUser('" + content[i].decodedId + "')\" class=\"btn btn-success btnAction\"><i class=\"far fa-check-square\"></i></a>";
         } else {
+
             var vehicleNumber = (content[i].vehicle.vehicleNumber != null)
                 ? content[i].vehicle.vehicleNumber : "N/A";
             row += '<td class="text-center">' + vehicleNumber + '</td>';
@@ -50,9 +99,15 @@ function loadData(res) {
             row += '<td class="text-center">' + vehicleType + '</td>';
         }
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
+
         var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].decodedId + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
         var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].decodedId + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
-        row += cellBuilder(deleteStr + edit);
+        if (addVehicle != null) {
+            row += cellBuilder(addVehicle + deleteStr + edit);
+        } else {
+            row += cellBuilder(deleteStr + edit);
+        }
+
         row += '</tr>';
         $('#user-table tbody').append(row);
     }
@@ -289,6 +344,7 @@ function buildUserJSON() {
 }
 
 function loadUserInfo(id) {
+    userId = id;
     openSaveForm();
     $.ajax({
         type: "GET",
@@ -311,6 +367,7 @@ function setUpUserInfo(data) {
     $('#money').val(data.money);
     $('#smsNoti').prop('checked', data.smsNoti);
     $('#activated').prop('checked', data.activated);
+    $('#vehicleNumberHidden').val(data.vehicle.vehicleNumber)
 }
 
 
@@ -329,4 +386,146 @@ function deleteUser(id) {
                 location.reload();
             }
         }));
+}
+
+// Add Vehicle To User
+// Vehicles to add to user.
+var vehicleSearch = "";
+var currentPhoneNumber = "";
+function addVehicleToUser(phoneNumber) {
+    currentPhoneNumber = "";
+    $('#vehicle-list').show();
+    $('#main-content-user-list').hide();
+    searchVehicle(0);
+    currentPhoneNumber = phoneNumber;
+}
+
+$(document).ready(function () {
+    $('#search-vehicle-form').submit((e) => {
+        e.preventDefault();
+        vehicleSearch = $('#vehicleSearch').val();
+        searchVehicle(0);
+    });
+});
+
+function searchVehicle(pageNumber) {
+    var url = "http://localhost:8080/vehicle/search-vehicle";
+    if (pageNumber != null) {
+        url = url + "?page=" + pageNumber;
+    }
+    var listFilterObject = [];
+    var vehicleType = $('#vehicle-search-filter option:selected').val();
+
+    var verifyObject = createSearchObject("user", ":", null);
+    var filterObject = createSearchObject(vehicleType, ":", vehicleSearch);
+    listFilterObject.push(filterObject);
+    listFilterObject.push(verifyObject);
+    $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: "json",
+        contentType: 'application/json',
+        data: JSON.stringify(listFilterObject),
+        success: function (response) {
+            emptyVehicleTable();
+            emptyVehiclePaginationLi();
+            loadVehicles(response.data);
+            console.log(response);
+        }, error: function (data) {
+            console.log(data);
+        }
+    });
+}
+
+function emptyVehicleTable() {
+    $('#vehicle-table tbody tr').remove();
+}
+
+function emptyVehiclePaginationLi() {
+    $('#vehicle-pagination').empty();
+}
+
+function loadVehicles(res) {
+    var content = "";
+    content = res.data;
+    var row = "";
+    for (i = 0; i < content.length; i++) {
+        row = '<tr>';
+        var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "N/A";
+        var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "N/A";
+        row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
+        row += cellBuilder(content[i].vehicleNumber, "text-right");
+        row += cellBuilder(content[i].licensePlateId, "text-right");
+        row += cellBuilder(vehicleType, "text-center");
+        row += cellBuilder(content[i].brand, "");
+        row += cellBuilder(content[i].size, "text-right");
+        row += cellBuilder(convertDate(content[i].expireDate), "text-right");
+        row += cellBuilder(ownerPhone, "text-right");
+        var addToUser = "<a href=\"#\" onclick=\"addToUser('" + content[i].vehicleNumber + "')\" class=\"btn btn-success btnAction\"><i class=\"fas fa-plus-square\"></i></a>";
+        row += cellBuilder(addToUser, "text-center");
+        row += '</tr>';
+        $('#vehicle-table tbody').append(row);
+    }
+
+    for (var i = 0; i < res.pageSize - content.length; i++) {
+        $('#vehicle-table tbody').append('<tr class="blank-row"></tr>');
+    }
+
+    var pageNumber = res.pageNumber;
+    console.log("page: " + pageNumber);
+    console.log("Total Page: " + res.totalPages);
+    $('#vehicle-pagination').append(createVehiclePageButton(0, 'First', false, false));
+    $('#vehicle-pagination').append(createVehiclePageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+    if (pageNumber > 2) {
+        $('#vehicle-pagination').append(createEtcButton());
+    }
+    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+            $('#vehicle-pagination').append(createVehiclePageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
+        }
+    }
+    if (res.totalPages - pageNumber > 3) {
+        $('#vehicle-pagination').append(createEtcButton());
+    }
+    $('#vehicle-pagination').append(createVehiclePageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+    $('#vehicle-pagination').append(createVehiclePageButton((res.totalPages - 1), 'Last', false, false));
+}
+
+function addToUser(addedVehicleNumber) {
+    console.log(addedVehicleNumber);
+    $.ajax({
+        url: "http://localhost:8080/user/add-vehicle",
+        type: "POST",
+        data: {
+            vehicleNumber: addedVehicleNumber,
+            phoneNumber: currentPhoneNumber
+        },
+        success: function (data) {
+            console.log(data);
+            if (data === false) {
+                alert("Can't add vehicle to user");
+            } else {
+                location.reload(true);
+            }
+        }, error: function (data) {
+            console.log(data);
+        }
+    })
+}
+
+function createVehiclePageButton(pageNumber, label, isDisable, isActive) {
+    var className = (isActive) ? 'nav-item active' : 'nav-item';
+    className += (isDisable) ? ' disabled-href' : '';
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="searchVehicle(' + pageNumber + ')">' + label + '</a>\n' +
+        '</li>';
+}
+
+function convertDate(dateTypeLong) {
+    if (dateTypeLong === null) {
+        return "N/A";
+    }
+    var dateStr = new Date(dateTypeLong),
+        dformat = [dateStr.getDate(), dateStr.getMonth() + 1,
+            dateStr.getFullYear()].join('-');
+    return dformat;
 }

@@ -59,7 +59,7 @@ public class PolicyController {
             List<VehicleType> vehicleTypeList = policyView.getVehicleTypes();
             if (policyView.getPolicy().getId() == null) {
                 if (policyService.isExistedPolicy(policy, locationId)) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Existed Policy");
+                    return ResponseEntity.status(409).body("This policy existed");
                 }
             }
 

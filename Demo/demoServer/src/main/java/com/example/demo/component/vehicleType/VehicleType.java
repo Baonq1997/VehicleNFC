@@ -17,6 +17,9 @@ public class VehicleType implements Serializable {
     @Size(max = 45)
     @Column(name = "name")
     private String name;
+    @Size(max = 45)
+    @Column(name = "en_name")
+    private String en_name;
     @Transient
     private String isDelete;
     public VehicleType() {
@@ -36,6 +39,14 @@ public class VehicleType implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEn_name() {
+        return en_name;
+    }
+
+    public void setEn_name(String en_name) {
+        this.en_name = en_name;
     }
 
     public String getIsDelete() {

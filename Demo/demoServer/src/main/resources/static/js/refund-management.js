@@ -87,7 +87,7 @@ function loadData(res) {
 function createPageButton(pageNumber, label, isDisable, isActive) {
     var className = (isActive) ? 'nav-item active' : 'nav-item';
     className += (isDisable) ? ' disabled-href' : '';
-    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="searchVehicle(' + pageNumber + ')">' + label + '</a>\n' +
+    return '<li class="' + className + '">\n<a href="#" class="nav-link" onclick="searchRequest(' + pageNumber + ')">' + label + '</a>\n' +
         '</li>';
 }
 

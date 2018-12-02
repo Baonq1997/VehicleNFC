@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/demo.css">
     <link rel="stylesheet" href="/css/user.css">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
 </head>
 <body>
 <div class="panel" id="main-content-user-list">
@@ -114,6 +115,8 @@
                 <button type="button" class="btn btn-secondary" onclick="closeForm()">Close
                 </button>
                 <input type="submit" class="btn btn-primary" value="Save"/>
+                <input type="hidden" id="vehicleNumberHidden" value="">
+                <button type="button" class="btn btn-success" id="btn-vehicle">Vehicle</button>
             </div>
         </form>
     </div>
@@ -169,11 +172,13 @@
         </form>
     </div>
 </div>
+
+
 <div class="modal" tabindex="-1" role="dialog" id="deleteModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">Delete</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -190,10 +195,131 @@
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" role="dialog" id="deleteVehicleModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Vehicle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="vehicleNumber" class="col-form-label">Vehicle Number:</label>
+                    <label class="form-control" id="vehicleNumber"></label>
+                    <!--<input type="text" class="form-control" id="vehicleNumber" name="vehicleNumber" value="" required/>-->
+                </div>
+                <div class="form-group">
+                    <label for="licensePlateId" class="col-form-label">License Plate:</label>
+                    <label class="form-control" id="licensePlateId"></label>
+                    <!--<input type="text" class="form-control" id="licensePlateId" name="licensePlateId" value="" required/>-->
+                </div>
+                <div class="form-group">
+                    <label for="brand" class="col-form-label">Brand:</label>
+                    <label class="form-control" id="brand"></label>
+                    <!--<input type="text" class="form-control" id="brand" name="brand" value="" required/>-->
+                </div>
+                <div class="form-group">
+                    <label for="expireDate" class="col-form-label">Expire Date:</label>
+                    <label class="form-control" id="expireDate"></label>
+                    <!--<input type="text" class="form-control" id="expireDate" name="expireDate" value="" required/>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="delete-btn" class="btn btn-danger">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Vehicles-->
+<div class="panel" id="vehicle-list" style="display: none;">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Manage vehicles
+            </span>
+            <form action="search-user" method="post" id="search-vehicle-form" class="search-box">
+                <select id="vehicle-search-filter" class="form-control">
+                    <option value="vehicleNumber" selected="selected">Search By Vehicle Number</option>
+                    <option value="licensePlateId">Search By License Plate</option>
+                </select>
+                <input type="text" class="form-control" id="vehicleSearch" name="vehicleSearch" value=""
+                       style="width: 50%; float: left;"/>
+                <button class="btn btn-primary btnAction" type="submit" id="searcVehiclehBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="content-list-table">
+            <div class="row">
+                <table class="table table-hover" id="vehicle-table">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Vehicle Number</th>
+                        <th>License</th>
+                        <th>Vehicle Type</th>
+                        <th>Brand</th>
+                        <th>Size</th>
+                        <th>Expire</th>
+                        <th>Owner phone</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <ul class="nav nav-pills" id="vehicle-pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="/assets/vendor/jquery/jquery.min.js"></script>
 <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 <script src="/js/user-management.js"></script>
+<script>
+    $(function() {
+        function checkCookie(name) {
+            return getCookie(name);
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var username = checkCookie('username');
+        console.log(username);
+        if (username !== null && username.trim() !== '') {
+            // $('#staff-username').html(username);
+            console.log('true checkcookie');
+        } else {
+            console.log('false checkcookie');
+            location.href = 'http://localhost:8080/staff/login';
+        }
+    });
+</script>
 
 </body>
 </html>

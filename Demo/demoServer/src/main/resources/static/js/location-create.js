@@ -20,7 +20,13 @@ function createLocation() {
                 console.log(data);
                 location.reload(true);
             }, error: function (data) {
-                console.log(data);
+                if (data.status === 409) {
+                    alert("This location existed");
+                } else {
+                    alert("Could not save location");
+                    console.log(data);
+                }
+
             }
         })
     });

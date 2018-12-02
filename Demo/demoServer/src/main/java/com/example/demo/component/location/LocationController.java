@@ -74,6 +74,10 @@ public class LocationController {
 
     @PostMapping("/save")
     public ResponseEntity saveLocation(@RequestBody Location location) {
+        boolean isExisted = locationService.checkExistedLocation(location.getLocation());
+        if (isExisted) {
+            return ResponseEntity.status(409).body("This location existed");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(locationService.saveLocation(location));
     }
 

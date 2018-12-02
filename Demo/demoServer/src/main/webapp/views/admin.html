@@ -165,6 +165,9 @@
                     <li><a onclick="switchContentFragment('/order/index',$(this))" class="pointer menu"><i
                             class="lnr lnr-file-empty"></i> <span class="title">Orders</span></a>
                     </li>
+                    <li><a onclick="switchContentFragment('/refund/staff/index',$(this))" class="pointer menu"><i
+                            class="lnr lnr-file-empty"></i> <span class="title">Refund Request</span></a>
+                    </li>
                     <li id="shortenNavBar" onclick="shortenNavBar()" class="pointer">
                         <a class="menu" style="border-bottom: 0;color: white"><i
                                 id="shortenNavBarIcon" class="lnr lnr-chevron-left"></i> <span class="title">Hide</span></a>
@@ -200,7 +203,7 @@
     }
 
     function logout() {
-        document.cookie = "username=;";
+        document.cookie = "username=;path=/";
         location.href = checkCookie('staff/login');
     }
 

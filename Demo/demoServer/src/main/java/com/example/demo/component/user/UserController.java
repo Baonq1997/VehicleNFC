@@ -1,5 +1,6 @@
 package com.example.demo.component.user;
 
+import com.example.demo.component.vehicle.Vehicle;
 import com.example.demo.config.PaginationEnum;
 import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletContext;
 import java.util.*;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.status;
 
@@ -45,7 +47,22 @@ public class UserController {
 
     @PostMapping(value = "/create-user")
     public ResponseEntity<String> createUser(@RequestBody User user) {
-        String encodedId = UserService.encodeId(userService.createUser(user));
+        boolean isExisted = userService.checkExistedPhoneNumber(user.getPhoneNumber());
+        if (isExisted) {
+           return status(409).body("This phone number has already taken");
+        }
+        Optional<Vehicle> vehicleOptional = vehicleService.getVehicle(user.getVehicle().getVehicleNumber());
+        if (vehicleOptional.isPresent()) {
+            return status(409).body("This vehicle existed");
+        }
+
+        Map<String, String> tokenList;
+        tokenList = (Map<String, String>) servletContext.getAttribute("staffTokenList");
+        if (tokenList == null){
+            tokenList = new HashMap<>();
+        }
+
+        String encodedId = UserService.encodeId(userService.createUser(user, tokenList));
         return status(OK).body(encodedId);
     }
 
@@ -258,6 +275,16 @@ public class UserController {
             }
         }
         return status(OK).body(false);
+    }
+    @PostMapping(value = "/unbind-vehicle")
+    public ResponseEntity unbind(@Param("userId") String userId) {
+        return ResponseEntity.status(OK).body(userService.unbindVehicle(UserService.decodeId(userId)));
+    }
+
+    @PostMapping(value = "/add-vehicle")
+    public ResponseEntity<Boolean> addToUser(@Param(value = "vehicleNumber") String vehicleNumber
+                                    ,@Param(value = "phoneNumber") String phoneNumber) {
+        return ResponseEntity.status(OK).body(userService.addVehicleToUser(vehicleNumber, phoneNumber));
 
     }
 }

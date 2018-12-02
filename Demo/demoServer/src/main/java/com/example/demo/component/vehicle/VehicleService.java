@@ -100,7 +100,7 @@ public class VehicleService {
         Root r = query.from(Vehicle.class);
 
         Predicate predicate = builder.conjunction();
-
+        boolean getOccupiedVehicles = false;
         for (SearchCriteria param : params) {
             if (param.getOperation().equalsIgnoreCase(">")) {
                 predicate = builder.and(predicate,
@@ -111,25 +111,43 @@ public class VehicleService {
                         builder.lessThanOrEqualTo(r.get(param.getKey()),
                                 param.getValue().toString()));
             } else if (param.getOperation().equalsIgnoreCase(":")) {
-                if (r.get(param.getKey()).getJavaType() == String.class) {
+                Object type;
+                if (param.getKey().equalsIgnoreCase("user")) {
+                    type = User.class;
+                } else {
+                    type = r.get(param.getKey()).getJavaType();
+                }
+                if (type == String.class) {
                     predicate = builder.and(predicate,
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
+                } else if (type == User.class) {
+                    if (param.getKey().equalsIgnoreCase("user")) {
+                        getOccupiedVehicles = true;
+                        predicate = builder.and(predicate, builder.isNull(r.get("ownerId")));
+                    }
+                } else if (type == boolean.class) {
+                    predicate = builder.and(predicate,
+                            builder.equal(r.get("isVerified"), Boolean.parseBoolean(param.getValue().toString())));
                 }
             } else {
                 predicate = builder.and(predicate,
                         builder.equal(r.get(param.getKey()), param.getValue()));
             }
         }
+        predicate = builder.and(predicate, builder.equal(r.get("isActive"), true));
         query.where(predicate);
         TypedQuery<Vehicle> typedQuery = entityManager.createQuery(query);
         List<Vehicle> result = typedQuery.getResultList();
-        for (Vehicle vehicle : result) {
-            Optional<User> owner = userRepository.findByVehicle(vehicle);
-            if (owner.isPresent()) {
-                vehicle.setOwner(Owner.covertUserToOwner(owner.get()));
+        if(!getOccupiedVehicles) {
+            for (Vehicle vehicle : result) {
+                Optional<User> owner = userRepository.findByVehicle(vehicle);
+                if (owner.isPresent()) {
+                    vehicle.setOwner(Owner.covertUserToOwner(owner.get()));
+                }
             }
         }
+
         int totalPages = (int) Math.ceil((double) result.size() / pageSize);
         typedQuery.setFirstResult(pagNumber * pageSize);
         typedQuery.setMaxResults(pageSize);

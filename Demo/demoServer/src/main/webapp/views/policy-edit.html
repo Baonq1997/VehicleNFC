@@ -51,22 +51,26 @@
 
                         <div class="from-group clockpickerFrom" style="width:48%; float: left; margin-right: 2%;">
                             <label for="allowedParkingFrom" class="col-form-label">Allowed Parking From:</label>
-                            <input type="text" class="form-control" id="ParkingFrom">
+                            <input type="text" class="form-control" id="ParkingFrom"/>
                             <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
                         </div>
                         <input type="hidden" id="allowedParkingFrom">
-                        <div class="from-group clockpickerTo" style="width:48%; float: right; margin-left: 2%;">
+                        <div class="from-group clockpickerTo" style="width:48%; float: left; margin-left: 2%;">
                             <label for="allowedParkingTo" class="col-form-label">Allowed Parking To:</label>
-                            <input type="text" class="form-control" id="ParkingTo">
+                            <input type="text" class="form-control" id="ParkingTo"/>
                             <span class="input-group-addon">
                                  <span class="glyphicon glyphicon-time"></span>
                                 </span>
                         </div>
+                        <!--<div class="form-group" style="width: 30%; float: left; margin-left: 2%">-->
+                            <!--<label for="minHour" class="col-form-label">Min Hour:</label>-->
+                            <!--<input type="text" class="form-control" id="minHour"/>-->
+                        <!--</div>-->
                         <input type="hidden" id="allowedParkingTo">
                         <div class="row">
-                            <button class="btn btn-primary" id="save-policy" style="margin-top: 20px;">Save Policy</button>
+                            <button class="btn btn-primary" id="save-policy" style="margin-top: 30px;">Save Policy</button>
                         </div>
                         <div class="content-list-table">
                             <div class="row">
@@ -92,9 +96,9 @@
                             <!--</table>-->
                         </div>
                         <div class="row" style="margin-top: 10px;">
-                            <div class="button-wrapper">
-                                <button class="btn btn-danger" id="delete-policy">Delete Policy</button>
-                            </div>
+                            <!--<div class="button-wrapper">-->
+                                <!--<button class="btn btn-danger" id="delete-policy">Delete Policy</button>-->
+                            <!--</div>-->
 
                         </div>
                     </div>
@@ -220,6 +224,38 @@
 <script src="/js/policy-edit.js"></script>
 <script src="/assets/scripts/klorofil-common.js"></script>
 <script src="/assets/scripts/jquery-clockpicker.min.js"></script>
+<script>
+    $(function() {
+        function checkCookie(name) {
+            return getCookie(name);
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var username = checkCookie('username');
+        console.log(username);
+        if (username !== null && username.trim() !== '') {
+            // $('#staff-username').html(username);
+            console.log('true checkcookie');
+        } else {
+            console.log('false checkcookie');
+            location.href = 'http://localhost:8080/staff/login';
+        }
+    });
+</script>
 
 </body>
 </html>

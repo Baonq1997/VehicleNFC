@@ -77,6 +77,7 @@ public class PolicyService {
                 PolicyHasTblVehicleType policyHasTblVehicleType = new PolicyHasTblVehicleType();
                 policyHasTblVehicleType.setPolicyId(policyDB.getId());
                 policyHasTblVehicleType.setVehicleTypeId(vehicleTypeList.get(i));
+                policyHasTblVehicleType.setMinHour(1);
                 policyHasVehicleTypeRepository.saveAndFlush(policyHasTblVehicleType);
             } else {
                 if (vehicleTypeList.get(i).getIsDelete().equalsIgnoreCase("true")) {
@@ -86,20 +87,13 @@ public class PolicyService {
                         pricingRepository.deleteByPolicyHasTblVehicleTypeId(instance.getId());
                         policyHasVehicleTypeRepository.delete(instance);
                     }
-
-//                    if (null != pricings || !pricings.isEmpty()) {
-//                        for (Pricing pricing : pricings) {
-//                            pricingRepository.delete(pricing);
-//                        }
-//                    }
-
-//                    break;
                 } else {
                     Optional<PolicyHasTblVehicleType> instance = policyHasVehicleTypeRepository.findByPolicyIdAndVehicleTypeId(policyDB.getId(), vehicleTypeList.get(i));
                     if (!instance.isPresent()) {
                         PolicyHasTblVehicleType dto = new PolicyHasTblVehicleType();
                         dto.setPolicyId(policyDB.getId());
                         dto.setVehicleTypeId(vehicleTypeList.get(i));
+                        dto.setMinHour(1);
                         policyHasVehicleTypeRepository.saveAndFlush(dto);
                     }
 

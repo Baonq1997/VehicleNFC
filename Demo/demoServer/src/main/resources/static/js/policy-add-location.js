@@ -1,7 +1,10 @@
 var locationArr = [];
+var locationMap = new Map();
 $(document).ready(function () {
     loadVehicles();
     filterPolicies(0);
+
+
     $('#searchBtn').off().on('click', function (e) {
         e.preventDefault();
         searchValue = $('#searchValue').val();
@@ -17,23 +20,27 @@ $(document).ready(function () {
     $('#btn-close').on('click', function (e) {
         location.reload(true);
     });
-    $('#searchLocationBtn').on('click', function (e) {
-        e.preventDefault()
+
+    $('#location-form-search').submit((e) => {
+        e.preventDefault();
         searchLocation();
     });
 });
 var isShow = false;
+
 function filterBox() {
     isShow = !isShow;
     if (isShow === true) {
         $('#filter').show();
         // $('#filter').attr('display', 'flex');
         // $('#filter').attr('flex-wrap', 'wrap');
-    }else {
+    } else {
         $('#filter').hide();
     }
 }
-var searchValue ="";
+
+var searchValue = "";
+
 function filterPolicies(pageNumber) {
 
     var vehicleTypeArr = [];
@@ -135,6 +142,7 @@ function loadData(res) {
 
 var existedLocations = [];
 var policy;
+
 function getExistedLocations(policyId) {
     policy = policyId;
     $('#location-wrapper').show();
@@ -157,6 +165,28 @@ function getExistedLocations(policyId) {
     });
 }
 
+var locationContain = [];
+
+const setTick = (id, location) => {
+    console.log(id);
+    if ($('#locationChkbox' + id).is(':checked')) {
+        item = '<td><label class="control control--checkbox">\n' +
+            '                                <input id="locationChkbox' + id + '" checked type="checkbox" value="' + id + '" name="chk"' +
+            ' onclick="setTick(' + id + ',\'' + location + '\')"/>' +
+            '<label>' + location + '</label>\n' +
+            '                                <div class="control__indicator"></div>\n' +
+            '                            </label></td>';
+    } else {
+        item = '<td> <label class="control control--checkbox">\n' +
+            '                                <input id="locationChkbox' + id + '" type="checkbox" value="' + id + '" name="chk"' +
+            ' onclick="setTick(' + id + ',\'' + location + '\')"/>' +
+            '<label>' + location + '</label>\n' +
+            '                                <div class="control__indicator"></div>\n' +
+            '                            </label></td>';
+    }
+    locationMap.set(location, item);
+}
+
 function loadLocations(policyId) {
     $.ajax({
         type: "GET",
@@ -166,16 +196,21 @@ function loadLocations(policyId) {
             if (data != null) {
                 var locations = data.data;
                 emptyLocationCheckboxes();
-                for (let i = 0; i < locations.length; i++) {
-                    var item = "";
-                    if (!containsObject(locations[i], existedLocations)) {
-                        item = ' <label class="control control--checkbox">\n' +
-                            '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
-                            '<label>' + locations[i].location + '</label>\n' +
-                            '                                <div class="control__indicator"></div>\n' +
-                            '                            </label>';
-                        $('#locations').append(item);
+                var i;
+                let j = 0;
+                let rowNum = 0;
+                for (i = 0; i < locations.length; i++) {
+                    if (j % 3 === 0) {
+                        rowNum = j;
+                        if ($(`#locationRow${rowNum}`).length) {
+
+                        } else {
+                            $("#locations").append('<tr id="locationRow' + rowNum + '">\n' +
+
+                                '                    </tr>');
+                        }
                     }
+                    j = loadColumn(locations[i], $(`#locationRow${rowNum}`), j);
                 }
             }
 
@@ -185,6 +220,23 @@ function loadLocations(policyId) {
     });
     // $('#addLocationModal').modal();
     addPolicyToLocation(policyId);
+}
+
+function loadColumn(value, element, j) {
+    var item = "";
+    if (!containsObject(value, existedLocations)) {
+        locationContain.push(value);
+        item = '<td> <label class="control control--checkbox">\n' +
+            '                                <input id="locationChkbox' + value.id + '" type="checkbox" value="' + value.id + '" name="chk"' +
+            ' onclick="setTick(' + value.id + ',\'' + value.location + '\')"/>' +
+            '<label>' + value.location + '</label>\n' +
+            '                                <div class="control__indicator"></div>\n' +
+            '                            </label></td>';
+        locationMap.set(value.location, item);
+        element.append(locationMap.get(value.location));
+        j++;
+    }
+    return j;
 }
 
 function addPolicyToLocation(policyId) {
@@ -338,30 +390,53 @@ function searchLocation() {
     var searchValue = $('#locationName').val();
     var searchObject = createSearchObject("location", ":", searchValue);
     listSearchObject.push(searchObject);
-    $.ajax({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        data: JSON.stringify(listSearchObject),
-        url: url,
-        success: function (data) {
-            emptyLocationCheckboxes();
-            var locations = data.data;
-            for (var i = 0; i < locations.length; i++) {
-                item = ' <label class="control control--checkbox">\n' +
-                    '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
-                    '<label>' + locations[i].location + '</label>\n' +
-                    '                                <div class="control__indicator"></div>\n' +
-                    '                            </label>';
-                $('#locations').append(item);
+
+    emptyLocationCheckboxes();
+
+    let j = 0;
+    let rowNum = 0;
+    for (var [location, item] of locationMap.entries()) {
+        if (j % 3 === 0) {
+            rowNum = j;
+            if ($(`#locationRow${rowNum}`).length) {
+
+            } else {
+                $("#locations").append('<tr id="locationRow' + rowNum + '">\n' +
+
+                    '                    </tr>');
             }
-            // loadLocations(policy);
-        }, error: function (data) {
-            console.log(data);
         }
-    });
+        if (location.includes(searchValue)) {
+            $(`#locationRow${rowNum}`).append(item);
+            j++
+        }
+    }
+
+    // $.ajax({
+    //     type: "POST",
+    //     contentType: "application/json; charset=utf-8",
+    //     dataType: "json",
+    //     data: JSON.stringify(listSearchObject),
+    //     url: url,
+    //     success: function (data) {
+    //         emptyLocationCheckboxes();
+    //         var locations = data.data;
+    //         for (var i = 0; i < locations.length; i++) {
+    //             item = ' <label class="control control--checkbox">\n' +
+    //                 '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
+    //                 '<label>' + locations[i].location + '</label>\n' +
+    //                 '                                <div class="control__indicator"></div>\n' +
+    //                 '                            </label>';
+    //             $('#locations').append(item);
+    //         }
+    //         // loadLocations(policy);
+    //     }, error: function (data) {
+    //         console.log(data);
+    //     }
+    // });
     addPolicyToLocation(policy);
 }
+
 function createSearchObject(key, operation, value) {
     var obj = {
         key: key,

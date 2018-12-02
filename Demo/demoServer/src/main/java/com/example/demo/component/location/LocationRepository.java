@@ -14,6 +14,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 //    void deleteLocationPolicyByPolicyId(@Param("policyId") Integer policyId);
 //
     List<Location> findByPolicyList(List<Policy> policyList);
+    Location findByLocation(String location);
 //
 //    @Query(value = "INSERT INTO tbl_location_has_tbl_policy(tbl_location_id, tbl_policy_id) VALUES(:locationId,:policyId)",
 //    nativeQuery = true)
