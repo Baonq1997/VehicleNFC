@@ -58,7 +58,7 @@ public class RefundRequestController {
     }
 
     @PostMapping("/request")
-    public ResponseEntity<Boolean> searchVehicle(@Param("orderId") Integer orderId
+    public ResponseEntity<Boolean> requestRefund(@Param("orderId") Integer orderId
             , @Param("amount") String amount, @Param("description") String description
             , @Param("username") String username) {
         Map<String, String> managerList = (Map<String, String>) servletContext.getAttribute("managerTokenList");
@@ -77,7 +77,7 @@ public class RefundRequestController {
     }
 
     @PostMapping("/approve")
-    public ResponseEntity<Boolean> searchVehicle(@Param("requestId") Integer requestId
+    public ResponseEntity<Boolean> approveRefund(@Param("requestId") Integer requestId
             , @Param("isApprove") boolean isApprove
             , @Param("username") String username) {
         Map<String, String> staffList = (Map<String, String>) servletContext.getAttribute("staffTokenList");

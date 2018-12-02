@@ -144,14 +144,12 @@ public class RefundRequestService {
                 Optional<Order> order = orderRepository.findById(refundRequest.get().getOrderId());
                 if (order.isPresent()) {
                     if (isApprove) {
-                        if (order.isPresent()) {
-                            order.get().setOrderStatusId(orderStatusRepository.findByName(OrderStatusEnum.Refunded.getName()).get());
-                            orderRepository.save(order.get());
-                            User user = order.get().getUserId();
-                            user.setMoney(user.getMoney() + refundRequest.get().getAmount());
-                            userRepository.save(user);
-                        }
-                    }else {
+                        order.get().setOrderStatusId(orderStatusRepository.findByName(OrderStatusEnum.Refunded.getName()).get());
+                        orderRepository.save(order.get());
+                        User user = order.get().getUserId();
+                        user.setMoney(user.getMoney() + refundRequest.get().getAmount());
+                        userRepository.save(user);
+                    } else {
                         order.get().setOrderStatusId(orderStatusRepository.findByName(OrderStatusEnum.Close.getName()).get());
                         orderRepository.save(order.get());
                     }

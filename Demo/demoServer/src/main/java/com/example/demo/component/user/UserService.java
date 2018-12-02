@@ -1,11 +1,8 @@
 package com.example.demo.component.user;
 
-import com.example.demo.config.NFCServerProperties;
 import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
-import com.example.demo.component.user.User;
 import com.example.demo.component.vehicle.Vehicle;
-import com.example.demo.component.user.UserRepository;
 import com.example.demo.component.vehicle.VehicleRepository;
 import com.example.demo.service.PushNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +96,7 @@ public class UserService {
     }
 
     public void requestNewConfirmCode(String phoneNumber, String confirmCode) {
-        PushNotificationService.sendPhoneConfirmNotification(NFCServerProperties.getSmsHostToken(), phoneNumber, confirmCode);
+        PushNotificationService.sendPhoneConfirmNotification(null, phoneNumber, confirmCode);
     }
 
     public Optional<User> getUserByPhone(String phone) {

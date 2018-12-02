@@ -246,7 +246,7 @@ public class OrderService {
         order.setOrderPricingList(orderPricings);
         if (user.getSmsNoti() != null) {
             if (user.getSmsNoti()) {
-                PushNotificationService.sendNotificationToSendSms(NFCServerProperties.getSmsHostToken(), notification, order);
+                PushNotificationService.sendNotificationToSendSms(null, notification, order);
             } else {
                 if (userToken != null) {
                     PushNotificationService.sendNotification(userToken.get(user.getPhoneNumber()), notification, order.getId());
