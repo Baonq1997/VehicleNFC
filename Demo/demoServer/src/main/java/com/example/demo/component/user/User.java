@@ -42,8 +42,9 @@ public class User implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @JoinColumn(name = "tbl_vehicle_vehicle_number", referencedColumnName = "vehicle_number")
+    @JoinColumn(name = "tbl_vehicle_vehicle_number", referencedColumnName = "vehicle_number", nullable = true)
     @OneToOne(optional = false)
+
     private Vehicle vehicle;
 
 //    @Transient

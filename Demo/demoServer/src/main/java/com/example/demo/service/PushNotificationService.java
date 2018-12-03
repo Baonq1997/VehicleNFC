@@ -155,7 +155,7 @@ public class PushNotificationService {
 
             json.put("data", msg);
 
-            json.put("to", "fhRoDKtJR4Q:APA91bFRKKjR2GydlMD0akn71EluhoayB7YXe3a9M5MVat1IRPGo-59onV4VmI-KLj3b-e0zQ2k55brMCxTGJPIcZK2eNslJMnTdq8BNecpqJwsDO5InyL-ALvF0ojQEb_PMtX_xtYsf");
+            json.put("to", appToken);
 
             HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
             String response = restTemplate.postForObject(FIREBASE_API_URL, httpEntity, String.class);

@@ -302,11 +302,36 @@ function createTable(vehicleTypeId, policyHasVehicleTypeId) {
         '                                    </tbody>\n' +
         '                                </table>';
 
+    // var tableData = btnAddPricing + table;
+    var div = '<div class="form-group">';
+    div += '<div class="form-group"><label class="col-form-label" style="float: left;">Minimum parking hour:</label>';
+    div += '<input type="number" class="form-control" style="width: 10%; float: left;" id="min-hour-vehicle-' + vehicleTypeId + '"  min="1"  onclick="saveMinHour(\' + policyHasVehicleTypeId + \', \' + vehicleTypeId + \')" value="1">';
+    div += '<button class="btn btn-primary" value="Update" type="button" id="btn-update-minHour"  onclick="saveMinHour(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')">Update</button></div>';
 
-    var tableData = btnAddPricing + table;
+    $('#vehicle-' + vehicleTypeId).append(div);
     $('#vehicle-' + vehicleTypeId).append(btnAddPricing);
     $('#vehicle-' + vehicleTypeId).append(table);
+
+    // $('#vehicle-' + vehicleTypeId).append(minHour);
+    // $('#vehicle-' + vehicleTypeId).append(updateMinHourBtn);
     return table;
+}
+
+function saveMinHour(policyHasVehicleTypeId, vehicleTypeId) {
+    var minHour = $('#min-hour-vehicle-'+vehicleTypeId).val();
+    $.ajax({
+       type: "POST",
+       url: "http://localhost:8080/policy-vehicle/update-min-hour",
+       data: {
+           minHour: parseInt(minHour),
+           policyHasVehicleTypeId: policyHasVehicleTypeId
+       },
+        success: function (data) {
+            console.log(data);
+        }, error: function (data) {
+            console.log(data);
+        }
+    });
 }
 
 function deletePolicy() {

@@ -5,6 +5,7 @@ import com.example.demo.config.PaginationEnum;
 import com.example.demo.config.SearchCriteria;
 import com.example.demo.view.DeletePolicyObject;
 import com.example.demo.view.PolicyView;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -66,7 +67,7 @@ public class PolicyController {
             return ResponseEntity.status(HttpStatus.OK).body(policyService.savePolicy(policy, vehicleTypeList, locationId));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error has occurred");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please try again. Contact admin if this message keep showing.");
         }
     }
 
@@ -103,6 +104,8 @@ public class PolicyController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
+
     @GetMapping("/index")
     public ModelAndView index(ModelAndView mav) {
         mav.setViewName("policies");
@@ -114,4 +117,5 @@ public class PolicyController {
         mav.setViewName("policy-add-location");
         return mav;
     }
+
 }

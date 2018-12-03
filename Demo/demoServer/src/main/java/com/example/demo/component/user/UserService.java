@@ -45,7 +45,7 @@ public class UserService {
         if (userId == null) {
             userId = -1;
         }
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findUserById(userId);
         return user;
     }
 
@@ -87,7 +87,7 @@ public class UserService {
             }
 
             user.getVehicle().setVerified(!needVerify);
-            user.setActivated(false);
+            user.setActivated(true);
             vehicleRepository.save(user.getVehicle());
             userRepository.save(user);
 
@@ -392,4 +392,9 @@ public class UserService {
         }
         return false;
     }
+
+    public void updateUserStatus(boolean status, Integer userId) {
+      userRepository.updateUserStatus(status, userId);
+    }
+
 }
