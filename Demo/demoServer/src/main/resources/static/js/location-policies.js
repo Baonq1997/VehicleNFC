@@ -1,4 +1,5 @@
 var locationId;
+var locationMap = new Map();
 $(document).ready(function () {
     var url = window.location + "";
     console.log("url: " + url);
@@ -11,6 +12,10 @@ $(document).ready(function () {
     getLocation();
     loadVehicles();
     filterPolicies(0);
+    $('#searchBtn').off().on('click', function (e) {
+        e.preventDefault();
+       filterPolicies(0);
+    });
     // addLocations();
     $('.clockpickerFrom').clockpicker({
         placement: 'bottom',
@@ -28,9 +33,27 @@ $(document).ready(function () {
             parseTimeToLong("clockpickerTo", "ParkingTo");
         }
     });
+    $('#location-form-search').submit((e) => {
+        e.preventDefault();
+        searchLocation();
+    });
+    $('#btn-close').on('click', function (e) {
+        location.reload(true);
+    });
 });
 
+var isShow = false;
 
+function filterBox() {
+    isShow = !isShow;
+    if (isShow === true) {
+        $('#filter').show();
+        // $('#filter').attr('display', 'flex');
+        // $('#filter').attr('flex-wrap', 'wrap');
+    } else {
+        $('#filter').hide();
+    }
+}
 function getLocation() {
     var policies = [];
     $.ajax({
@@ -153,6 +176,8 @@ var existedLocations = [];
 
 function getExistedLocations(policyId) {
     existedLocations = [];
+    $('#location-wrapper').show();
+    $('#main-wrapper').hide();
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -170,6 +195,46 @@ function getExistedLocations(policyId) {
     });
 }
 
+var locationContain = [];
+
+const setTick = (id, location) => {
+    console.log(id);
+    if ($('#locationChkbox' + id).is(':checked')) {
+        item = '<td><label class="control control--checkbox">\n' +
+            '                                <input id="locationChkbox' + id + '" checked type="checkbox" value="' + id + '" name="chk"' +
+            ' onclick="setTick(' + id + ',\'' + location + '\')"/>' +
+            '<label>' + location + '</label>\n' +
+            '                                <div class="control__indicator"></div>\n' +
+            '                            </label></td>';
+    } else {
+        item = '<td> <label class="control control--checkbox">\n' +
+            '                                <input id="locationChkbox' + id + '" type="checkbox" value="' + id + '" name="chk"' +
+            ' onclick="setTick(' + id + ',\'' + location + '\')"/>' +
+            '<label>' + location + '</label>\n' +
+            '                                <div class="control__indicator"></div>\n' +
+            '                            </label></td>';
+    }
+    locationMap.set(location, item);
+}
+
+function loadColumn(value, element, j) {
+    var item = "";
+    if (!containsObject(value, existedLocations)) {
+        locationContain.push(value);
+        item = '<td> <label class="control control--checkbox">\n' +
+            '                                <input id="locationChkbox' + value.id + '" type="checkbox" value="' + value.id + '" name="chk"' +
+            ' onclick="setTick(' + value.id + ',\'' + value.location + '\')"/>' +
+            '<label>' + value.location + '</label>\n' +
+            '                                <div class="control__indicator"></div>\n' +
+            '                            </label></td>';
+        locationMap.set(value.location, item);
+        element.append(locationMap.get(value.location));
+        j++;
+    }
+    return j;
+}
+
+
 function convertStatus(status) {
     if (status === true) {
         return "Available";
@@ -181,7 +246,6 @@ function convertStatus(status) {
 var existedLocations = [];
 
 function loadLocations(policyId) {
-    // getExistedLocations(policyId);
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -190,23 +254,21 @@ function loadLocations(policyId) {
             if (data != null) {
                 var locations = data.data;
                 emptyLocationCheckboxes();
-                for (let i = 0; i < locations.length; i++) {
-                    var item = "";
-                    if (containsObject(locations[i], existedLocations)) {
-                        item = ' <label class="control control--checkbox">\n' +
-                            '                                <input type="checkbox" value="' + locations[i].id + '" name="chk" checked="checked"/> ' +
-                            '<label>' + locations[i].location + '</label>\n' +
-                            '                                <div class="control__indicator"></div>\n' +
-                            '                            </label>';
-                        $('#locations').append(item);
-                    } else {
-                        item = ' <label class="control control--checkbox">\n' +
-                            '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
-                            '<label>' + locations[i].location + '</label>\n' +
-                            '                                <div class="control__indicator"></div>\n' +
-                            '                            </label>';
-                        $('#locations').append(item);
+                var i;
+                let j = 0;
+                let rowNum = 0;
+                for (i = 0; i < locations.length; i++) {
+                    if (j % 3 === 0) {
+                        rowNum = j;
+                        if ($(`#locationRow${rowNum}`).length) {
+
+                        } else {
+                            $("#locations").append('<tr id="locationRow' + rowNum + '">\n' +
+
+                                '                    </tr>');
+                        }
                     }
+                    j = loadColumn(locations[i], $(`#locationRow${rowNum}`), j);
                 }
             }
 
@@ -214,11 +276,49 @@ function loadLocations(policyId) {
             console.log(data);
         }
     });
-    // $('#btn-save-locations').on('click', function (e) {
-    $('#addLocationModal').modal();
+    // $('#addLocationModal').modal();
     addPolicyToLocation(policyId);
-    // });
 }
+
+// function loadLocations(policyId) {
+//     // getExistedLocations(policyId);
+//     $.ajax({
+//         type: "GET",
+//         dataType: "json",
+//         url: 'http://localhost:8080/location/get-locations',
+//         success: function (data) {
+//             if (data != null) {
+//                 var locations = data.data;
+//                 emptyLocationCheckboxes();
+//                 for (let i = 0; i < locations.length; i++) {
+//                     var item = "";
+//                     if (containsObject(locations[i], existedLocations)) {
+//                         item = ' <label class="control control--checkbox">\n' +
+//                             '                                <input type="checkbox" value="' + locations[i].id + '" name="chk" checked="checked"/> ' +
+//                             '<label>' + locations[i].location + '</label>\n' +
+//                             '                                <div class="control__indicator"></div>\n' +
+//                             '                            </label>';
+//                         $('#locations').append(item);
+//                     } else {
+//                         item = ' <label class="control control--checkbox">\n' +
+//                             '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
+//                             '<label>' + locations[i].location + '</label>\n' +
+//                             '                                <div class="control__indicator"></div>\n' +
+//                             '                            </label>';
+//                         $('#locations').append(item);
+//                     }
+//                 }
+//             }
+//
+//         }, error: function (data) {
+//             console.log(data);
+//         }
+//     });
+//     // $('#btn-save-locations').on('click', function (e) {
+//     // $('#addLocationModal').modal();
+//     addPolicyToLocation(policyId);
+//     // });
+// }
 
 var locationArr = [];
 
@@ -444,4 +544,57 @@ function msToTime(ms) {
     minutes = minutes % 60;
 
     return hours + ':' + minutes;
+}
+function searchLocation() {
+
+    // var listSearchObject = [];
+    // var url = "http://localhost:8080/location/filter?page=0";
+    var searchValue = $('#locationName').val();
+    // var searchObject = createSearchObject("location", ":", searchValue);
+    // listSearchObject.push(searchObject);
+
+    emptyLocationCheckboxes();
+
+    let j = 0;
+    let rowNum = 0;
+    for (var [location, item] of locationMap.entries()) {
+        if (j % 3 === 0) {
+            rowNum = j;
+            if ($(`#locationRow${rowNum}`).length) {
+
+            } else {
+                $("#locations").append('<tr id="locationRow' + rowNum + '">\n' +
+
+                    '                    </tr>');
+            }
+        }
+        if (location.includes(searchValue)) {
+            $(`#locationRow${rowNum}`).append(item);
+            j++
+        }
+    }
+
+    // $.ajax({
+    //     type: "POST",
+    //     contentType: "application/json; charset=utf-8",
+    //     dataType: "json",
+    //     data: JSON.stringify(listSearchObject),
+    //     url: url,
+    //     success: function (data) {
+    //         emptyLocationCheckboxes();
+    //         var locations = data.data;
+    //         for (var i = 0; i < locations.length; i++) {
+    //             item = ' <label class="control control--checkbox">\n' +
+    //                 '                                <input type="checkbox" value="' + locations[i].id + '" name="chk"/>' +
+    //                 '<label>' + locations[i].location + '</label>\n' +
+    //                 '                                <div class="control__indicator"></div>\n' +
+    //                 '                            </label>';
+    //             $('#locations').append(item);
+    //         }
+    //         // loadLocations(policy);
+    //     }, error: function (data) {
+    //         console.log(data);
+    //     }
+    // });
+    addPolicyToLocation(policy);
 }

@@ -13,8 +13,13 @@ $('#save-user-form').on('submit', function (e) {
         success: function (data) {
             alert("User code: "+data);
             $('#save-user-form').trigger("reset");
-        }, error: function (data) {
-            alert("Cannot create User")
+        },  error: function (data) {
+            if (data.status === 409) {
+                alert(data.responseText);
+            } else {
+                alert("Cannot create User")
+            }
+
             console.log(data);
         }
     });

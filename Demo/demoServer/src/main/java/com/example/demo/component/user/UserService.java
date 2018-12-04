@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -56,13 +57,10 @@ public class UserService {
     }
 
     @Transactional
-    public Integer createUser(User user) {
+    public Integer createUser(User user, Map<String, String> tokenList) {
         if (user.getVehicle() != null) {
             boolean needVerify = true;
-            //TODO check if phoneNumber exist
-            if (userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent()) {
-                return null;
-            }
+
             //TODO check if any vehicle avaiable
             Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.getVehicle().getVehicleNumber());
             if (vehicle.isPresent()) {
@@ -80,19 +78,35 @@ public class UserService {
             user.setActivated(false);
             vehicleRepository.save(user.getVehicle());
             userRepository.save(user);
+
+            user.getVehicle().setOwnerId(user.getId());
+            vehicleRepository.save(user.getVehicle());
+
             if (needVerify) {
-                try {
-                    PushNotificationService.sendUserNeedVerifyNotification(
-                            "fhRoDKtJR4Q:APA91bFRKKjR2GydlMD0akn71EluhoayB7YXe3a9M5MVat1IRPGo-59onV4VmI-KLj3b-e0zQ2k55brMCxTGJPIcZK2eNslJMnTdq8BNecpqJwsDO5InyL-ALvF0ojQEb_PMtX_xtYsf",
-                            user.getPhoneNumber()
-                    );
-                } catch (Exception e) {
-                    System.err.println("Cannot connect to firebase");
+                for (Map.Entry<String, String> entry : tokenList.entrySet())
+                {
+                    try {
+                        PushNotificationService.sendUserNeedVerifyNotification(
+                                entry.getValue(),
+                                user.getPhoneNumber()
+                        );
+                    } catch (Exception e) {
+                        System.err.println("Cannot connect to firebase");
+                    }
                 }
+
             }
             return user.getId();
         }
         return null;
+    }
+
+    public boolean checkExistedPhoneNumber(String phoneNumber) {
+        Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
+        if (userOpt.isPresent()) {
+            return true;
+        }
+        return false;
     }
 
     public void requestNewConfirmCode(String phoneNumber, String confirmCode) {
@@ -163,6 +177,8 @@ public class UserService {
                 if (param.getKey().equalsIgnoreCase("vehicle")) {
                     // do vehicleNumber la object nam trong User
                     type = User.class;
+                } else if (param.getKey().equalsIgnoreCase("isVerified")) {
+                   type = Vehicle.class;
                 } else {
                     type = r.get(param.getKey()).getJavaType();
                 }
@@ -170,6 +186,12 @@ public class UserService {
                     predicate = builder.and(predicate,
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
+                } else if (type == Vehicle.class) {
+                    if (param.getKey().equalsIgnoreCase("isVerified")) {
+                        Join<User, Vehicle> join = r.join("vehicle");
+                        Predicate vehiclePredicate = builder.equal(join.get("isVerified"),  Boolean.parseBoolean(param.getValue().toString()));
+                        predicate = builder.and(predicate, vehiclePredicate);
+                    }
                 } else if (type == User.class) {
                     if (param.getKey().equalsIgnoreCase("vehicle")) {
                         Join<User, Vehicle> join = r.join("vehicle");
@@ -182,6 +204,7 @@ public class UserService {
                 }
             }
         }
+//        predicate = builder.and(predicate, builder.equal(r.get("isActivated"), true));
         query.where(predicate);
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
         List<User> result = typedQuery.getResultList();
@@ -339,5 +362,22 @@ public class UserService {
             return vehicle.get();
         }
         return null;
+    }
+
+    public Boolean addVehicleToUser(String vehicleNumber, String phoneNumber) {
+        Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(vehicleNumber);
+        if (vehicle.isPresent()) {
+            Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                user.setVehicle(vehicle.get());
+                userRepository.save(user);
+                Vehicle vehicleDB = vehicle.get();
+                vehicleDB.setOwnerId(user.getId());
+                vehicleRepository.save(vehicleDB);
+                return true;
+            }
+        }
+        return false;
     }
 }

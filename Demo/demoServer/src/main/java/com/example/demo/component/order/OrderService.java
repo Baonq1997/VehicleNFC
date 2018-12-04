@@ -324,10 +324,10 @@ public class OrderService {
                     predicate = builder.and(predicate,
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
-//                } else if (type == Location.class) {
-//                    Join<Order, Location> join = r.join("locationId");
-//                    Predicate locationNamePredicate = builder.like(join.get("location"), "%" + param.getValue() + "%");
-//                    predicate = builder.and(predicate, locationNamePredicate);
+                } else if (type == Location.class) {
+                    Join<Order, Location> join = r.join("locationId");
+                    Predicate locationNamePredicate = builder.like(join.get("location"), "%" + param.getValue() + "%");
+                    predicate = builder.and(predicate, locationNamePredicate);
                 } else if (type == OrderStatus.class) {
                     Join<Order, OrderStatus> join = r.join("orderStatusId");
                     Predicate locationNamePredicate = builder.like(join.get("name"), param.getValue() + "%");

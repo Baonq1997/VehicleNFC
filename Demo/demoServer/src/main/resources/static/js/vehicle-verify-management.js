@@ -117,7 +117,7 @@ function searchVehicle(pageNumber) {
 
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
-    var verifyObject = createSearchObject("isVerified", "=", false);
+    var verifyObject = createSearchObject("isVerified", ":", false);
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
     listFilterObject.push(filterObject);
     listFilterObject.push(verifyObject);

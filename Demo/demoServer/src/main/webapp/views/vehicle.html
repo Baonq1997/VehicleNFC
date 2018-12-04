@@ -34,7 +34,7 @@
         </div>
         <div class="content-list-table">
             <div class="row">
-                <table class="table table-hover" id="user-table">
+                <table class="table table-hover" id="vehicle-table">
                     <thead>
                     <tr>
                         <th>No.</th>
@@ -177,5 +177,38 @@
 <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 <script src="/js/vehicle-management.js"></script>
+<script>
+    $(function() {
+        function checkCookie(name) {
+            return getCookie(name);
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var username = checkCookie('username');
+        console.log(username);
+        if (username !== null && username.trim() !== '') {
+            // $('#staff-username').html(username);
+            console.log('true checkcookie');
+        } else {
+            console.log('false checkcookie');
+            location.href = 'http://localhost:8080/staff/login';
+        }
+    });
+</script>
+
 </body>
 </html>

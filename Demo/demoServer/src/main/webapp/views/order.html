@@ -211,6 +211,38 @@
 <script src="/assets/scripts/klorofil-common.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+<script>
+    $(function() {
+        function checkCookie(name) {
+            return getCookie(name);
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var username = checkCookie('username');
+        console.log(username);
+        if (username !== null && username.trim() !== '') {
+            // $('#staff-username').html(username);
+            console.log('true checkcookie');
+        } else {
+            console.log('false checkcookie');
+            location.href = 'http://localhost:8080/staff/login';
+        }
+    });
+</script>
 
 </body>
 </html>

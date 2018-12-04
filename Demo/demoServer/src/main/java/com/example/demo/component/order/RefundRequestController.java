@@ -93,4 +93,11 @@ public class RefundRequestController {
         }
         return ResponseEntity.status(OK).body(false);
     }
+
+    @GetMapping("/staff/index")
+    public ModelAndView staffRefund(ModelAndView mav) {
+        mav.setViewName("refund-management");
+        return mav;
+    }
+
 }

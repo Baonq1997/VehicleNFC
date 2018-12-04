@@ -139,5 +139,4 @@ public class VehicleController {
         return ResponseEntity.status(OK).body(userService.changeVehicle(phoneNumber,vehicleNumber,licenseId));
     }
 
-
 }

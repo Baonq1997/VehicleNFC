@@ -68,7 +68,7 @@ function loadVehicleTypes() {
         success: function (data) {
             console.log("VehicleTypes: " + data);
             for (i = 0; i < data.length; i++) {
-                var chk = '<input type="checkbox" class="vehicles" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label>' + data[i].name + '</label>';
+                var chk = '<input type="checkbox" class="vehicles" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label class="vehicle-type">' + data[i].en_name + '</label>';
                 $('#vehicleTypeArr').append(chk);
 
             }
@@ -107,10 +107,10 @@ function loadVehiclesCheckedBoxes() {
                 }
                 let chk = "";
                 if (isFound) {
-                    chk =  '<input type="checkbox" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '" checked><label>' + data[i].name + '</label>';
+                    chk =  '<input type="checkbox" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '" checked><label class="vehicle-type">' + data[i].en_name + '</label>';
 
                 } else {
-                    chk = '<input type="checkbox" existed="false" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label>' + data[i].name + '</label>';
+                    chk = '<input type="checkbox" existed="false" name="chk" id="vehicleType-' + i + '" value="' + data[i].id + '"><label class="vehicle-type">' + data[i].en_name + '</label>';
                 }
                 $('#vehicleTypeArr').append(chk);
 
@@ -146,7 +146,6 @@ function savePolicyVehicle() {
         //     return this;
         // }).get();
         var locationId = $('#locationArr :selected').val();
-        alert(locationId);
         var vehicleTypes = $('input[name=chk]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
@@ -186,7 +185,20 @@ function savePolicyVehicle() {
                 }
             }
         }
-
+        if (vehicleArr.length ===0) {
+            alert("Please choose vehicle");
+            return;
+        }
+        var allowedParkingFrom = $('#allowedParkingFrom').val();
+        if (allowedParkingFrom === "") {
+            alert("Please select parking time allow");
+            return;
+        }
+        var allowedParkingTo = $('#allowedParkingTo').val();
+        if (allowedParkingTo === "") {
+            alert("Please select parking time allow");
+            return;
+        }
         var policyJson = {
             id: policy,
             allowedParkingFrom: $('#allowedParkingFrom').val(),
@@ -218,10 +230,12 @@ function savePolicyVehicle() {
                 $('#vehicleTypeArr').empty();
                 loadVehiclesCheckedBoxes();
             }, error: function (data) {
-                alert(data.responseText);
-                console.log(data.responseText);
-
-                console.log("Could not save policy vehicle");
+                if (data.status === 409) {
+                    alert(data.responseText);
+                } else {
+                    alert("Could not save policy");
+                    console.log(data);
+                }
             }
         });
     });
@@ -242,12 +256,12 @@ function createPricingTabs(policyId) {
                 //             '</li>';
                 if (i == 0){
                     navTabs += '<li class="nav-item">' +
-                        '<a class="nav-link active" data-toggle="tab" href="#vehicle-' + data[i].vehicleTypeId.id + '">' + data[i].vehicleTypeId.name + '</a>' +
+                        '<a class="nav-link active" data-toggle="tab" href="#vehicle-' + data[i].vehicleTypeId.id + '">' + data[i].vehicleTypeId.en_name + '</a>' +
                         '</li>';
                     tabPanes += ' <div class="tab-pane container active" id="vehicle-' + data[i].vehicleTypeId.id + '"></div>';
                 } else {
                     navTabs += '<li class="nav-item">' +
-                        '<a class="nav-link" data-toggle="tab" href="#vehicle-' + data[i].vehicleTypeId.id + '">' + data[i].vehicleTypeId.name + '</a>' +
+                        '<a class="nav-link" data-toggle="tab" href="#vehicle-' + data[i].vehicleTypeId.id + '">' + data[i].vehicleTypeId.en_name + '</a>' +
                         '</li>';
                     tabPanes += ' <div class="tab-pane container" id="vehicle-' + data[i].vehicleTypeId.id + '"></div>';
                 }

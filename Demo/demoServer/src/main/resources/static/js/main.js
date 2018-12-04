@@ -34,7 +34,7 @@ function shortenNavBar() {
     $("#footer").css("font-size", (show) ? "0" : "18px");
     $("#content-title-holder").css("left", (show) ? "50px" : "240px");
     $("#main").width((show) ? "calc(100% - 70px)" : "calc(100% - 260px)");
-    $("#shortenNavBarIcon").attr('class', (show) ? "lnr lnr-chevron-down" : "lnr lnr-chevron-left");
+    $("#shortenNavBarIcon").attr('class', (show) ? "lnr lnr-chevron-right" : "lnr lnr-chevron-left");
     if (!show) {
         $(".menu-icon").show();
     } else {

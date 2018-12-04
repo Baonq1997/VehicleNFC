@@ -66,13 +66,15 @@ public class RefundRequestService {
                 Object type;
                 if (param.getKey().equalsIgnoreCase("manager")) {
                     type = Staff.class;
+                } else if (param.getKey().equalsIgnoreCase("orderId")){
+                    type = Order.class;
                 } else {
                     type = r.get(param.getKey()).getJavaType();
                 }
                 if (type == Order.class) {
                     predicate = builder.and(predicate,
-                            builder.like(r.get(param.getKey()),
-                                    "%" + param.getValue() + "%"));
+                            builder.equal(r.get(param.getKey()),
+                                     param.getValue()));
                 } else if (r.get(param.getKey()).getJavaType() == Staff.class) {
                     if (param.getKey().equalsIgnoreCase("manager")) {
                         Join<RefundRequest, Staff> join = r.join("manager");
@@ -104,9 +106,9 @@ public class RefundRequestService {
         typedQuery.setMaxResults(pageSize);
         List<RefundRequest> refundRequestList = typedQuery.getResultList();
         //TODO ????????????
-//        for (RefundRequest refundRequest : refundRequestList){
-//            refundRequest.setOrder(orderRepository.findById(refundRequest.getOrderId()).get());
-//        }
+        for (RefundRequest refundRequest : refundRequestList){
+            refundRequest.setOrder(orderRepository.findById(refundRequest.getOrderId()).get());
+        }
         responseObject.setData(refundRequestList);
         responseObject.setTotalPages(totalPages);
         responseObject.setPageNumber(pagNumber);

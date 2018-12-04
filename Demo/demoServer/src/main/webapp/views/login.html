@@ -4,14 +4,39 @@
     <meta charset="UTF-8">
     <title>Parking With NFC</title>
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/logo.png">
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
-<form action="/staff/login" method="post" id="login-form">
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="******">
-    <button type="submit">Login</button>
-    <button type="reset">Reset</button>
-</form>
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6 ielt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="ie7 ielt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="ie8"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <title>Paper Stack</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div class="container">
+    <section id="content">
+        <form action="" id="login-form">
+            <h1>Login Form</h1>
+            <div>
+                <input type="text" placeholder="Username" required="" name="username" id="username" />
+            </div>
+            <div>
+                <input type="password" placeholder="Password" required="" name="password" id="password" />
+            </div>
+            <div>
+                <input type="submit" value="Log in" />
+            </div>
+        </form>
+
+    </section>
+</div>
+</body>
+</html>
 </body>
 <script src="/assets/vendor/jquery/jquery.min.js"></script>
 <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -24,7 +49,7 @@
             success: function (data) {
                 if (typeof (data.username) !== 'undefined') {
                     var url = (data.manager) ? '/staff/manager' : '/staff/admin';
-                    document.cookie = "username=" + data.username + ";url=" + url;
+                    document.cookie = "username=" + data.username + ";url=" + url + ";path=/";
                     location.href = url;
                 }else {
                     alert('wrong username or password');
