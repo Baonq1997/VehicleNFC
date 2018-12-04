@@ -79,7 +79,7 @@ function loadVehicles() {
             if (data != null) {
                 var ul = "<ul>";
                 for (var i = 0; i < data.length; i++) {
-                    ul += '<li> <input type="checkbox" name="vehicle" value="' + data[i].id + '"><label>' + data[i].name + '</label></li>'
+                    ul += '<li class="filter-item"> <input type="checkbox" name="vehicle" value="' + data[i].id + '"><label>' + data[i].en_name + '</label></li>'
                 }
                 ul += '</ul>';
                 $('#filter').append(ul);
@@ -112,7 +112,7 @@ function loadTable(data) {
 
             row += '<td class="vehicle-tags">';
             for (let j = 0; j < vehicleList.length; j++) {
-                row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
+                row += '<span class="label label-success">' + vehicleList[j].vehicleTypeId.en_name + '</span>';
             }
             row += '</td>';
         } else {
@@ -333,40 +333,40 @@ function addPolicyToLocation(policyId) {
             return this;
         }).get();
         let locations = [];
-        if (existedLocations.length === 0) {
-            locations = locationArr;
-        } else {
-            for (let i = 0; i < locationArr.length; i++) {
-                for (let j = 0; j < existedLocations.length; j++) {
-                    var checkedLocation = locationArr[i];
-                    var existedLocation = existedLocations[j];
-                    if (!containsObject(existedLocation, locationArr)) {
-                        var temp = {
-                            id: existedLocation.id,
-                            location: existedLocation.location,
-                            isDelete: "true"
-
-                        }
-                        if (!containsObject(temp, locations)) {
-                            locations.push(temp);
-                        }
-                    } else {
-                        var temp = {
-                            id: checkedLocation.id,
-                            location: checkedLocation.location,
-                            isDelete: "false"
-                        }
-                        if (!containsObject(temp, locations)) {
-                            locations.push(temp);
-                        }
-                    }
-                }
-            }
-        }
+        // if (existedLocations.length === 0) {
+        //     locations = locationArr;
+        // } else {
+        //     for (let i = 0; i < locationArr.length; i++) {
+        //         for (let j = 0; j < existedLocations.length; j++) {
+        //             var checkedLocation = locationArr[i];
+        //             var existedLocation = existedLocations[j];
+        //             if (!containsObject(existedLocation, locationArr)) {
+        //                 var temp = {
+        //                     id: existedLocation.id,
+        //                     location: existedLocation.location,
+        //                     isDelete: "true"
+        //
+        //                 }
+        //                 if (!containsObject(temp, locations)) {
+        //                     locations.push(temp);
+        //                 }
+        //             } else {
+        //                 var temp = {
+        //                     id: checkedLocation.id,
+        //                     location: checkedLocation.location,
+        //                     isDelete: "false"
+        //                 }
+        //                 if (!containsObject(temp, locations)) {
+        //                     locations.push(temp);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         var jsonObject = {
             policyId: policyId,
-            locationArr: locations,
+            locationArr: locationArr,
             currentLocationId: existedLocations
         }
 
@@ -399,21 +399,13 @@ function filterPolicies(pageNumber) {
     var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
         var vehicleType = {
             id: this.value,
-            name: $(this).next('label').text()
+            en_name: $(this).next('label').text()
         }
-        vehicleTypeArr.push(vehicleType.name);
+        vehicleTypeArr.push(vehicleType.en_name);
         return this;
     }).get();
     console.log("ARR" + vehicleTypeArr);
     var listSearchParam = [];
-    // if (allowedParkingFrom !== "") {
-    //     var allowedParkingFromObj = createSearchObject("allowedParkingFrom", ">", allowedParkingFrom);
-    //     listSearchParam.push(allowedParkingFromObj);
-    // }
-    // if (allowedParkingTo !== "") {
-    //     var allowedParkingToObj = createSearchObject("allowedParkingTo", "<", allowedParkingTo);
-    //     listSearchParam.push(allowedParkingToObj);
-    // }
     if (vehicleTypeArr != null && vehicleTypeArr.length > 0) {
 
         var vehicleTypes = createSearchObject("vehicleTypes", ":", vehicleTypeArr);
@@ -446,7 +438,7 @@ function emptyTable() {
 function loadTableAfterFilter(response) {
     var data = response.data;
     if (data != null) {
-        // if (data.length != 0) {
+        if (data.length != 0) {
 
             for (var i = 0; i < data.length; i++) {
                 var vehicleList = data[i].policyHasTblVehicleTypes;
@@ -456,7 +448,7 @@ function loadTableAfterFilter(response) {
                 if (vehicleList != null || vehicleList.length != 0) {
                     row += '<td class="vehicle-tags">';
                     for (let j = 0; j < vehicleList.length; j++) {
-                        row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
+                        row += '<span class="label label-success">' + vehicleList[j].vehicleTypeId.en_name + '</span>';
                     }
                     row += '</td>';
                 } else {
@@ -485,7 +477,10 @@ function loadTableAfterFilter(response) {
             }
             $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === response.totalPages - 1), false));
             $('#pagination').append(createPageButton((response.totalPages - 1), 'Last', false, false));
-        // }
+        } else {
+            var row = '<td colspan="4" style="text-align: center;"><strong> No data </strong></td>';
+            $('#location-policies tbody').append(row);
+        }
     }else {
         var row = '<td colspan="4" style="text-align: center;"><strong> No data </strong></td>';
         $('#location-policies tbody').append(row);

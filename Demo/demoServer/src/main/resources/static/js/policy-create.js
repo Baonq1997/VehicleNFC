@@ -78,13 +78,14 @@ function containsObject(obj, list) {
     return false;
 }
 
+var deletePricingItem = [];
 function savePolicyVehicle(locationId) {
     $('#save-policy-vehicle').on('click', function () {
         vehicleTypeArr = [];
         var vehicleTypes = $('input[name=chk]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
-                name: $(this).next('label').text()
+                en_name: $(this).next('label').text()
             }
             vehicleTypeArr.push(vehicleType);
             return this;
@@ -101,13 +102,14 @@ function savePolicyVehicle(locationId) {
                     if (!containsObject(vehicleExisted, vehicleTypeArr)) {
                         var temp = {
                             id: vehicleExisted.id,
-                            name: vehicleExisted.name,
+                            en_name: vehicleExisted.en_name,
                             // name: "true",
                             isDelete: "true"
 
                         }
                         if (!containsObject(temp, vehicleArr)) {
                             vehicleArr.push(temp);
+                            deletePricingItem.push(temp.id);
                             // break;
                         }
 
@@ -115,7 +117,7 @@ function savePolicyVehicle(locationId) {
                     } else {
                         var temp = {
                             id: checkedVehicle.id,
-                            name: checkedVehicle.name,
+                            en_name: checkedVehicle.en_name,
                             // name: "false",
                             isDelete: "false"
                         }
@@ -172,6 +174,13 @@ function savePolicyVehicle(locationId) {
                 $('#pricing-panel').show();
                 $('#wrapper').hide();
                 policyId = data.id;
+
+                if (deletePricingItem.length != 0) {
+                    for (let i = 0; i < deletePricingItem.length; i++) {
+                        localStorage.removeItem("pricingList-"+deletePricingItem[i]);
+                    }
+                }
+
                 createPricingTabs(data.id);
                 $('#vehicleTypeArr').empty();
                 loadVehiclesCheckedBoxes();
@@ -248,11 +257,31 @@ function createTable(vehicleTypeId, policyHasVehicleTypeId) {
         '                                    </tbody>\n' +
         '                                </table>';
 
+    var div = '<div class="form-group">';
+    div += '<div class="form-group"><label class="col-form-label" style="float: left;">Minimum parking hour:</label>';
+    div += '<input type="number" class="form-control" style="width: 10%; float: left;" id="min-hour-vehicle-' + vehicleTypeId + '"  min="1"  onclick="saveMinHour(\' + policyHasVehicleTypeId + \', \' + vehicleTypeId + \')" value="1">';
+    div += '<button class="btn btn-primary" value="Update" type="button" id="btn-update-minHour"  onclick="saveMinHour(' + policyHasVehicleTypeId + ', ' + vehicleTypeId + ')">Update</button></div>';
 
-    var tableData = btnAddPricing + table;
+    $('#vehicle-' + vehicleTypeId).append(div);
     $('#vehicle-' + vehicleTypeId).append(btnAddPricing);
     $('#vehicle-' + vehicleTypeId).append(table);
     return table;
+}
+function saveMinHour(policyHasVehicleTypeId, vehicleTypeId) {
+    var minHour = $('#min-hour-vehicle-'+vehicleTypeId).val();
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8080/policy-vehicle/update-min-hour",
+        data: {
+            minHour: parseInt(minHour),
+            policyHasVehicleTypeId: policyHasVehicleTypeId
+        },
+        success: function (data) {
+            console.log(data);
+        }, error: function (data) {
+            console.log(data);
+        }
+    });
 }
 
 function loadVehicleTypes() {
@@ -292,7 +321,7 @@ function loadVehiclesCheckedBoxes() {
                         isFound = true;
                         let existedVehicle = {
                             id: data[i].id,
-                            name: data[i].name
+                            en_name: data[i].en_name
                             // existed: true
                         }
                         if (!containsObject(existedVehicle, vehicleExistedArr)) {
@@ -433,8 +462,8 @@ function loadPricingTable(vehicleTypeId) {
             row += '<td>' + convertMoney(pricings[i].pricePerHour) + '</td>';
             row += '<td>' + convertMoney(pricings[i].lateFeePerHour) + '</td>';
             // row += '<td><a href="#" onclick="loadPricingModal(' + policyHasVehicleType + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
-            row += '<td><a href="#" onclick="savePricing(' + policyHasVehicleType + ',' + vehicleTypeId + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn">Edit</a></td>'
-            row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + vehicleTypeId + ')" class="btn btn-danger delBtn">Delete</a></td>'
+            row += '<td><a href="#" onclick="savePricing(' + policyHasVehicleType + ',' + vehicleTypeId + ',' + pricings[i].id + ')" class="btn btn-primary saveBtn"><i class="lnr lnr-pencil"></i></a></td>'
+            row += '<td><a href="#" onclick="deleteModal(' + pricings[i].id + ',' + vehicleTypeId + ')" class="btn btn-danger delBtn"><i class="lnr lnr-trash"></i></a></td>'
             row += '</tr>';
             $('#pricing-vehicle-' + vehicleTypeId + ' tbody').append(row);
         }

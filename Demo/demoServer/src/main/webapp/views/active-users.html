@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Active User</title>
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/demo.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <link href="/assets/fontawesome-free-5.4.2-web/css/all.css" rel="stylesheet">
+</head>
+<body>
+<div class="panel" id="main-content-user-list">
+    <div class="panel-body">
+        <div class="row">
+            <span class="content-name">
+                Deactive Users
+            </span>
+            <form action="search-user" class="search-box" method="post" id="search-user-form">
+                <select id="search-filter" class="form-control">
+                    <option value="phoneNumber" selected="selected">Search By phone number</option>
+                    <option value="lastName">Search By LastName</option>
+                    <option value="vehicle">Search By Vehicle Number</option>
+                </select>
+                <input type="text" class="form-control" id="searchValue" name="searchValue" value=""
+                       style="width: 50%; float: left;"/>
+                <button class="btn btn-primary btnAction" type="submit" id="searchBtn" name="Search">
+                    <i class="lnr lnr-magnifier"></i>
+                </button>
+            </form>
+        </div>
+        <div class="content-list-table">
+            <div class="row">
+                <table class="table table-hover" id="user-table">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Phone</th>
+                        <th>Name</th>
+                        <th>Money</th>
+                        <th>Vehicle Number</th>
+                        <th>Vehicle Type</th>
+                        <th style="text-align: center;width: 193px;">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <ul class="nav nav-pills" id="pagination"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/active-user.js"></script>
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+<script>
+    $(function() {
+        function checkCookie(name) {
+            return getCookie(name);
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        var username = checkCookie('username');
+        console.log(username);
+        if (username !== null && username.trim() !== '') {
+            // $('#staff-username').html(username);
+            console.log('true checkcookie');
+        } else {
+            console.log('false checkcookie');
+            location.href = 'http://localhost:8080/staff/login';
+        }
+    });
+</script>
+</body>
+</html>

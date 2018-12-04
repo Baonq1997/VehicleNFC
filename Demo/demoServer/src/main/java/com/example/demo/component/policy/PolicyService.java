@@ -178,7 +178,7 @@ public class PolicyService {
                     Root<PolicyHasTblVehicleType> policyVehicleRoot = vehicleQuery.from(PolicyHasTblVehicleType.class);
                     Join<PolicyHasTblVehicleType, VehicleType> vehicleTypeJoin = policyVehicleRoot.join("vehicleTypeId");
                     ArrayList<String> vehicleTypes = (ArrayList<String>) param.getValue();
-                    Expression<String> vehicleExpression = vehicleTypeJoin.get("name");
+                    Expression<String> vehicleExpression = vehicleTypeJoin.get("en_name");
                     Predicate vehiclePredicate = vehicleExpression.in(vehicleTypes);
 
                     vehicleQuery.where(vehiclePredicate);

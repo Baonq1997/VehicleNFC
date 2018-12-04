@@ -54,9 +54,9 @@ function filterPolicies(pageNumber) {
     var vehicleTypes = $('input[name=vehicle]:checked').map(function (i) {
         var vehicleType = {
             id: this.value,
-            name: $(this).next('label').text()
+            en_name: $(this).next('label').text()
         }
-        vehicleTypeArr.push(vehicleType.name);
+        vehicleTypeArr.push(vehicleType.en_name);
         return this;
     }).get();
 
@@ -97,7 +97,7 @@ function loadData(res) {
             if (vehicleList != null || vehicleList.length != 0) {
                 row += '<td class="vehicle-tags">';
                 for (let j = 0; j < vehicleList.length; j++) {
-                    row += '<span class="badge badge-success">' + vehicleList[j].vehicleTypeId.name + '</span>';
+                    row += '<span class="label label-success">' + vehicleList[j].vehicleTypeId.en_name + '</span>';
                 }
             } else {
                 row += '<td> N/A </td>'
@@ -315,7 +315,7 @@ function loadVehicles() {
             if (data != null) {
                 var ul = "<ul>";
                 for (var i = 0; i < data.length; i++) {
-                    ul += '<li> <input type="checkbox" name="vehicle" value="' + data[i].id + '"><label>' + data[i].name + '</label></li>'
+                    ul += '<li class="filter-item"> <input type="checkbox" name="vehicle" value="' + data[i].id + '"><label>' + data[i].en_name + '</label></li>'
                 }
                 ul += '</ul>';
                 $('#filter').append(ul);

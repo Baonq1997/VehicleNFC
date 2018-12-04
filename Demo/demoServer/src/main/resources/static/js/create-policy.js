@@ -96,7 +96,7 @@ function loadVehiclesCheckedBoxes() {
                         isFound = true;
                         let existedVehicle = {
                             id: data[i].id,
-                            name: data[i].name
+                            en_name: data[i].en_name
                             // existed: true
                         }
                         if (!containsObject(existedVehicle,vehicleExistedArr)) {
@@ -133,6 +133,7 @@ function parseTimeToLong(clockPicker, type) {
 }
 
 var policy;
+var deletePricingItem = [];
 function savePolicyVehicle() {
     $('#save-policy-vehicle').off().on('click', function () {
         vehicleTypeArr = [];
@@ -149,7 +150,7 @@ function savePolicyVehicle() {
         var vehicleTypes = $('input[name=chk]:checked').map(function (i) {
             var vehicleType = {
                 id: this.value,
-                name: $(this).next('label').text()
+                en_name: $(this).next('label').text()
             }
             vehicleTypeArr.push(vehicleType);
             return this;
@@ -165,17 +166,18 @@ function savePolicyVehicle() {
                     if (!containsObject(vehicleExisted, vehicleTypeArr)) {
                         var temp = {
                             id: vehicleExisted.id,
-                            name: vehicleExisted.name,
+                            en_name: vehicleExisted.en_name,
                             isDelete: "true"
 
                         }
                         if(!containsObject(temp, vehicleArr)) {
                             vehicleArr.push(temp);
+                            deletePricingItem.push(temp.id);
                         }
                     } else {
                         var temp = {
                             id: checkedVehicle.id,
-                            name: checkedVehicle.name,
+                            en_name: checkedVehicle.en_name,
                             isDelete: "false"
                         }
                         if(!containsObject(temp, vehicleArr)) {
@@ -226,6 +228,12 @@ function savePolicyVehicle() {
                 $('.button-wrapper').show();
                 $('#pricing-vehicle tbody').empty();
                 policy = data.id;
+                if (deletePricingItem.length != 0) {
+                    for (let i = 0; i < deletePricingItem.length; i++) {
+                        localStorage.removeItem("pricingList-"+deletePricingItem[i]);
+                    }
+                }
+
                 createPricingTabs(data.id);
                 $('#vehicleTypeArr').empty();
                 loadVehiclesCheckedBoxes();

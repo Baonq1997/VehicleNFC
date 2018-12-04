@@ -128,6 +128,7 @@ public class UserController {
         try {
             userService.deleteUser(UserService.decodeId(id));
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return "Success";
     }
@@ -176,9 +177,9 @@ public class UserController {
             , @RequestParam(defaultValue = "0") Integer page) {
         ResponseObject response = new ResponseObject();
         response.setData(userService.searchUser(params, page, PaginationEnum.userPageSize.getNumberOfRows()));
-        response.setPageNumber(page);
-        response.setPageSize(PaginationEnum.userPageSize.getNumberOfRows());
-        response.setTotalPages(userService.getTotalUsers(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
+//        response.setPageNumber(page);
+//        response.setPageSize(PaginationEnum.userPageSize.getNumberOfRows());
+//        response.setTotalPages(userService.getTotalUsers(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -286,5 +287,17 @@ public class UserController {
                                     ,@Param(value = "phoneNumber") String phoneNumber) {
         return ResponseEntity.status(OK).body(userService.addVehicleToUser(vehicleNumber, phoneNumber));
 
+    }
+
+    @GetMapping(value = "/active-users")
+    public ModelAndView activeUsers(ModelAndView mav) {
+        mav.setViewName("active-users");
+        return mav;
+    }
+
+    @PostMapping(value = "/active/{phoneNumber}")
+    public ResponseEntity activeUser(@PathVariable("phoneNumber") String phoneNumber) {
+        userService.activateUser(phoneNumber);
+        return ResponseEntity.status(OK).body("Active successfully");
     }
 }

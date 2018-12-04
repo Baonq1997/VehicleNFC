@@ -45,7 +45,7 @@ public class UserService {
         if (userId == null) {
             userId = -1;
         }
-        Optional<User> user = userRepository.findUserById(userId);
+        Optional<User> user = userRepository.findById(userId);
         return user;
     }
 
@@ -138,8 +138,10 @@ public class UserService {
         return userRepository.findAll(new PageRequest(page, numOfRows));
     }
 
+    @Transactional
     public void deleteUser(Integer id) {
-        userRepository.deleteById(id);
+
+        userRepository.updateUserStatus(0,id);
     }
 
     public static String encodeId(Integer id) {
@@ -172,7 +174,7 @@ public class UserService {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root r = query.from(User.class);
-
+        boolean isFilterActive = true;
         Predicate predicate = builder.conjunction();
         for (SearchCriteria param : params) {
 
@@ -191,6 +193,8 @@ public class UserService {
                     type = User.class;
                 } else if (param.getKey().equalsIgnoreCase("isVerified")) {
                    type = Vehicle.class;
+                } else if (param.getKey().equalsIgnoreCase("isActivated")) {
+                    type = User.class;
                 } else {
                     type = r.get(param.getKey()).getJavaType();
                 }
@@ -209,6 +213,8 @@ public class UserService {
                         Join<User, Vehicle> join = r.join("vehicle");
                         Predicate vehiclePredicate = builder.like(join.get("vehicleNumber"), "%" + param.getValue() + "%");
                         predicate = builder.and(predicate, vehiclePredicate);
+                    } else {
+                        isFilterActive = false;
                     }
                 } else {
                     predicate = builder.and(predicate,
@@ -216,7 +222,11 @@ public class UserService {
                 }
             }
         }
-//        predicate = builder.and(predicate, builder.equal(r.get("isActivated"), true));
+        if (isFilterActive) {
+            predicate = builder.and(predicate, builder.equal(r.get("isActivated"), true));
+        } else {
+            predicate = builder.and(predicate, builder.equal(r.get("isActivated"), false));
+        }
         query.where(predicate);
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
         List<User> result = typedQuery.getResultList();
@@ -335,9 +345,10 @@ public class UserService {
             Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.get().getVehicle().getVehicleNumber());
             if (vehicle.isPresent()) {
                 vehicle.get().setActive(false);
+                vehicle.get().setOwnerId(null);
                 vehicleRepository.save(vehicle.get());
                 user.get().setVehicle(null);
-                user.get().setActivated(false);
+                user.get().setActivated(true);
                 userRepository.save(user.get());
                 return true;
             }
@@ -394,7 +405,7 @@ public class UserService {
     }
 
     public void updateUserStatus(boolean status, Integer userId) {
-      userRepository.updateUserStatus(status, userId);
+      userRepository.updateUserStatus(0, userId);
     }
 
 }

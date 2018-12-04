@@ -325,7 +325,7 @@ public class OrderService {
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
                 } else if (type == Location.class) {
-                    Join<Order, Location> join = r.join("locationId");
+                    Join<Order, Location> join = r.join("location");
                     Predicate locationNamePredicate = builder.like(join.get("location"), "%" + param.getValue() + "%");
                     predicate = builder.and(predicate, locationNamePredicate);
                 } else if (type == OrderStatus.class) {
