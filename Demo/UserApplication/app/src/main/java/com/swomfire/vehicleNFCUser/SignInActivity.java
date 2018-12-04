@@ -76,9 +76,13 @@ public class SignInActivity extends Activity {
                                 Intent intent = new Intent(context, NotVerifiedVehicleActivity.class);
                                 startActivity(intent);
                             }
+                            editor.putString("vehicleStatus", "true");
                         } else {
-                            Intent intent = new Intent(context, AddVehicleActivity.class);
-                            startActivity(intent);
+                            if (result.isActivated()) {
+                                Intent intent = new Intent(context, NoVehicleMainActivity.class);
+                                startActivity(intent);
+                                editor.putString("vehicleStatus", "false");
+                            }
                         }
 
                     } else {

@@ -5,10 +5,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -24,6 +26,7 @@ import service.UserService;
 public class PopMenuActivity extends Activity {
 
     TextView txtName, txtPhoneNumber;
+    LinearLayout btnViewHistory;
     Context context;
 
     @Override
@@ -47,6 +50,12 @@ public class PopMenuActivity extends Activity {
         SharedPreferences prefs = getSharedPreferences("localData", MODE_PRIVATE);
         String userName = prefs.getString("userName", "1");
         String userPhoneNumber = prefs.getString("phoneNumberSignIn", "1");
+        String vehicleStatus = prefs.getString("vehicleStatus", "true");
+        if (vehicleStatus.equals("false")) {
+            btnViewHistory = findViewById(R.id.btnViewHistory);
+            btnViewHistory.setEnabled(false);
+            btnViewHistory.setBackgroundColor(Color.parseColor("#CCCCCC"));
+        }
         txtName.setText(userName);
         txtPhoneNumber.setText(userPhoneNumber);
 

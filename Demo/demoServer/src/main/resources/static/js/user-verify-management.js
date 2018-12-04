@@ -3,7 +3,7 @@ $(document).ready(function (e) {
     if (typeof(phone) === 'undefined') {
         searchUser(0);
     } else {
-        $('#searchValue').val(phone);
+        searchValue = phone;
         searchUser(0);
     }
 });

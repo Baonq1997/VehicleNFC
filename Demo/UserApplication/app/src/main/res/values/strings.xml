@@ -6,9 +6,10 @@
     <string name="forgetyourpass"><u><i>Quên mật khẩu ?</i></u></string>
     <string name="parkingwithnfc"><b>Đỗ xe với NFC</b></string>
     <string name="readycheckin"><b>Sẵn sàng quét NFC</b></string>
+    <string name="novehicle"><b>Bạn không có phuơng tiện để check in</b></string>
     <string name="verifyphone"><b>Xác minh số điện thoại</b></string>
     <string name="profile"><b>Thông tin</b></string>
     <string name="changpass"><u><i>Đổi mật khẩu</i></u></string>
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
-    <string name="changevehicle"><u><i>Xóa phương tiện</i></u></string>
+    <string name="changevehicle"><u><i>Gỡ bỏ phương tiện</i></u></string>
 </resources>

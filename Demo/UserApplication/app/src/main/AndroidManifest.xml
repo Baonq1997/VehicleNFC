@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignInActivity" />
+        <activity android:name=".NoVehicleMainActivity" />
         <activity
             android:name=".SignUpActivity"
             android:screenOrientation="portrait" />
