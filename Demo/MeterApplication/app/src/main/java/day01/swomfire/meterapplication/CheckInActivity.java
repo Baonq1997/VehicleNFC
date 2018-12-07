@@ -131,8 +131,8 @@ public class CheckInActivity extends Activity {
 
 
         txtUsername.setText(user.getLastName() + " " + user.getFirstName());
-        txtUserVehicleNumber.setText(user.getVehicle().getVehicleNumber());
-        txtUserVehicleType.setText(order.getVehicleType().getName());
+        txtUserVehicleNumber.setText(order.getVehicle().getVehicleNumber());
+        txtUserVehicleType.setText(order.getVehicle().getVehicleTypeId().getName());
         txtPhoneNumber.setText(user.getPhone());
         String pattern = "HH:mm dd-MM-yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);

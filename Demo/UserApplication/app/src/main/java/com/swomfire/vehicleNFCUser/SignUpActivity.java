@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 
 import Util.RmaAPIUtils;
+import model.ResponseObject;
 import model.User;
 import model.Vehicle;
 import remote.RmaAPIService;
@@ -119,11 +120,10 @@ public class SignUpActivity extends Activity {
             user.setVehicle(vehicle);
 
             RmaAPIService mService = RmaAPIUtils.getAPIService();
-            mService.sendUserToServer(user).enqueue(new Callback<String>() {
+            mService.sendUserToServer(user).enqueue(new Callback<ResponseObject>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-
-                    String id = response.body();
+                public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                    String id = response.body().getMsg();
                     if (!id.equals("")) {
                         Intent intent = new Intent(context, CreateSuccessActivity.class);
                         startActivity(intent);
@@ -132,9 +132,11 @@ public class SignUpActivity extends Activity {
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<ResponseObject> call, Throwable t) {
                     Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
                     toast.show();
+//                    Intent intent = new Intent(context, CreateSuccessActivity.class);
+//                    startActivity(intent);
                 }
             });
 

@@ -7,7 +7,7 @@ import java.time.Instant;
 
 public class TimeService {
 
-    public static TimeDuration compareTwoDates(long dateA, long dateB){
+    public static TimeDuration compareTwoDates(long dateA, long dateB) {
         Instant start = Instant.ofEpochMilli(dateA);
         Instant end = Instant.ofEpochMilli(dateB);
 
@@ -15,7 +15,11 @@ public class TimeService {
         Integer hours = ((Long) duration.toHours()).intValue();
         int minutes = (int) (duration.getSeconds() % 60);
 
-        return new TimeDuration(hours,minutes,null);
+        return new TimeDuration(hours, minutes, null);
+    }
+
+    public static double miliSecondToHour(long mili) {
+        return (double) mili / 3600000;
     }
 }
 

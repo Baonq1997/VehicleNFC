@@ -241,7 +241,7 @@ public class OrderService {
     }
 
 
-    public void sendNotification(User user, Order
+    public static void sendNotification(User user, Order
             order, Map<String, String> userToken, List<OrderPricing> orderPricings, NotificationEnum notification) {
         order.setOrderPricingList(orderPricings);
         if (user.getSmsNoti() != null) {
@@ -325,7 +325,7 @@ public class OrderService {
                             builder.like(r.get(param.getKey()),
                                     "%" + param.getValue() + "%"));
                 } else if (type == Location.class) {
-                    Join<Order, Location> join = r.join("locationId");
+                    Join<Order, Location> join = r.join("location");
                     Predicate locationNamePredicate = builder.like(join.get("location"), "%" + param.getValue() + "%");
                     predicate = builder.and(predicate, locationNamePredicate);
                 } else if (type == OrderStatus.class) {
@@ -474,6 +474,13 @@ public class OrderService {
         cur.setTimeInMillis(current);
         from.setTimeInMillis(limitFrom);
         to.setTimeInMillis(limitTo);
+        int bonus = 0;
+        if (to.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
+                || (to.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY))
+                && to.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)) {
+            bonus = 24;
+        }
+
 //        String a = cur.get(Calendar.HOUR_OF_DAY)+":"+cur.get(Calendar.MINUTE);
 //        String b = from.get(Calendar.HOUR_OF_DAY)+":"+from.get(Calendar.MINUTE);
 //        String c = to.get(Calendar.HOUR_OF_DAY)+":"+to.get(Calendar.MINUTE);
@@ -481,12 +488,9 @@ public class OrderService {
                 || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY)) {
             return true;
         }
-        if (cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY)
-                || cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY)) {
-            if (cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)
-                    || cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE)) {
-                return true;
-            }
+        if ((cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY) && cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE))
+                || (cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY) + bonus && cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE))) {
+            return true;
         }
         return false;
     }

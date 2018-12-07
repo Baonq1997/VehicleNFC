@@ -1,18 +1,7 @@
 $(document).ready(function (e) {
     var phone = $('#main-content', window.parent.document).attr('phone');
     if (typeof(phone) === 'undefined') {
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: 'get-users-json',
-            success: function (data) {
-                console.log(data);
-                loadData(data);
-            }, error: function () {
-                alert("Can't load data")
-            }
-
-        });
+        searchUser(0);
     } else {
         $('#searchValue').val(phone);
         searchUser(0);
@@ -102,7 +91,7 @@ function loadData(res) {
 
         var edit = "<a href=\"#\" onclick=\"loadUserInfo('" + content[i].decodedId + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
         var deleteStr = "<a href=\"#\" onclick=\"openDeleteModal('" + content[i].decodedId + "')\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
-        if (addVehicle != null) {
+        if (content[i].vehicle == null) {
             row += cellBuilder(addVehicle + deleteStr + edit);
         } else {
             row += cellBuilder(deleteStr + edit);
@@ -173,11 +162,12 @@ $(document).ready(function (e) {
 
     // end sort table headers
 });
-
+var searchValue = "";
 $(document).ready(function (e) {
 
     $('#searchBtn').on('click', function (e) {
         e.preventDefault();
+        searchValue = $('#searchValue').val();
         searchUser(0);
     });
 });
@@ -189,7 +179,6 @@ function searchUser(pageNumber) {
     }
     var listFilterObject = [];
     var vehicleType = $('#search-filter option:selected').val();
-    var searchValue = $('#searchValue').val();
 
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
@@ -367,7 +356,12 @@ function setUpUserInfo(data) {
     $('#money').val(data.money);
     $('#smsNoti').prop('checked', data.smsNoti);
     $('#activated').prop('checked', data.activated);
-    $('#vehicleNumberHidden').val(data.vehicle.vehicleNumber)
+    if (data.vehicle != null) {
+        $('#vehicleNumberHidden').val(data.vehicle.vehicleNumber)
+        $('#btn-vehicle').show();
+    } else {
+        $('#btn-vehicle').hide();
+    }
 }
 
 

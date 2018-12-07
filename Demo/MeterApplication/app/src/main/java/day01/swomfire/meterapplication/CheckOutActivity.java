@@ -153,8 +153,8 @@ public class CheckOutActivity extends Activity {
         TextView txtUsername = findViewById(R.id.txtUsername);
         TextView txtPhoneNumber = findViewById(R.id.txtPhoneNumber);
 
-        txtUserVehicleNumber.setText(user.getVehicle().getVehicleNumber());
-        txtUserVehicleType.setText(order.getVehicleType().getName());
+        txtUserVehicleNumber.setText(order.getVehicle().getVehicleNumber());
+        txtUserVehicleType.setText(order.getVehicle().getVehicleTypeId().getName());
         txtUsername.setText(order.getUser().getLastName() + " " + order.getUser().getFirstName());
         txtPhoneNumber.setText(order.getUser().getPhone());
 

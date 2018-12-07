@@ -20,10 +20,10 @@ public interface RmaAPIService {
     Call<String> getServer();
 
     @GET("/user/get-user/{id}")
-    Call<User> getUserById(@Path("id") Integer userId);
+    Call<User> getUserById(@Path("id") String userId);
 
     @GET("/order/open-order/{userId}")
-    Call<Order> getOpenOrderByUserId(@Path("userId") Integer userId);
+    Call<Order> getOpenOrderByUserId(@Path("userId") String userId);
 
 
     @GET("/location/get/{id}")

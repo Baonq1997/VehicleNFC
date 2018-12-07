@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import java.util.List;
 
 import model.Order;
+import model.ResponseObject;
 import model.User;
 import model.Vehicle;
 import retrofit2.Call;
@@ -53,7 +54,7 @@ public interface RmaAPIService {
 
     @POST("/user/create-user")
     @Headers({"Content-Type: application/json"})
-    Call<String> sendUserToServer(@Body User user);
+    Call<ResponseObject> sendUserToServer(@Body User user);
 
 
     @GET("user/get-user-by-phone")

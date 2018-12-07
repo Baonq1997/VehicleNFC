@@ -104,16 +104,20 @@ public class UserService {
         cur.setTimeInMillis(current);
         from.setTimeInMillis(limitFrom);
         to.setTimeInMillis(limitTo);
+        int bonus = 0;
+        if (to.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
+                || (to.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY))
+                && to.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)) {
+            bonus = 24;
+        }
+        
         if (cur.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
                 || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY)) {
             return true;
         }
-        if (cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY)
-                || cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY)) {
-            if (cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)
-                    || cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE)) {
-                return true;
-            }
+        if ((cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY) && cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE))
+                || (cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY) + bonus && cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE))) {
+            return true;
         }
         return false;
     }

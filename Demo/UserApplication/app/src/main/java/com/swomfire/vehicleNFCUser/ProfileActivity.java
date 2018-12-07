@@ -74,15 +74,20 @@ public class ProfileActivity extends Activity {
                         txtMoney.setText(UserService.convertMoney(Double.parseDouble(user.getMoney())));
                         txtName.setText(user.getFirstName() + " " + user.getLastName());
                         txtPhone.setText(user.getPhone());
-                        txtVehicalID.setText(user.getVehicle().getVehicleNumber());
+                        if (user.getVehicle() != null) {
+                            txtVehicalID.setText(user.getVehicle().getVehicleNumber());
+                            String count = user.getVehicle().getVehicleTypeId().getName();
+                            txtVehicalName.setText(count);
+                            if (count.matches("16 chỗ")) {
+                                imageXe.setImageDrawable(getResources().getDrawable(R.drawable.cartypeicobig));
+                            }
 
-                        String count = user.getVehicle().getVehicleTypeId().getName();
-                        txtVehicalName.setText(count);
-                        if (count.matches("16 chỗ")) {
-                            imageXe.setImageDrawable(getResources().getDrawable(R.drawable.cartypeicobig));
+                            txtDangKiem.setText(user.getVehicle().getLicensePlateId());
+                        }else {
+                            txtVehicalID.setText("Không có xe");
+                            txtVehicalName.setText("Không có xe");
+                            txtDangKiem.setText("Không có xe");
                         }
-
-                        txtDangKiem.setText(user.getVehicle().getLicensePlateId());
                     }
                 }
             }

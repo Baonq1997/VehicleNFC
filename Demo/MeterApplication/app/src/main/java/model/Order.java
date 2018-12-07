@@ -63,9 +63,9 @@ public class Order {
     @Expose
     private OrderStatus orderStatus;
 
-    @SerializedName("vehicleTypeId")
+    @SerializedName("vehicle")
     @Expose
-    private VehicleType vehicleType;
+    private Vehicle vehicle;
 
     @SerializedName("orderPricingList")
     @Expose
@@ -183,11 +183,12 @@ public class Order {
         this.minHour = minHour;
     }
 
-    public VehicleType getVehicleType() {
-        return vehicleType;
+
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicleType(VehicleType vehicleType) {
-        this.vehicleType = vehicleType;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 }

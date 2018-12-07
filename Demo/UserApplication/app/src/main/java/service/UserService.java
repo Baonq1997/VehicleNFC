@@ -3,12 +3,11 @@ package service;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.paypal.android.sdk.bo;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import model.HourHasPrice;
 import model.OrderPricing;
@@ -160,23 +159,27 @@ public class UserService {
     }
 
     public static boolean isOutOfTheLine(long current, long limitFrom, long limitTo) {
+
         Calendar cur = Calendar.getInstance(), from = Calendar.getInstance(), to = Calendar.getInstance();
         cur.setTimeInMillis(current);
         from.setTimeInMillis(limitFrom);
         to.setTimeInMillis(limitTo);
+        int bonus = 0;
+        if (to.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
+                || (to.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY))
+                && to.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)) {
+            bonus = 24;
+        }
         String a = cur.get(Calendar.HOUR_OF_DAY) + ":" + cur.get(Calendar.MINUTE);
         String b = from.get(Calendar.HOUR_OF_DAY) + ":" + from.get(Calendar.MINUTE);
-        String c = to.get(Calendar.HOUR_OF_DAY) + ":" + to.get(Calendar.MINUTE);
+        String c = to.get(Calendar.HOUR_OF_DAY) + bonus + ":" + to.get(Calendar.MINUTE);
         if (cur.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
-                || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY)) {
+                || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY) + bonus) {
             return true;
         }
-        if (cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY)
-                || cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY)) {
-            if (cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)
-                    || cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE)) {
-                return true;
-            }
+        if ((cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY) && cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE))
+                || (cur.get(Calendar.HOUR_OF_DAY) == to.get(Calendar.HOUR_OF_DAY) + bonus && cur.get(Calendar.MINUTE) > to.get(Calendar.MINUTE))) {
+            return true;
         }
         return false;
     }

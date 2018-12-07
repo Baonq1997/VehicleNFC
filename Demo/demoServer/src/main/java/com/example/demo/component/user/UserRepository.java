@@ -15,12 +15,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByPhoneNumberAndPassword(String phone, String password);
 
     Optional<User> findByVehicle(Vehicle vehicle);
-
-    @Query(value = "SELECT * FROM tbl_user WHERE id = :id", nativeQuery = true)
-    Optional<User> findUserById(@Param("id") Integer id);
+//
+//    @Query(value = "SELECT * FROM tbl_user WHERE id = :id", nativeQuery = true)
+//    Optional<User> findUserById(@Param("id") Integer id);
 
     @Modifying
     @Query(value = "UPDATE tbl_user SET is_activated = :status where id = :id", nativeQuery = true)
-    void updateUserStatus(boolean status, Integer id);
+    void updateUserStatus(@Param("status") long status,@Param("id") Integer id);
 
 }

@@ -2602,6 +2602,12 @@ ul.activity-timeline > li:last-child:after {
     margin-left: auto;
 }
 
+#vehicle-pagination {
+    display: table;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 #content-title-holder {
     left: 240px;
     padding: 0 45px;
@@ -2886,4 +2892,7 @@ body {
 }
 .vehicle-type {
     font-size: 17px;
+}
+.filter-item {
+    padding-top: 15px;
 }

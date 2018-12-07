@@ -2,8 +2,9 @@ package com.example.demo.component.user;
 
 import com.example.demo.component.vehicle.Vehicle;
 import com.example.demo.config.PaginationEnum;
-import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
+import com.example.demo.model.ResponseObject;
+import com.example.demo.service.ThreadService;
 import com.example.demo.service.UtilityService;
 import com.example.demo.component.vehicle.VehicleService;
 import com.example.demo.component.vehicleType.VehicleTypeService;
@@ -46,24 +47,31 @@ public class UserController {
     }
 
     @PostMapping(value = "/create-user")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<ResponseObject> createUser(@RequestBody User user) {
         boolean isExisted = userService.checkExistedPhoneNumber(user.getPhoneNumber());
+        ResponseObject responseObject = new ResponseObject();
         if (isExisted) {
-           return status(409).body("This phone number has already taken");
+            responseObject.setCode(409);
+            responseObject.setMsg("This phone number has already taken");
+            return status(409).body(responseObject);
         }
         Optional<Vehicle> vehicleOptional = vehicleService.getVehicle(user.getVehicle().getVehicleNumber());
         if (vehicleOptional.isPresent()) {
-            return status(409).body("This vehicle existed");
+            responseObject.setCode(409);
+            responseObject.setMsg("This vehicle existed");
+            return status(409).body(responseObject);
         }
 
         Map<String, String> tokenList;
         tokenList = (Map<String, String>) servletContext.getAttribute("staffTokenList");
-        if (tokenList == null){
+        if (tokenList == null) {
             tokenList = new HashMap<>();
         }
 
         String encodedId = UserService.encodeId(userService.createUser(user, tokenList));
-        return status(OK).body(encodedId);
+        responseObject.setCode(200);
+        responseObject.setMsg(encodedId);
+        return status(OK).body(responseObject);
     }
 
 
@@ -128,16 +136,17 @@ public class UserController {
         try {
             userService.deleteUser(UserService.decodeId(id));
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return "Success";
     }
 
     //    JsonPagination
     @GetMapping("/get-users-json")
-    public ResponseEntity<ResponseObject> getUsers(@RequestParam(defaultValue = "0") Integer page) {
+    public ResponseEntity<com.example.demo.config.ResponseObject> getUsers(@RequestParam(defaultValue = "0") Integer page) {
 //        return ResponseEntity.status(OK).body(userService.getAllUser(page, PaginationEnum.userPageSize.getNumberOfRows()));
         List<User> listUser = userService.getUsers(page, PaginationEnum.userPageSize.getNumberOfRows());
-        ResponseObject response = new ResponseObject();
+        com.example.demo.config.ResponseObject response = new com.example.demo.config.ResponseObject();
         response.setData(listUser);
         response.setPageNumber(page);
         response.setTotalPages(userService.getTotalUsers(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
@@ -172,13 +181,13 @@ public class UserController {
     }
 
     @PostMapping("/search-user")
-    public ResponseEntity<ResponseObject> searchUser(@RequestBody List<SearchCriteria> params
+    public ResponseEntity<com.example.demo.config.ResponseObject> searchUser(@RequestBody List<SearchCriteria> params
             , @RequestParam(defaultValue = "0") Integer page) {
-        ResponseObject response = new ResponseObject();
+        com.example.demo.config.ResponseObject response = new com.example.demo.config.ResponseObject();
         response.setData(userService.searchUser(params, page, PaginationEnum.userPageSize.getNumberOfRows()));
-        response.setPageNumber(page);
-        response.setPageSize(PaginationEnum.userPageSize.getNumberOfRows());
-        response.setTotalPages(userService.getTotalUsers(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
+//        response.setPageNumber(page);
+//        response.setPageSize(PaginationEnum.userPageSize.getNumberOfRows());
+//        response.setTotalPages(userService.getTotalUsers(PaginationEnum.userPageSize.getNumberOfRows()).intValue());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -240,6 +249,7 @@ public class UserController {
         registerTokenList.put(phoneNumber, token);
         System.err.println("Token: " + phoneNumber + ", " + token);
         servletContext.setAttribute("registerTokenList", registerTokenList);
+        ThreadService.setRegisterTokenList(registerTokenList);
         return ResponseEntity.status(OK).body(true);
     }
 
@@ -276,6 +286,7 @@ public class UserController {
         }
         return status(OK).body(false);
     }
+
     @PostMapping(value = "/unbind-vehicle")
     public ResponseEntity unbind(@Param("userId") String userId) {
         return ResponseEntity.status(OK).body(userService.unbindVehicle(UserService.decodeId(userId)));
@@ -283,8 +294,20 @@ public class UserController {
 
     @PostMapping(value = "/add-vehicle")
     public ResponseEntity<Boolean> addToUser(@Param(value = "vehicleNumber") String vehicleNumber
-                                    ,@Param(value = "phoneNumber") String phoneNumber) {
+            , @Param(value = "phoneNumber") String phoneNumber) {
         return ResponseEntity.status(OK).body(userService.addVehicleToUser(vehicleNumber, phoneNumber));
 
+    }
+
+    @GetMapping(value = "/active-users")
+    public ModelAndView activeUsers(ModelAndView mav) {
+        mav.setViewName("active-users");
+        return mav;
+    }
+
+    @PostMapping(value = "/active/{phoneNumber}")
+    public ResponseEntity activeUser(@PathVariable("phoneNumber") String phoneNumber) {
+        userService.activateUser(phoneNumber);
+        return ResponseEntity.status(OK).body("Active successfully");
     }
 }

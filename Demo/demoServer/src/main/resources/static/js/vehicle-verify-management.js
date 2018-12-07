@@ -20,50 +20,50 @@ function loadData(res) {
     var content = "";
     content = res.data;
     var row = "";
-    for (i = 0; i < content.length; i++) {
-        row = '<tr>';
-        var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "N/A";
-        var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "N/A";
-        row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
-        row += cellBuilder(content[i].vehicleNumber, "text-right");
-        row += cellBuilder(content[i].licensePlateId, "text-right");
-        row += cellBuilder(vehicleType, "text-center");
-        row += cellBuilder(content[i].brand, "");
-        row += cellBuilder(content[i].size, "text-right");
-        row += cellBuilder(convertDate(content[i].expireDate), "text-right");
-        row += cellBuilder(ownerPhone, "text-right");
+    if (content.length != 0) {
+        for (i = 0; i < content.length; i++) {
+            row = '<tr>';
+            var vehicleType = (content[i].vehicleTypeId != null) ? content[i].vehicleTypeId.name : "N/A";
+            var ownerPhone = (content[i].owner != null) ? content[i].owner.phoneNumber : "N/A";
+            row += cellBuilder((i + (res.pageNumber * res.pageSize) + 1), "text-center");
+            row += cellBuilder(content[i].vehicleNumber, "text-right");
+            row += cellBuilder(content[i].licensePlateId, "text-right");
+            row += cellBuilder(vehicleType, "text-center");
+            row += cellBuilder(content[i].brand, "");
+            row += cellBuilder(content[i].size, "text-right");
+            row += cellBuilder(convertDate(content[i].expireDate), "text-right");
+            row += cellBuilder(ownerPhone, "text-right");
 
-        var verify = (!content[i].verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "','main-content-verify-form'," + setUpFormData + ",'vehicle-list')\" class=\"btn btn-primary btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
-        var disable = (content[i].owner != null) ? "disabled" : "onclick=\"openDeleteModal('" + content[i].vehicleNumber + "')\" ";
-        var deleteStr = "<a " + disable +
-            " href=\"#\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
-        row += cellBuilder(deleteStr + verify);
-        row += '</tr>';
-        $('#user-table tbody').append(row);
-    }
-
-    for (var i = 0; i < res.pageSize - content.length; i++) {
-        $('#user-table tbody').append('<tr class="blank-row"></tr>');
-    }
-
-    var pageNumber = res.pageNumber;
-    console.log("page: " + pageNumber);
-    console.log("Total Page: " + res.totalPages);
-    $('#pagination').append(createPageButton(0, 'First', false, false));
-    $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
-    if (pageNumber > 2) {
-        $('#pagination').append(createEtcButton());
-    }
-    for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
-        if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
-            $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
+            var verify = (!content[i].verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicleNumber + "','main-content-verify-form'," + setUpFormData + ",'vehicle-list')\" class=\"btn btn-primary btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
+            var disable = (content[i].owner != null) ? "disabled" : "onclick=\"openDeleteModal('" + content[i].vehicleNumber + "')\" ";
+            var deleteStr = "<a " + disable +
+                " href=\"#\" class=\"btn btn-danger btnAction-remove\"><i class=\"lnr lnr-trash\"></i></a>";
+            row += cellBuilder(deleteStr + verify);
+            row += '</tr>';
+            $('#user-table tbody').append(row);
         }
+        var pageNumber = res.pageNumber;
+        console.log("page: " + pageNumber);
+        console.log("Total Page: " + res.totalPages);
+        $('#pagination').append(createPageButton(0, 'First', false, false));
+        $('#pagination').append(createPageButton((pageNumber - 1), '<', (pageNumber < 1), false));
+        if (pageNumber > 2) {
+            $('#pagination').append(createEtcButton());
+        }
+        for (var currentPage = 0; currentPage < res.totalPages; currentPage++) {
+            if (currentPage > res.pageNumber - 3 && currentPage < res.pageNumber + 3) {
+                $('#pagination').append(createPageButton(currentPage, (currentPage + 1), false, (currentPage === pageNumber)));
+            }
+        }
+        if (res.totalPages - pageNumber > 3) {
+            $('#pagination').append(createEtcButton());
+        }
+        $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
+        $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
+    } else {
+        $('#user-table tbody').append('<tr class="blank-row"><td colspan="9" style="text-align: center;">No data</td></tr>');
     }
-    if (res.totalPages - pageNumber > 3) {
-        $('#pagination').append(createEtcButton());
-    }
-    $('#pagination').append(createPageButton((pageNumber + 1), '>', (pageNumber === res.totalPages - 1), false));
-    $('#pagination').append(createPageButton((res.totalPages - 1), 'Last', false, false));
+
 }
 
 function createPageButton(pageNumber, label, isDisable, isActive) {
@@ -211,7 +211,7 @@ function setUpSaveFormData(vehicle) {
 function setUpVehicleType(list, holder) {
     $('#' + holder).empty();
     for (var i = 0; i < list.length; i++) {
-        var option = "<option value='" + list[i].id + "'>" + list[i].name + "</option>";
+        var option = "<option value='" + list[i].id + "'>" + list[i].en_name + "</option>";
         $('#' + holder).append(option);
     }
 }

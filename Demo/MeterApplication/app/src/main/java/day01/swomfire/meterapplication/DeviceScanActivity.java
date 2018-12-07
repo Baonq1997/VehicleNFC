@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -82,6 +83,16 @@ public class DeviceScanActivity extends AppCompatActivity {
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            byte[] parcelables = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
+            String id = new String();
+            for (int i = 0; i < parcelables.length; i++) {
+                String x = Integer.toHexString(((int) parcelables[i] & 0xff));
+                if (x.length() == 1) {
+                    x = '0' + x;
+                }
+                id += x + ' ';
+            }
+            //TODO check valid id here
             NdefMessage[] msgs = null;
             if (rawMsgs != null) {
                 msgs = new NdefMessage[rawMsgs.length];
@@ -169,7 +180,7 @@ public class DeviceScanActivity extends AppCompatActivity {
     public void checkUserInfo(final String userId, final String token) {
         pd.show();
         RmaAPIService mService = RmaAPIUtils.getAPIService();
-        mService.getUserById(Integer.parseInt(userId)).enqueue(new Callback<User>() {
+        mService.getUserById(userId).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
@@ -193,7 +204,7 @@ public class DeviceScanActivity extends AppCompatActivity {
     public void checkOpenOrderInfo(final User user, final String token) {
         pd.show();
         RmaAPIService mService = RmaAPIUtils.getAPIService();
-        mService.getOpenOrderByUserId(Integer.parseInt(user.getId())).enqueue(new Callback<Order>() {
+        mService.getOpenOrderByUserId(user.getId()).enqueue(new Callback<Order>() {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
                 if (response.isSuccessful()) {

@@ -15,16 +15,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import adapter.PolicyAdapter;
 import adapter.VehicleTypeAdapter;
 import model.Policy;
+import model.PolicyHasVehicleType;
 
 public class PolicyListFragment extends Fragment implements View.OnClickListener {
     Button btnNext, btnPre;
-    TextView txtFrom,txtTo;
+    TextView txtFrom, txtTo;
     List<Policy> policyList;
     int position;
     Context context;
@@ -50,13 +52,13 @@ public class PolicyListFragment extends Fragment implements View.OnClickListener
         btnPre = view.findViewById(R.id.btnPre);
         btnNext.setOnClickListener(this);
         btnPre.setOnClickListener(this);
-        if (policyList != null) {
+        if (policyList != null && policyList.size() != 0) {
             setUpViewForPolicy(policyList, 0, view);
         }
     }
 
     public void setPolicyList(List<Policy> policyList) {
-        this.policyList = policyList;
+        this.policyList = filterList(policyList);
     }
 
     public void setPosition(int position) {
@@ -78,6 +80,9 @@ public class PolicyListFragment extends Fragment implements View.OnClickListener
     }
 
     public void setUpViewForPolicy(List<Policy> policyList, int position, View view) {
+        if (policyList == null){
+            return;
+        }
         if (position == 0) {
             btnPre.setTextColor(getResources().getColor(R.color.colorTransparent));
             btnPre.setEnabled(false);
@@ -99,11 +104,31 @@ public class PolicyListFragment extends Fragment implements View.OnClickListener
         txtTo.setText(simpleDateFormat.format(new Date(policyList.get(position).getAllowedParkingTo())));
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.listPricing);
 //        PolicyAdapter pricingAdapter = new PolicyAdapter(policyList.get(position).getPolicies(), context);
-        VehicleTypeAdapter vehicleTypeAdapter = new VehicleTypeAdapter(policyList.get(position).getPolicyHasVehicleTypes(),context);
+        VehicleTypeAdapter vehicleTypeAdapter = new VehicleTypeAdapter(policyList.get(position).getPolicyHasVehicleTypes(), context);
         GridLayoutManager gLayoutManager = new GridLayoutManager(context, 1);
         recyclerView.setLayoutManager(gLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(vehicleTypeAdapter);
+    }
+
+    public List<Policy> filterList(List<Policy> policies) {
+        List<Policy> policyList = null;
+        for (Policy policy : policies) {
+            List<PolicyHasVehicleType> policyHasVehicleTypes = policy.getPolicyHasVehicleTypes();
+            for (int i = 0; i < policyHasVehicleTypes.size(); i++) {
+                if (policyHasVehicleTypes.get(i).getPricings() == null || policyHasVehicleTypes.get(i).getPricings().size() == 0) {
+                    policyHasVehicleTypes.remove(i);
+                    i--;
+                }
+            }
+            if (policyHasVehicleTypes.size() > 0) {
+                if (policyList == null) {
+                    policyList = new ArrayList<>();
+                }
+                policyList.add(policy);
+            }
+        }
+        return policyList;
     }
 }
 
