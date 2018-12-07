@@ -454,13 +454,14 @@ function createSearchObject(key, operation, value) {
 }
 
 function msToTime(ms) {
+    ms += 7 * 60 * 60 * 1000;
     var seconds = parseInt(ms / 1000);
     var minutes = parseInt(seconds / 60, 10);
     seconds = seconds % 60;
     var hours = parseInt(minutes / 60, 10);
     minutes = minutes % 60;
 
-    return hours + ':' + minutes;
+    return hours % 24 + ':' + minutes;
 }
 
 function createPageButton(pageNumber, label, isDisable, isActive) {

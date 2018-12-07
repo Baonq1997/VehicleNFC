@@ -127,7 +127,7 @@ function parseTimeToLong(clockPicker, type) {
     var temp = time.split(":")
     var hour = temp[0];
     var minute = temp[1];
-    var ms = parseInt(hour * 3600000) + parseInt(minute * 60000);
+    var ms = parseInt(hour * 3600000) + parseInt(minute * 60000) - (7 * 60 * 60 * 1000);
     // console.log(ms);
     $('#allowed' + type).val(ms);
 }
