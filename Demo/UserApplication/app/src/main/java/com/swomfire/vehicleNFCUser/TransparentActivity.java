@@ -11,6 +11,7 @@ public class TransparentActivity extends Activity {
     public static final String POP_MENU = "PopMenuActivity";
     public static final String POP_TOP_UP = "PopTopUp";
     public static final String POP_PRICE_LIST = "PriceList";
+    public static final String SIGN_UP = "CreateSuccessActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,9 @@ public class TransparentActivity extends Activity {
             case POP_PRICE_LIST:
                 intent = new Intent(this, ShowPopupPrice.class);
                 intent.putExtra("itemID", getIntent().getIntExtra("extra", 0));
+                break;
+            case SIGN_UP:
+                intent = new Intent(this, CreateSuccessActivity.class);
                 break;
         }
         if (intent != null) {

@@ -1,6 +1,7 @@
 package com.swomfire.vehicleNFCUser;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -19,6 +20,7 @@ import remote.RmaAPIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import service.UserService;
 
 public class SignUpActivity extends Activity {
     EditText txtFirstname, txtLastname, txtPhone, txtPassword, txtVehicalID, txtVehicalLicenceId;
@@ -44,7 +46,13 @@ public class SignUpActivity extends Activity {
         txtVehicalLicenceId = findViewById(R.id.txtVehicalLicenceId);
     }
 
+    ProgressDialog progressDialog;
+
     public void signUpUser(View view) {
+
+        progressDialog = UserService.setUpProcessDialog(context);
+        progressDialog.show();
+
         boolean flag = true;
 
         boolean flag1 = true;
@@ -89,23 +97,23 @@ public class SignUpActivity extends Activity {
             txtPassword.setBackgroundResource(R.drawable.signupedt);
         }
 
-        if (veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{5}") || veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{3}.[0-9]{2}")
-                || veid.matches("[A-Z]{2}[0-9]{2}-[0-9]{2}") || veid.matches("[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{5}")
-                || veid.matches("[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{3}.[0-9]{2}")) {
-            txtVehicalID.setBackgroundResource(R.drawable.signupedt);
-        } else {
-            flag4 = false;
-            txtVehicalID.setBackgroundResource(R.drawable.signuperror);
-        }
+//        if (veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{5}") || veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{3}.[0-9]{2}")
+//                || veid.matches("[A-Z]{2}[0-9]{2}-[0-9]{2}") || veid.matches("[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{5}")
+//                || veid.matches("[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{3}.[0-9]{2}")) {
+//            txtVehicalID.setBackgroundResource(R.drawable.signupedt);
+//        } else {
+//            flag4 = false;
+//            txtVehicalID.setBackgroundResource(R.drawable.signuperror);
+//        }
+//
+//        if (!vechungnhan.matches("[0-9]{5,15}")) {
+//            flag5 = false;
+//            txtVehicalLicenceId.setBackgroundResource(R.drawable.signuperror);
+//        } else {
+//            txtVehicalLicenceId.setBackgroundResource(R.drawable.signupedt);
+//        }
 
-        if (!vechungnhan.matches("[0-9]{5,15}")) {
-            flag5 = false;
-            txtVehicalLicenceId.setBackgroundResource(R.drawable.signuperror);
-        } else {
-            txtVehicalLicenceId.setBackgroundResource(R.drawable.signupedt);
-        }
-
-        if ((flag == true) && (flag1 == true) && (flag2 == true) && (flag3 == true) && (flag4 == true) && (flag5 == true)) {
+//        if ((flag == true) && (flag1 == true) && (flag2 == true) && (flag3 == true) && (flag4 == true) && (flag5 == true)) {
 
             user.setFirstName(fistname);
             user.setLastName(lastname);
@@ -125,8 +133,11 @@ public class SignUpActivity extends Activity {
                 public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
                     String id = response.body().getMsg();
                     if (!id.equals("")) {
-                        Intent intent = new Intent(context, CreateSuccessActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), TransparentActivity.class);
+                        intent.putExtra("switcher", TransparentActivity.SIGN_UP);
+                        intent.putExtra("extra", true);
                         startActivity(intent);
+                        progressDialog.cancel();
                     }
 
                 }
@@ -137,10 +148,10 @@ public class SignUpActivity extends Activity {
                     toast.show();
 //                    Intent intent = new Intent(context, CreateSuccessActivity.class);
 //                    startActivity(intent);
+                    progressDialog.cancel();
                 }
             });
 
-        }
     }
 
     public void onBackButton(View view) {

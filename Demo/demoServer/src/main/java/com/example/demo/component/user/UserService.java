@@ -75,7 +75,7 @@ public class UserService {
             }
 
             user.getVehicle().setVerified(!needVerify);
-            user.setActivated(true);
+            user.setActivated(false);
             vehicleRepository.save(user.getVehicle());
             userRepository.save(user);
 

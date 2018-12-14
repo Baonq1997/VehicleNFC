@@ -15,8 +15,9 @@ public class CreateSuccessActivity extends Activity {
 
     public void onClickXacNhan(View v){
 
-        Intent intent = new Intent(this, SignInActivity.class);
+        Intent intent = new Intent(this, SignInActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
 
     }
 }

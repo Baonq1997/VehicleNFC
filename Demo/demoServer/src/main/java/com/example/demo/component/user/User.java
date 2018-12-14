@@ -57,6 +57,10 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "is_activated")
     private Boolean isActivated = false;
+
+    @Basic(optional = false)
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
     @Transient
     private String deviceToken;
     @Transient
@@ -160,5 +164,13 @@ public class User implements Serializable {
 
     public void setDecodedId(String decodedId) {
         this.decodedId = decodedId;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }
