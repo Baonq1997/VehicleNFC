@@ -75,7 +75,11 @@ public class UserService {
             }
 
             user.getVehicle().setVerified(!needVerify);
-            user.setActivated(false);
+            if (user.getCreateBy().equalsIgnoreCase("staff")) {
+                user.setActivated(true);
+            } else {
+                user.setActivated(false);
+            }
             vehicleRepository.save(user.getVehicle());
             userRepository.save(user);
 
@@ -164,8 +168,8 @@ public class UserService {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root r = query.from(User.class);
-        boolean isFilterActive = true;
-        boolean isFilterDeleted = false;
+        boolean isSkipActive = false;
+        boolean isSkipDelete = false;
         Predicate predicate = builder.conjunction();
         for (SearchCriteria param : params) {
 
@@ -207,9 +211,11 @@ public class UserService {
                         Predicate vehiclePredicate = builder.like(join.get("vehicleNumber"), "%" + param.getValue() + "%");
                         predicate = builder.and(predicate, vehiclePredicate);
                     } else if (param.getKey().equalsIgnoreCase("isDeleted")) {
-                        isFilterDeleted = true;
+                        predicate = builder.and(predicate, builder.equal(r.get("isDeleted"), Boolean.parseBoolean(param.getValue().toString())));
+                        isSkipDelete = true;
                     } else {
-                        isFilterActive = false;
+                        predicate = builder.and(predicate, builder.equal(r.get("isActivated"), Boolean.parseBoolean(param.getValue().toString())));
+                        isSkipActive = true;
                     }
                 } else {
                     predicate = builder.and(predicate,
@@ -217,18 +223,14 @@ public class UserService {
                 }
             }
         }
-//        if (isFilterDeleted) {
-//            predicate = builder.and(predicate, builder.equal(r.get("isDeleted"), true));
-//        } else {
-//            predicate = builder.and(predicate, builder.equal(r.get("isDeleted"), false));
-//        }
+        if (!isSkipDelete) {
+            predicate = builder.and(predicate, builder.equal(r.get("isDeleted"), false));
+        }
 
 
-//        if (isFilterActive) {
-//            predicate = builder.and(predicate, builder.equal(r.get("isActivated"), true));
-//        } else {
-//            predicate = builder.and(predicate, builder.equal(r.get("isActivated"), false));
-//        }
+        if (!isSkipActive) {
+            predicate = builder.and(predicate, builder.equal(r.get("isActivated"), true));
+        }
         query.where(predicate);
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
         List<User> result = typedQuery.getResultList();

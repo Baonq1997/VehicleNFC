@@ -11,11 +11,12 @@ $('#save-user-form').on('submit', function (e) {
         // dataType: "json",
         data: buildUserJSON(),
         success: function (data) {
-            alert("User code: "+data);
+            console.log(data);
+            alert("User code: "+data.data);
             $('#save-user-form').trigger("reset");
         },  error: function (data) {
             if (data.status === 409) {
-                alert(data.responseText);
+                alert(data.responseText.data);
             } else {
                 alert("Cannot create User")
             }
@@ -35,7 +36,8 @@ function buildUserJSON() {
         vehicle: {
             "vehicleNumber": $('#vehicleNumber').val(),
             "licensePlateId": $('#licensePlateId').val()
-        }
+        },
+        createBy: 'staff'
     };
     return JSON.stringify(string);
 }

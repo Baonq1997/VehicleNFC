@@ -65,6 +65,8 @@ public class User implements Serializable {
     private String deviceToken;
     @Transient
     private String confirmCode;
+    @Transient
+    private String createBy;
 
     @JsonIgnore
     public Integer getId() {
@@ -172,5 +174,13 @@ public class User implements Serializable {
 
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
 }
