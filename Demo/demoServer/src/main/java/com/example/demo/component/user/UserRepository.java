@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 //    Optional<User> findUserById(@Param("id") Integer id);
 
     @Modifying
-    @Query(value = "UPDATE tbl_user SET is_activated = :status where id = :id", nativeQuery = true)
+    @Query(value = "UPDATE tbl_user SET is_deleted = :status where id = :id", nativeQuery = true)
     void updateUserStatus(@Param("status") long status,@Param("id") Integer id);
 
 }

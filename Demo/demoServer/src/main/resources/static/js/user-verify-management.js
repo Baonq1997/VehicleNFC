@@ -37,7 +37,7 @@ function loadData(res) {
                 ? showText(content[i].vehicle.vehicleNumber) : "N/A";
             row += '<td class="text-right">' + vehicleNumber + '</td>';
             vehicleType = (content[i].vehicle.vehicleTypeId != null)
-                ? showText(content[i].vehicle.vehicleTypeId.name) : "N/A";
+                ? showText(content[i].vehicle.vehicleTypeId.en_name) : "N/A";
             row += '<td class="text-center">' + vehicleType + '</td>';
             verify = (!content[i].vehicle.verified) ? "<a href=\"#\" onclick=\"loadVehicleInfo('" + content[i].vehicle.vehicleNumber + "')\" class=\"btn btn-primary btnAction\"><i class=\"far fa-check-square\"></i></a>" : "";
         } else {
@@ -217,7 +217,7 @@ function setUpFormData(vehicle) {
 function setUpVehicleType(list, holder) {
     $('#' + holder).empty();
     for (var i = 0; i < list.length; i++) {
-        var option = "<option value='" + list[i].id + "'>" + list[i].name + "</option>";
+        var option = "<option value='" + list[i].id + "'>" + list[i].en_name + "</option>";
         $('#' + holder).append(option);
     }
 }

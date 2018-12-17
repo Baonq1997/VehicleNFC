@@ -84,7 +84,7 @@ function loadData(res) {
                 ? content[i].vehicle.vehicleNumber : "N/A";
             row += '<td class="text-center">' + vehicleNumber + '</td>';
             var vehicleType = (content[i].vehicle.vehicleTypeId != null)
-                ? content[i].vehicle.vehicleTypeId.name : "N/A";
+                ? content[i].vehicle.vehicleTypeId.en_name : "N/A";
             row += '<td class="text-center">' + vehicleType + '</td>';
         }
         // row += '<td>' + content[i].vehicleTypeId.name + '</td>';
@@ -183,7 +183,9 @@ function searchUser(pageNumber) {
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
+    var filterDelete = createSearchObject("isDeleted", ":", "false");
     listFilterObject.push(filterObject);
+    listFilterObject.push(filterDelete);
     $.ajax({
         type: 'POST',
         url: url,

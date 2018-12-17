@@ -188,6 +188,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_weight="1"
+                android:onClick="haveAccount"
                 android:background="@drawable/btn_reverse"
                 android:text="Đã có tài khoản ?"
                 android:textColor="#006699"

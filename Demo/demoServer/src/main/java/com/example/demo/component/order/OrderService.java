@@ -469,7 +469,9 @@ public class OrderService {
         return hourHasPrices;
     }
 
+
     public static boolean isOutOfTheLine(long current, long limitFrom, long limitTo) {
+
         Calendar cur = Calendar.getInstance(), from = Calendar.getInstance(), to = Calendar.getInstance();
         cur.setTimeInMillis(current);
         from.setTimeInMillis(limitFrom);
@@ -480,12 +482,11 @@ public class OrderService {
                 && to.get(Calendar.MINUTE) < from.get(Calendar.MINUTE)) {
             bonus = 24;
         }
-
-//        String a = cur.get(Calendar.HOUR_OF_DAY)+":"+cur.get(Calendar.MINUTE);
-//        String b = from.get(Calendar.HOUR_OF_DAY)+":"+from.get(Calendar.MINUTE);
-//        String c = to.get(Calendar.HOUR_OF_DAY)+":"+to.get(Calendar.MINUTE);
+        String a = cur.get(Calendar.HOUR_OF_DAY) + ":" + cur.get(Calendar.MINUTE);
+        String b = from.get(Calendar.HOUR_OF_DAY) + ":" + from.get(Calendar.MINUTE);
+        String c = to.get(Calendar.HOUR_OF_DAY) + bonus + ":" + to.get(Calendar.MINUTE);
         if (cur.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
-                || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY)) {
+                || cur.get(Calendar.HOUR_OF_DAY) > to.get(Calendar.HOUR_OF_DAY) + bonus) {
             return true;
         }
         if ((cur.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY) && cur.get(Calendar.MINUTE) < from.get(Calendar.MINUTE))

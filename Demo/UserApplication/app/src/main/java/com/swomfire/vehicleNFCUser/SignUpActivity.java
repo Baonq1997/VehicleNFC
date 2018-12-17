@@ -12,6 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
+
 import Util.RmaAPIUtils;
 import model.ResponseObject;
 import model.User;
@@ -97,7 +101,7 @@ public class SignUpActivity extends Activity {
             txtPassword.setBackgroundResource(R.drawable.signupedt);
         }
 
-//        if (veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{5}") || veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{3}.[0-9]{2}")
+//        if (veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{5}") || veid.matches("[0-9]{2}[A-Z]{1}-[0-9]{3}.[0-9]{2}[A-Z]{")
 //                || veid.matches("[A-Z]{2}[0-9]{2}-[0-9]{2}") || veid.matches("[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{5}")
 //                || veid.matches("[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{3}.[0-9]{2}")) {
 //            txtVehicalID.setBackgroundResource(R.drawable.signupedt);
@@ -106,7 +110,7 @@ public class SignUpActivity extends Activity {
 //            txtVehicalID.setBackgroundResource(R.drawable.signuperror);
 //        }
 //
-//        if (!vechungnhan.matches("[0-9]{5,15}")) {
+//        if (!vechungnhan.matches("[0-9]{5,10}")) {
 //            flag5 = false;
 //            txtVehicalLicenceId.setBackgroundResource(R.drawable.signuperror);
 //        } else {
@@ -115,43 +119,65 @@ public class SignUpActivity extends Activity {
 
 //        if ((flag == true) && (flag1 == true) && (flag2 == true) && (flag3 == true) && (flag4 == true) && (flag5 == true)) {
 
-            user.setFirstName(fistname);
-            user.setLastName(lastname);
-            user.setPhone(phone);
-            user.setPassword(pass);
-            //user. setVehicleNumber(veid);
-            //user.setLicensePlateId(vechungnhan);
+        user.setFirstName(fistname);
+        user.setLastName(lastname);
+        user.setPhone(phone);
+        user.setPassword(pass);
+        //user. setVehicleNumber(veid);
+        //user.setLicensePlateId(vechungnhan);
 
-            Vehicle vehicle = new Vehicle();
-            vehicle.setVehicleNumber(veid);
-            vehicle.setLicensePlateId(vechungnhan);
-            user.setVehicle(vehicle);
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleNumber(veid);
+        vehicle.setLicensePlateId(vechungnhan);
+        user.setVehicle(vehicle);
 
-            RmaAPIService mService = RmaAPIUtils.getAPIService();
-            mService.sendUserToServer(user).enqueue(new Callback<ResponseObject>() {
-                @Override
-                public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
-                    String id = response.body().getMsg();
-                    if (!id.equals("")) {
-                        Intent intent = new Intent(getApplicationContext(), TransparentActivity.class);
-                        intent.putExtra("switcher", TransparentActivity.SIGN_UP);
-                        intent.putExtra("extra", true);
-                        startActivity(intent);
-                        progressDialog.cancel();
+        RmaAPIService mService = RmaAPIUtils.getAPIService();
+        mService.sendUserToServer(user).enqueue(new Callback<ResponseObject>() {
+            @Override
+            public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                if (response.isSuccessful()) {
+                    ResponseObject responseObject = response.body();
+//                        (response.isSuccessful()) ? response.body() : response.errorBody();
+                    if (responseObject != null) {
+                        String msg = responseObject.getData().toString();
+                        if (responseObject.getStatus() == 200) {
+                            Intent intent = new Intent(getApplicationContext(), TransparentActivity.class);
+                            intent.putExtra("switcher", TransparentActivity.SIGN_UP);
+                            intent.putExtra("extra", true);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                        }
                     }
-
+                } else {
+                    if (response.code() == 409) {
+                        try {
+                            JSONObject errMsg = new JSONObject(response.errorBody().string());
+                            String msg = errMsg.getString("data");
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+                progressDialog.cancel();
+            }
 
-                @Override
-                public void onFailure(Call<ResponseObject> call, Throwable t) {
-                    Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
-                    toast.show();
+            @Override
+            public void onFailure(Call<ResponseObject> call, Throwable t) {
+                Toast toast = Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
 //                    Intent intent = new Intent(context, CreateSuccessActivity.class);
 //                    startActivity(intent);
-                    progressDialog.cancel();
-                }
-            });
+                progressDialog.cancel();
+            }
+        });
 
+    }
+
+    public void haveAccount(View v){
+        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+        startActivity(intent);
     }
 
     public void onBackButton(View view) {

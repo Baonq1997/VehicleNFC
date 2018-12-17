@@ -162,8 +162,8 @@ public class UserService {
 
         Calendar cur = Calendar.getInstance(), from = Calendar.getInstance(), to = Calendar.getInstance();
         cur.setTimeInMillis(current);
-        from.setTimeInMillis(limitFrom);
-        to.setTimeInMillis(limitTo);
+        from.setTimeInMillis(limitFrom - (60 * 60 * 1000));
+        to.setTimeInMillis(limitTo - (60 * 60 * 1000));
         int bonus = 0;
         if (to.get(Calendar.HOUR_OF_DAY) < from.get(Calendar.HOUR_OF_DAY)
                 || (to.get(Calendar.HOUR_OF_DAY) == from.get(Calendar.HOUR_OF_DAY))

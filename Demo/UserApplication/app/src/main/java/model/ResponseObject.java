@@ -1,23 +1,31 @@
 package model;
 
+import okhttp3.ResponseBody;
+
 public class ResponseObject {
 
-    private int code;
-    private String msg;
+    private int status;
+    private Object data;
 
-    public int getCode() {
-        return code;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public String getMsg() {
-        return msg;
+    public Object getData() {
+        return data;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setData(Object data) {
+        this.data = data;
     }
+
+//    public static ResponseObject ConvertError(ResponseBody responseBody){
+//        ResponseObject responseObject = new ResponseObject();
+//        responseBody.
+//        data = responseBody;
+//    }
 }

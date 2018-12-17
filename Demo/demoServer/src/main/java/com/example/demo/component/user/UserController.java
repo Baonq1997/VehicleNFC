@@ -2,8 +2,8 @@ package com.example.demo.component.user;
 
 import com.example.demo.component.vehicle.Vehicle;
 import com.example.demo.config.PaginationEnum;
+import com.example.demo.config.ResponseObject;
 import com.example.demo.config.SearchCriteria;
-import com.example.demo.model.ResponseObject;
 import com.example.demo.service.ThreadService;
 import com.example.demo.service.UtilityService;
 import com.example.demo.component.vehicle.VehicleService;
@@ -51,14 +51,14 @@ public class UserController {
         boolean isExisted = userService.checkExistedPhoneNumber(user.getPhoneNumber());
         ResponseObject responseObject = new ResponseObject();
         if (isExisted) {
-            responseObject.setCode(409);
-            responseObject.setMsg("This phone number has already taken");
+            responseObject.setStatus(409);
+            responseObject.setData("This phone number has already taken");
             return status(409).body(responseObject);
         }
         Optional<Vehicle> vehicleOptional = vehicleService.getVehicle(user.getVehicle().getVehicleNumber());
         if (vehicleOptional.isPresent()) {
-            responseObject.setCode(409);
-            responseObject.setMsg("This vehicle existed");
+            responseObject.setStatus(409);
+            responseObject.setData("This vehicle existed");
             return status(409).body(responseObject);
         }
 
@@ -69,8 +69,8 @@ public class UserController {
         }
 
         String encodedId = UserService.encodeId(userService.createUser(user, tokenList));
-        responseObject.setCode(200);
-        responseObject.setMsg(encodedId);
+        responseObject.setStatus(200);
+        responseObject.setData(encodedId);
         return status(OK).body(responseObject);
     }
 
@@ -137,6 +137,7 @@ public class UserController {
             userService.deleteUser(UserService.decodeId(id));
         } catch (Exception e) {
             e.printStackTrace();
+            return "Failed";
         }
         return "Success";
     }
