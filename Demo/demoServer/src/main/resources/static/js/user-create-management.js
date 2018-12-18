@@ -6,7 +6,7 @@ $('#save-user-form').on('submit', function (e) {
     e.preventDefault();
     $.ajax({
         type: 'post',
-        url: 'create-user',
+        url: 'create-user?createType='+"staff",
         contentType: "application/json; charset=utf-8",
         // dataType: "json",
         data: buildUserJSON(),

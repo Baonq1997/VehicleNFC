@@ -57,7 +57,7 @@ public class UserService {
     }
 
     @Transactional
-    public Integer createUser(User user, Map<String, String> tokenList) {
+    public Integer createUser(User user, Map<String, String> tokenList, String createType) {
         if (user.getVehicle() != null) {
             boolean needVerify = true;
 
@@ -75,11 +75,11 @@ public class UserService {
             }
 
             user.getVehicle().setVerified(!needVerify);
-            if (user.getCreateBy().equalsIgnoreCase("staff")) {
-                user.setActivated(true);
-            } else {
-                user.setActivated(false);
-            }
+           if (createType != null && createType.equalsIgnoreCase("staff")) {
+               user.setActivated(true);
+           } else {
+               user.setActivated(false);
+           }
             vehicleRepository.save(user.getVehicle());
             userRepository.save(user);
 
@@ -299,7 +299,7 @@ public class UserService {
         Optional<User> userDB = userRepository.findByPhoneNumber(phoneNumber);
         if (userDB.isPresent()) {
             User existedUser = userDB.get();
-            existedUser.setActivated(true);
+            existedUser.setDeleted(false);
             userRepository.save(existedUser);
         }
     }
@@ -348,7 +348,7 @@ public class UserService {
         if (user.isPresent()) {
             Optional<Vehicle> vehicle = vehicleRepository.findByVehicleNumber(user.get().getVehicle().getVehicleNumber());
             if (vehicle.isPresent()) {
-                vehicle.get().setActive(false);
+                vehicle.get().setActive(true);
                 vehicle.get().setOwnerId(null);
                 vehicleRepository.save(vehicle.get());
                 user.get().setVehicle(null);

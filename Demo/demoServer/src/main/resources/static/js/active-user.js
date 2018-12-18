@@ -24,7 +24,8 @@ function searchUser(pageNumber) {
 
     console.log("Search By: " + vehicleType);
     console.log("SearchValue: " + searchValue);
-    var deActiveUser = createSearchObject("isActivated",":",false);
+    // var deActiveUser = createSearchObject("isActivated",":",false);
+    var deActiveUser = createSearchObject("isDeleted",":",true);
     var filterObject = createSearchObject(vehicleType, ":", searchValue);
     listFilterObject.push(filterObject);
     listFilterObject.push(deActiveUser);
@@ -70,7 +71,7 @@ function loadData(res) {
                 row += '<td class="text-center">' + vehicleType + '</td>';
             }
 
-            var active = "<a href=\"#\" onclick=\"activeUser('" + content[i].phoneNumber + "')\" class=\"btn btn-primary btnAction\"><i class=\"lnr lnr-pencil\"></i></a>";
+            var active = "<a href=\"#\" onclick=\"activeUser('" + content[i].phoneNumber + "')\" class=\"btn btn-primary btnAction\"><i class=\"fas fa-check\"></i></a>";
             row += cellBuilder(active);
             row += '</tr>';
             $('#user-table tbody').append(row);

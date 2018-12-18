@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/create-user")
-    public ResponseEntity<ResponseObject> createUser(@RequestBody User user) {
+    public ResponseEntity<ResponseObject> createUser(@RequestParam(value = "createType", required = false, defaultValue = "user") String createType, @RequestBody User user) {
         boolean isExisted = userService.checkExistedPhoneNumber(user.getPhoneNumber());
         ResponseObject responseObject = new ResponseObject();
         if (isExisted) {
@@ -68,7 +68,7 @@ public class UserController {
             tokenList = new HashMap<>();
         }
 
-        String encodedId = UserService.encodeId(userService.createUser(user, tokenList));
+        String encodedId = UserService.encodeId(userService.createUser(user, tokenList,createType));
         responseObject.setStatus(200);
         responseObject.setData(encodedId);
         return status(OK).body(responseObject);
